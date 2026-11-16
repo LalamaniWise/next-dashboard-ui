@@ -47,3 +47,10 @@ next-env.d.ts
 # local SQLite database
 /prisma/dev.db
 /prisma/dev.db-journal
+
+# AI workspace
+__pycache__/
+/ai/finetune/data/
+/ai/finetune/outputs/
+/ai/video/media/
+/ai/video/*.mp4
