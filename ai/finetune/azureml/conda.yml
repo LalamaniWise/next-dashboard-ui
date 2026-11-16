@@ -1,0 +1,14 @@
+name: school-tutor
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - pip
+  - pip:
+      - torch>=2.4
+      - transformers>=5.0
+      - trl>=1.0
+      - peft>=0.17
+      - datasets>=3.0
+      - bitsandbytes>=0.45
+      - accelerate>=1.0

@@ -615,3 +615,18 @@ model Enquiry {
 
   @@index([status])
 }
+
+// A lesson video made by the AI video service and uploaded to YouTube. Only
+// its name and link are kept here; the video itself lives on YouTube.
+// Not to be confused with Lesson (a timetable slot).
+model Video {
+  id          Int      @id @default(autoincrement())
+  title       String
+  youtubeUrl  String   @unique
+  // Who sees it: learners in this grade (10 to 12)
+  subjectName String
+  grade       Int
+  createdAt   DateTime @default(now())
+
+  @@index([grade])
+}

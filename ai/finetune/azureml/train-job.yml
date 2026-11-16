@@ -1,0 +1,30 @@
+# Azure ML command job: fine-tune the tutor model on one GPU.
+#
+#   az ml compute create -n gpu-a100 --type AmlCompute \
+#       --size Standard_NC24ads_A100_v4 --min-instances 0 --max-instances 1
+#   az ml job create -f azureml/train-job.yml
+#
+# min-instances 0 means the GPU shuts down (and stops costing money) when idle.
+$schema: https://azuremlschemas.azureedge.net/latest/commandJob.schema.json
+display_name: school-tutor-qlora
+experiment_name: school-tutor
+compute: azureml:gpu-a100
+code: ..
+command: >-
+  pip install -r requirements.txt &&
+  python train_qlora.py
+  --train ${{inputs.data}}/train.jsonl
+  --val ${{inputs.data}}/val.jsonl
+  --base ${{inputs.base_model}}
+  --out ${{outputs.adapter}}
+inputs:
+  data:
+    type: uri_folder
+    path: ../data          # created by prepare_data.py
+  base_model: Qwen/Qwen2.5-7B-Instruct
+outputs:
+  adapter:
+    type: uri_folder
+environment:
+  image: mcr.microsoft.com/azureml/openmpi4.1.0-cuda11.8-cudnn8-ubuntu22.04:latest
+  conda_file: conda.yml

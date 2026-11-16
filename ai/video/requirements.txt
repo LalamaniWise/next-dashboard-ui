@@ -1,0 +1,5 @@
+manim>=0.18
+sympy>=1.12
+numpy
+# optional, for --tts piper
+piper-tts>=1.3

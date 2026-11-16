@@ -1,0 +1,176 @@
+# English voice-training sentences. One per line; lines starting with # are skipped.
+# Read each one naturally, like you are teaching. Re-record any line you stumble on.
+#
+# General speech: a wide mix of sounds
+Good morning, everyone, and welcome back to class.
+Please take out your books and turn to page forty-two.
+The quick brown fox jumps over the lazy dog.
+She sells sea shells on the shore every Saturday.
+We will start with a short revision of last week's work.
+If you are not sure, ask a question before you move on.
+The school bus leaves at half past three this afternoon.
+Thandi and Pieter worked together on the project.
+Our next test is on Thursday, the fourteenth of March.
+Make sure your name and class are on every page.
+Read the question twice before you start writing.
+That is a very good answer, well done.
+Let us look at the example on the board.
+Write down the formula first, then substitute the values.
+Show all your working, because method marks count.
+The library closes early on Fridays.
+Can anyone tell me what we learned yesterday?
+Remember to check your answer at the end.
+This is one of the most common mistakes in the exam.
+Underline the key words in the question.
+The weather in Johannesburg was cold and windy today.
+Polokwane, Mbombela and Gqeberha are all South African cities.
+The Drakensberg mountains are covered in snow in winter.
+My grandmother grew up in a small village near Thohoyandou.
+The rugby match was cancelled because of the heavy rain.
+How many learners are in your class this year?
+Why do you think the answer changed?
+Wow, that was quick!
+Hmm, let us think about that again.
+Yes, exactly. No, not quite. Try once more.
+Zero, one, two, three, four, five, six, seven, eight, nine, ten.
+Eleven, twelve, thirteen, fifteen, twenty, fifty, a hundred, a thousand.
+The price went up from forty-nine rand to fifty-five rand ninety-nine.
+It is a quarter to eight, so we have fifteen minutes left.
+In two thousand and twenty-four, the results improved by six percent.
+Choose the correct option: A, B, C or D.
+Question three point two point one is worth four marks.
+#
+# Mathematics and Technical Mathematics
+Let x be the number of boxes sold.
+x squared plus five x plus six equals zero.
+Factorise the expression, then solve for x.
+The derivative of x cubed is three x squared.
+Set the first derivative equal to zero to find the turning points.
+The gradient of the tangent at that point is negative two.
+The y-intercept is found by letting x equal zero.
+The x-intercepts are where the graph cuts the x-axis.
+Use the quadratic formula when the expression does not factorise.
+The square root of eighty-one is nine.
+Two to the power of five is thirty-two.
+The log of one hundred to base ten is two.
+The sum of the first ten terms of the arithmetic sequence is one hundred and fifty.
+The common ratio of the geometric sequence is one half.
+Sine of thirty degrees is one half.
+Cosine of sixty degrees is also one half.
+Tan theta equals the opposite side divided by the adjacent side.
+The angle in a semicircle is ninety degrees.
+The opposite angles of a cyclic quadrilateral add up to one hundred and eighty degrees.
+The probability of getting heads twice is one quarter.
+The mean is the sum of the values divided by the number of values.
+The median is the middle value when the data is arranged in order.
+The standard deviation tells us how spread out the data is.
+Find the equation of the straight line through the two points.
+The parabola has a minimum turning point at two, negative three.
+The asymptotes of the hyperbola are x equals one and y equals two.
+Compound interest grows faster than simple interest.
+The loan is repaid over twenty years at eleven percent per year.
+Convert the angle from degrees to radians.
+The area of the circle is pi r squared.
+The volume of the cylinder is pi r squared h.
+#
+# Mathematical Literacy
+Calculate the total cost, including VAT at fifteen percent.
+The electricity tariff is two rand thirty per kilowatt hour.
+Use the map scale to find the actual distance in kilometres.
+The bus leaves Pretoria at seven fifteen and arrives at nine forty.
+Her monthly income is twelve thousand rand and her expenses are nine thousand rand.
+Read the value from the bar graph for the month of June.
+Convert two and a half litres to millilitres.
+The recipe needs three cups of flour for every two eggs.
+Compare the two cell phone contracts and decide which one is cheaper.
+The break-even point is where income equals expenses.
+#
+# Physical Sciences
+Newton's second law states that the net force equals mass times acceleration.
+The acceleration due to gravity is nine point eight metres per second squared.
+Momentum is the product of mass and velocity.
+In a closed system, the total momentum is conserved.
+Work done equals force multiplied by displacement.
+The resistance of the resistor is twelve ohms.
+Current is measured in amperes and voltage in volts.
+The Doppler effect explains why the siren sounds higher as the ambulance approaches.
+Electrons are emitted when light of a high enough frequency shines on the metal.
+The reaction is exothermic, because energy is released.
+An acid donates protons and a base accepts protons.
+The rate of the reaction increases when the temperature increases.
+At equilibrium, the forward and reverse reactions occur at the same rate.
+Methane is the simplest alkane, with one carbon atom.
+The oxidising agent is reduced during the reaction.
+#
+# Life Sciences
+Deoxyribonucleic acid carries the genetic information of the cell.
+Meiosis produces four haploid cells from one diploid cell.
+Photosynthesis takes place in the chloroplasts of green plants.
+The heart pumps blood through the arteries to the rest of the body.
+The pituitary gland is often called the master gland.
+Natural selection explains how species change over time.
+The fertilised egg implants in the wall of the uterus.
+Homeostasis keeps the internal environment of the body constant.
+The neuron carries impulses from the receptor to the brain.
+A dominant allele masks the effect of a recessive allele.
+#
+# Geography
+The mid-latitude cyclone brings cold fronts and rain to the Western Cape.
+Rivers erode, transport and deposit material along their course.
+Read the contour lines to find the height of the hill.
+Urbanisation happens when people move from rural areas to cities.
+The informal sector provides jobs for many South Africans.
+Berg winds are hot, dry winds that blow from the interior towards the coast.
+The drainage basin is the area drained by a river and its tributaries.
+Find the grid reference of the dam on the topographical map.
+#
+# Accounting
+Assets equal liabilities plus owner's equity.
+Debit the bank account and credit the sales account.
+The trial balance shows that total debits equal total credits.
+Depreciation is calculated at twenty percent per year on cost.
+The cash budget shows expected receipts and payments.
+Prepare the statement of comprehensive income for the year.
+The current ratio measures the ability to pay short-term debts.
+Inventory is valued using the weighted average method.
+VAT input is claimed back from the South African Revenue Service.
+Calculate the gross profit and the net profit for the year.
+#
+# Economics and Business Studies
+Demand decreases when the price increases, all else being equal.
+Inflation is a general increase in the price level of goods and services.
+The Reserve Bank uses the repo rate to control inflation.
+Gross domestic product measures the value of all final goods produced.
+A monopoly is a market with only one seller.
+Unemployment is one of the biggest challenges in South Africa.
+Business Studies looks at the macro, market and micro environments.
+A SWOT analysis lists strengths, weaknesses, opportunities and threats.
+The entrepreneur must write a business plan before applying for a loan.
+Broad-based black economic empowerment aims to include more people in the economy.
+Good corporate governance means being transparent and accountable.
+Quality management helps a business to meet the needs of its customers.
+#
+# Engineering Graphics and Design
+Draw the front view, the top view and the left view of the object.
+Use a sharp pencil and draw construction lines lightly.
+The isometric drawing shows the object at an angle of thirty degrees.
+The scale of the drawing is one to fifty.
+Add the dimensions in millimetres above the dimension lines.
+#
+# English and Afrikaans language lessons
+A noun is a naming word and a verb is a doing word.
+The poem uses imagery to create a sad and lonely mood.
+Change the sentence from the active voice to the passive voice.
+In direct speech, we use quotation marks around the spoken words.
+The theme of the novel is the struggle between tradition and change.
+Write a formal letter to the editor of the local newspaper.
+A simile compares two things using like or as.
+The protagonist faces a difficult choice in the final chapter.
+Summarise the passage in no more than ninety words.
+#
+# Longer teaching sentences
+Before we begin, let us remind ourselves of the rule we used yesterday, because we will need it again today.
+If you get stuck, go back to the definition, write it down, and see which part of the question it matches.
+This question looks difficult, but if we break it into small steps, each step is actually quite simple.
+In the exam, you will often see this type of question in Paper One, usually worth between eight and twelve marks.
+Notice how the answer changes when we double the value, and think about why that happens.
