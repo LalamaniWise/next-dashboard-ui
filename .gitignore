@@ -65,3 +65,4 @@ __pycache__/
 # lesson video service
 /ai/service/jobs.json
 /ai/service/work/
+/ai/service/*.log
