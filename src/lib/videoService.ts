@@ -74,10 +74,14 @@ export const getJob = (jobId: string) => serviceFetch<VideoJob>(`/jobs/${jobId}`
 export const recentJobs = async () =>
   (await serviceFetch<{ jobs: VideoJob[] }>("/jobs?limit=20")).jobs;
 
+// A dry run (DRY_RUN=1) gives a made-up YouTube link, so it's never saved
+const isSavable = (job: VideoJob) =>
+  job.status === "done" && !!job.youtubeUrl && job.privacy !== "dry-run";
+
 // Saves a finished job as a Video. Everything comes from the service's
 // answer, never from the browser. Safe to call again for the same job.
 export const saveFinishedVideo = async (job: VideoJob) => {
-  if (job.status !== "done") return null;
+  if (!isSavable(job)) return null;
   const youtubeId = job.youtubeUrl ? parseYouTubeId(job.youtubeUrl) : null;
   if (
     !youtubeId ||
@@ -98,7 +102,7 @@ export const saveFinishedVideo = async (job: VideoJob) => {
 // Saves every finished job not saved yet, e.g. when nobody kept the page
 // open until the video was done
 export const saveFinishedVideos = async (jobs: VideoJob[]) => {
-  const done = jobs.filter((j) => j.status === "done" && j.youtubeUrl);
+  const done = jobs.filter(isSavable);
   if (done.length === 0) return;
   const urls = done
     .map((j) => parseYouTubeId(j.youtubeUrl!))

@@ -74,12 +74,19 @@ export const JobProgress = ({ jobId, initialStep }: { jobId: string; initialStep
       </p>
     );
   }
+  if (progress.status === "done" && progress.privacy === "dry-run") {
+    return (
+      <p role="status" className="text-sm text-green-600">
+        Done: &quot;{progress.title}&quot; was rendered. Dry run: nothing was uploaded to YouTube or
+        added to the list.
+      </p>
+    );
+  }
   if (progress.status === "done") {
     return (
       <p role="status" className="text-sm text-green-600">
         Done: &quot;{progress.title}&quot; is on YouTube and in the list below.
         {progress.privacy === "private" && " YouTube has made it private for now (see the note above)."}
-        {progress.privacy === "dry-run" && " (Dry run: nothing was uploaded; the link is made up.)"}
       </p>
     );
   }
