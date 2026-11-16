@@ -6,6 +6,7 @@ Two parts, built to work together:
 |---|---|---|
 | Lesson videos | `video/` | Turns a lesson (JSON) into a narrated MP4 with animated equations and graphs |
 | Tutor model | `finetune/` | Fine-tunes an open model on CAPS past papers + memos so it explains like a South African teacher |
+| Your voice | `voice/` | Record lessons in your own voice, or train a voice model of your voice (see `voice/README.md`) |
 
 ```
 topic ──► script_writer.py ──► lesson.json ──► render_lesson.py ──► lesson.mp4
@@ -38,7 +39,10 @@ python script_writer.py --subject "Physical Sciences" --grade 11 \
 python render_lesson.py lessons/newton2.json
 ```
 
-- **Voices:** `--tts espeak` is free and offline but robotic. `--tts azure` uses Azure AI
+- **Your own voice:** `--tts recorded --voice-dir <folder>` uses your recordings, and
+  `--tts piper --voice-model my_voice.onnx` uses a voice model trained on your voice.
+  See `voice/README.md`.
+- **Other voices:** `--tts espeak` is free and offline but robotic. `--tts azure` uses Azure AI
   Speech neural voices: South African English (`en-ZA`) and Afrikaans (`af-ZA`). Set
   `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION`.
 - **Languages:** `"language": "en"` or `"af"` in the lesson file.

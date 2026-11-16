@@ -2,6 +2,8 @@
 
     python render_lesson.py lessons/gr12-maths-stationary-points.json
     python render_lesson.py lesson.json --tts azure --quality h --out video.mp4
+    python render_lesson.py lesson.json --tts recorded --voice-dir recordings/lesson1
+    python render_lesson.py lesson.json --tts piper --voice-model my-voice.onnx
 
 Each scene's narration is turned into audio first; the animation for that
 scene is then timed to fill exactly the length of its audio, so the picture
@@ -158,7 +160,8 @@ class LessonScene(Scene):
         return used
 
 
-def render(lesson_path, out_path, tts_backend="espeak", quality="m"):
+def render(lesson_path, out_path, tts_backend="espeak", quality="m",
+           voice_model=None, voice_dir=None):
     with open(lesson_path, encoding="utf-8") as fh:
         lesson = validate_lesson(json.load(fh))
 
@@ -166,7 +169,8 @@ def render(lesson_path, out_path, tts_backend="espeak", quality="m"):
     audio = []
     for i, scene in enumerate(lesson["scenes"]):
         wav = os.path.join(work, f"scene_{i:02d}.wav")
-        seconds = synthesize(scene["narration"], lesson["language"], wav, tts_backend)
+        seconds = synthesize(scene["narration"], lesson["language"], wav, tts_backend,
+                             voice_model=voice_model, voice_dir=voice_dir, scene_index=i)
         audio.append((wav, seconds))
         print(f"scene {i} ({scene['type']}): {seconds:.1f}s narration")
 
@@ -195,11 +199,13 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("lesson")
     ap.add_argument("--out", default=None)
-    ap.add_argument("--tts", choices=["espeak", "azure"], default="espeak")
+    ap.add_argument("--tts", choices=["espeak", "piper", "recorded", "azure"], default="espeak")
+    ap.add_argument("--voice-model", help="Piper .onnx voice (with --tts piper)")
+    ap.add_argument("--voice-dir", help="folder with scene_00.*, scene_01.* ... (with --tts recorded)")
     ap.add_argument("--quality", choices=list(QUALITY), default="m")
     a = ap.parse_args()
     out = a.out or os.path.splitext(os.path.basename(a.lesson))[0] + ".mp4"
-    render(a.lesson, out, a.tts, a.quality)
+    render(a.lesson, out, a.tts, a.quality, a.voice_model, a.voice_dir)
 
 
 if __name__ == "__main__":
