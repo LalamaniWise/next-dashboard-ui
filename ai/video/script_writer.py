@@ -58,18 +58,25 @@ JSON format
 
 def _post(url, headers, body):
     req = urllib.request.Request(url, data=json.dumps(body).encode(), headers=headers)
-    with urllib.request.urlopen(req, timeout=180) as resp:
+    with urllib.request.urlopen(req, timeout=300) as resp:
         return json.loads(resp.read())
 
 
 def call_model(messages, backend, model):
     if backend == "anthropic":
+        # Claude thinks before it writes, and the thinking counts towards
+        # max_tokens, so leave plenty of room. Only tokens used are billed.
         data = _post(
             "https://api.anthropic.com/v1/messages",
             {"x-api-key": os.environ["ANTHROPIC_API_KEY"],
              "anthropic-version": "2023-06-01", "content-type": "application/json"},
-            {"model": model, "max_tokens": 4000, "system": SYSTEM_PROMPT, "messages": messages},
+            {"model": model, "max_tokens": 16000, "system": SYSTEM_PROMPT, "messages": messages},
         )
+        # Asking again would hit the same wall, so stop instead of retrying
+        if data.get("stop_reason") == "max_tokens":
+            raise LessonError("the lesson was too long and got cut off; try a narrower topic")
+        if data.get("stop_reason") == "refusal":
+            raise LessonError("Claude declined to write this lesson; try rewording the topic")
         return "".join(b.get("text", "") for b in data["content"])
     # OpenAI-compatible: your fine-tuned model served by vLLM / Azure ML, or Azure OpenAI
     base = os.environ["TUTOR_API_BASE"].rstrip("/")
