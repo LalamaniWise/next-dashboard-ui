@@ -1,0 +1,104 @@
+# Afrikaanse sinne vir stemopleiding. Een sin per reël; reëls wat met # begin, word oorgeslaan.
+# Lees elke sin natuurlik, soos wanneer jy klasgee. Laat 'n Afrikaanse onderwyser asseblief die sinne nagaan.
+#
+# Algemene spraak
+Goeiemôre, almal, en welkom terug in die klas.
+Haal asseblief julle boeke uit en blaai na bladsy twee-en-veertig.
+Ons begin met 'n kort hersiening van verlede week se werk.
+As jy nie seker is nie, vra eers 'n vraag voordat jy aangaan.
+Die skoolbus vertrek vanmiddag om halfvier.
+Thandi en Pieter het saam aan die projek gewerk.
+Ons volgende toets is op Donderdag.
+Maak seker dat jou naam en klas op elke bladsy staan.
+Lees die vraag twee keer voordat jy begin skryf.
+Dit is 'n baie goeie antwoord, mooi so.
+Kom ons kyk na die voorbeeld op die bord.
+Skryf eers die formule neer en vervang dan die waardes.
+Toon al jou bewerkings, want metodepunte tel.
+Kan iemand vir my sê wat ons gister geleer het?
+Onthou om jou antwoord aan die einde na te gaan.
+Dit is een van die algemeenste foute in die eksamen.
+Onderstreep die sleutelwoorde in die vraag.
+Die weer in Pretoria was vandag koud en winderig.
+Die Drakensberg is in die winter met sneeu bedek.
+Die rugbywedstryd is weens die swaar reën gekanselleer.
+Hoeveel leerders is daar vanjaar in jou klas?
+Waarom dink jy het die antwoord verander?
+Ja, presies. Nee, nie heeltemal nie. Probeer weer.
+Nul, een, twee, drie, vier, vyf, ses, sewe, agt, nege, tien.
+Elf, twaalf, dertien, vyftien, twintig, vyftig, honderd, duisend.
+Die prys het van nege-en-veertig rand na vyf-en-vyftig rand gestyg.
+Dit is kwart voor agt, so ons het nog vyftien minute oor.
+Kies die korrekte opsie: A, B, C of D.
+Vraag drie punt twee is vier punte werd.
+Die vinnige bruin jakkals spring oor die lui hond.
+#
+# Wiskunde
+Laat x die aantal bokse wees wat verkoop is.
+x kwadraat plus vyf x plus ses is gelyk aan nul.
+Faktoriseer die uitdrukking en los dan vir x op.
+Die afgeleide van x tot die mag drie is drie x kwadraat.
+Stel die eerste afgeleide gelyk aan nul om die draaipunte te vind.
+Die gradiënt van die raaklyn by daardie punt is negatief twee.
+Die y-afsnit word gevind deur x gelyk aan nul te stel.
+Gebruik die kwadratiese formule as die uitdrukking nie faktoriseer nie.
+Die vierkantswortel van een-en-tagtig is nege.
+Die som van die eerste tien terme van die rekenkundige ry is honderd en vyftig.
+Die konstante verhouding van die meetkundige ry is 'n half.
+Sinus van dertig grade is 'n half.
+Die waarskynlikheid om twee keer kop te kry, is een kwart.
+Die gemiddelde is die som van die waardes gedeel deur die aantal waardes.
+Die mediaan is die middelste waarde wanneer die data gerangskik is.
+Vind die vergelyking van die reguit lyn deur die twee punte.
+Die parabool het 'n minimum draaipunt by twee, negatief drie.
+Saamgestelde rente groei vinniger as enkelvoudige rente.
+Die oppervlakte van die sirkel is pi r kwadraat.
+#
+# Wiskundige Geletterdheid
+Bereken die totale koste, insluitend BTW teen vyftien persent.
+Gebruik die kaartskaal om die werklike afstand in kilometer te bepaal.
+Haar maandelikse inkomste is twaalfduisend rand.
+Herlei twee en 'n half liter na milliliter.
+Die gelykbreekpunt is waar inkomste gelyk is aan uitgawes.
+#
+# Fisiese Wetenskappe en Lewenswetenskappe
+Newton se tweede wet sê dat die netto krag gelyk is aan massa maal versnelling.
+Die swaartekragversnelling is nege komma agt meter per sekonde kwadraat.
+Momentum is die produk van massa en snelheid.
+Die weerstand van die resistor is twaalf ohm.
+Die reaksie is eksotermies, want energie word vrygestel.
+'n Suur skenk protone en 'n basis neem protone op.
+Die reaksietempo verhoog wanneer die temperatuur styg.
+Fotosintese vind in die chloroplaste van groen plante plaas.
+Meiose lewer vier haploïede selle uit een diploïede sel.
+Die hart pomp bloed deur die are na die res van die liggaam.
+Natuurlike seleksie verduidelik hoe spesies oor tyd verander.
+#
+# Geografie, Rekeningkunde, Ekonomie en Besigheidstudies
+Riviere erodeer, vervoer en deponeer materiaal langs hul loop.
+Verstedeliking vind plaas wanneer mense van plattelandse gebiede na stede trek.
+Bergwinde is warm, droë winde wat van die binneland na die kus waai.
+Bates is gelyk aan laste plus eienaarsbelang.
+Debiteer die bankrekening en krediteer die verkoperekening.
+Die proefbalans toon dat die totale debiete gelyk is aan die totale krediete.
+Bereken die bruto wins en die netto wins vir die jaar.
+Inflasie is 'n algemene styging in die prysvlak van goedere en dienste.
+Die Reserwebank gebruik die repokoers om inflasie te beheer.
+Werkloosheid is een van die grootste uitdagings in Suid-Afrika.
+'n SWOT-ontleding lys sterkpunte, swakpunte, geleenthede en bedreigings.
+Die entrepreneur moet 'n sakeplan skryf voordat hy vir 'n lening aansoek doen.
+#
+# Taal
+'n Selfstandige naamwoord is 'n naam en 'n werkwoord is 'n doenwoord.
+Die gedig gebruik beeldspraak om 'n hartseer stemming te skep.
+Verander die sin van die bedrywende vorm na die lydende vorm.
+In direkte rede gebruik ons aanhalingstekens om die gesproke woorde.
+Die tema van die roman is die stryd tussen tradisie en verandering.
+Skryf 'n formele brief aan die redakteur van die plaaslike koerant.
+'n Vergelyking vergelyk twee dinge deur soos of as te gebruik.
+Som die leesstuk in hoogstens negentig woorde op.
+#
+# Langer sinne
+Voordat ons begin, kom ons herinner onsself aan die reël wat ons gister gebruik het, want ons gaan dit vandag weer nodig hê.
+Hierdie vraag lyk moeilik, maar as ons dit in klein stappies opbreek, is elke stap eintlik redelik eenvoudig.
+Let op hoe die antwoord verander wanneer ons die waarde verdubbel, en dink na oor waarom dit gebeur.

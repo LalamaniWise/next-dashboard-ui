@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voice Recorder · School AI</title>
+<style>
+  :root {
+    --bg: #F7F8FA; --card: #fff; --ink: #1F2937; --muted: #6B7280; --line: #E5E7EB;
+    --sky: #C3EBFA; --sky-ink: #1E7FA8; --purple: #CFCEFF; --purple-ink: #4F46E5;
+    --yellow: #FAE27C; --red: #EF4444; --green: #16A34A;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Inter, system-ui, sans-serif; background: var(--bg); color: var(--ink); }
+  header { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+           padding: 16px 24px; background: var(--card); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  header h1 { font-size: 18px; margin: 0; }
+  header .sub { color: var(--muted); font-size: 13px; }
+  main { max-width: 880px; margin: 24px auto; padding: 0 16px; display: grid; gap: 16px; }
+  .card { background: var(--card); border-radius: 12px; padding: 20px; border: 1px solid var(--line); }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  button, .file { font: inherit; font-size: 14px; border: none; border-radius: 8px; padding: 10px 16px;
+                  cursor: pointer; background: #F1F0FF; color: var(--ink); }
+  button:hover:not(:disabled), .file:hover { filter: brightness(0.96); }
+  button:disabled { opacity: 0.45; cursor: default; }
+  button.primary { background: var(--purple-ink); color: #fff; }
+  button.rec { background: var(--red); color: #fff; min-width: 150px; }
+  button.rec.on { animation: pulse 1.2s infinite; }
+  @keyframes pulse { 50% { opacity: 0.7; } }
+  .file input { display: none; }
+  .meta { color: var(--muted); font-size: 13px; }
+  .line-id { font-size: 13px; color: var(--sky-ink); font-weight: 600; letter-spacing: 0.02em; }
+  .prompt { font-size: 26px; line-height: 1.45; margin: 12px 0 4px; min-height: 120px; }
+  .bar { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; }
+  .bar > div { height: 100%; background: var(--sky-ink); width: 0; transition: width 0.2s; }
+  .meter { height: 10px; background: var(--line); border-radius: 99px; overflow: hidden; flex: 1; min-width: 120px; }
+  .meter > div { height: 100%; width: 0; background: var(--green); }
+  .meter.loud > div { background: var(--red); }
+  .status { font-size: 13px; font-weight: 600; }
+  .status.done { color: var(--green); }
+  .status.todo { color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(34px, 1fr)); gap: 4px; margin-top: 12px; }
+  .grid button { padding: 6px 0; font-size: 11px; border-radius: 6px; }
+  .grid button.done { background: var(--sky); }
+  .grid button.current { outline: 2px solid var(--purple-ink); }
+  .keys { color: var(--muted); font-size: 12px; }
+  kbd { background: #F3F4F6; border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; font-size: 11px; }
+  .empty { text-align: center; padding: 48px 20px; color: var(--muted); }
+  .warn { color: #B45309; font-size: 13px; }
+  label.check { font-size: 13px; color: var(--muted); display: flex; gap: 6px; align-items: center; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Voice Recorder</h1>
+    <div class="sub">Record lesson narration or voice-training sentences, then download them all at once.</div>
+  </div>
+  <div class="row">
+    <label class="file">Open lesson (.json) or sentences (.txt)
+      <input type="file" id="fileInput" accept=".json,.txt">
+    </label>
+    <button id="downloadBtn" class="primary" disabled>Download all (.zip)</button>
+  </div>
+</header>
+
+<main>
+  <div class="card empty" id="emptyState">
+    Open a <b>lesson .json</b> to record its narration scene by scene,<br>
+    or a <b>sentences .txt</b> (one sentence per line) to record voice-training data.<br><br>
+    Your recordings are kept in this browser, so you can stop and continue another day.
+  </div>
+
+  <div class="card" id="recorder" hidden>
+    <div class="row" style="justify-content: space-between;">
+      <span class="line-id" id="lineId"></span>
+      <span class="status" id="lineStatus"></span>
+    </div>
+    <div class="prompt" id="prompt"></div>
+    <div class="row" style="margin: 16px 0;">
+      <button class="rec" id="recBtn">● Record</button>
+      <button id="playBtn" disabled>▶ Play</button>
+      <button id="prevBtn">← Previous</button>
+      <button id="nextBtn">Next →</button>
+      <div class="meter" id="meter" title="Microphone level"><div></div></div>
+    </div>
+    <div class="warn" id="warn"></div>
+    <div class="keys">
+      <kbd>Space</kbd> record / stop · <kbd>Enter</kbd> next · <kbd>P</kbd> play · <kbd>←</kbd><kbd>→</kbd> move
+    </div>
+  </div>
+
+  <div class="card" id="progressCard" hidden>
+    <div class="row" style="justify-content: space-between; margin-bottom: 8px;">
+      <b id="sourceName"></b>
+      <span class="meta" id="progressText"></span>
+    </div>
+    <div class="bar"><div id="progressBar"></div></div>
+    <div class="grid" id="grid"></div>
+    <div class="row" style="margin-top: 14px; justify-content: space-between;">
+      <label class="check"><input type="checkbox" id="noiseToggle"> Reduce background noise (leave off for voice training)</label>
+      <button id="clearBtn">Delete all recordings for this file</button>
+    </div>
+  </div>
+</main>
+
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const state = { source: null, kind: null, items: [], index: 0, clips: new Map(),
+                  recorder: null, stream: null, recording: false, chunks: [], startedAt: 0 };
+
+  // ---------- storage (IndexedDB) so recordings survive a page reload ----------
+  let dbPromise = null;
+  function db() {
+    if (!dbPromise) {
+      dbPromise = new Promise((resolve) => {
+        try {
+          const req = indexedDB.open("voice-recorder", 1);
+          req.onupgradeneeded = () => req.result.createObjectStore("clips");
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => resolve(null);
+        } catch (e) { resolve(null); }
+      });
+    }
+    return dbPromise;
+  }
+  async function store(method, key, value) {
+    const d = await db();
+    if (!d) return null;
+    return new Promise((resolve) => {
+      try {
+        const tx = d.transaction("clips", method === "get" || method === "getAllKeys" ? "readonly" : "readwrite");
+        const os = tx.objectStore("clips");
+        const req = method === "put" ? os.put(value, key) : os[method](key);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => resolve(null);
+      } catch (e) { resolve(null); }
+    });
+  }
+  const keyFor = (id) => `${state.source}::${id}`;
+
+  // ---------- loading a lesson or a sentence list ----------
+  function parseSource(name, text) {
+    const stem = name.replace(/\.[^.]+$/, "").replace(/[^A-Za-z0-9_-]+/g, "_");
+    if (name.toLowerCase().endsWith(".json")) {
+      const lesson = JSON.parse(text);
+      if (!Array.isArray(lesson.scenes)) throw new Error("This JSON is not a lesson (no scenes).");
+      return { kind: "lesson", items: lesson.scenes.map((s, i) => ({
+        id: `scene_${String(i).padStart(2, "0")}`, text: s.narration, note: s.heading || s.type })) };
+    }
+    const lines = text.split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith("#"));
+    return { kind: "sentences", items: lines.map((l, i) => ({
+      id: `${stem}_${String(i + 1).padStart(4, "0")}`, text: l })) };
+  }
+
+  async function load(name, text) {
+    const parsed = parseSource(name, text);
+    Object.assign(state, { source: name, kind: parsed.kind, items: parsed.items, index: 0, clips: new Map() });
+    for (const item of state.items) {
+      const saved = await store("get", keyFor(item.id));
+      if (saved) state.clips.set(item.id, saved);
+    }
+    const firstTodo = state.items.findIndex((it) => !state.clips.has(it.id));
+    state.index = firstTodo === -1 ? 0 : firstTodo;
+    $("emptyState").hidden = true;
+    $("recorder").hidden = false;
+    $("progressCard").hidden = false;
+    $("sourceName").textContent = `${name} · ${state.kind === "lesson" ? "lesson narration" : "voice-training sentences"}`;
+    render();
+  }
+
+  $("fileInput").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try { await load(file.name, await file.text()); }
+    catch (err) { alert(err.message); }
+    e.target.value = "";
+  });
+
+  // ---------- UI ----------
+  function render() {
+    const item = state.items[state.index];
+    if (!item) return;
+    const done = state.clips.has(item.id);
+    $("lineId").textContent = `${item.id}  ·  ${state.index + 1} of ${state.items.length}` + (item.note ? `  ·  ${item.note}` : "");
+    $("prompt").textContent = item.text;
+    $("lineStatus").textContent = done ? "✓ Recorded" : "Not recorded yet";
+    $("lineStatus").className = "status " + (done ? "done" : "todo");
+    $("recBtn").textContent = state.recording ? "■ Stop" : done ? "● Re-record" : "● Record";
+    $("recBtn").classList.toggle("on", state.recording);
+    $("playBtn").disabled = !done || state.recording;
+    $("prevBtn").disabled = state.index === 0 || state.recording;
+    $("nextBtn").disabled = state.index >= state.items.length - 1 || state.recording;
+    const count = state.items.filter((it) => state.clips.has(it.id)).length;
+    $("progressText").textContent = `${count} of ${state.items.length} recorded`;
+    $("progressBar").style.width = `${(100 * count) / state.items.length}%`;
+    $("downloadBtn").disabled = count === 0;
+    const grid = $("grid");
+    grid.innerHTML = "";
+    state.items.forEach((it, i) => {
+      const b = document.createElement("button");
+      b.textContent = i + 1;
+      b.title = it.text;
+      if (state.clips.has(it.id)) b.classList.add("done");
+      if (i === state.index) b.classList.add("current");
+      b.onclick = () => { if (!state.recording) { state.index = i; render(); } };
+      grid.appendChild(b);
+    });
+  }
+
+  // ---------- microphone ----------
+  let meterRaf = 0;
+  async function getStream() {
+    if (state.stream) return state.stream;
+    const clean = $("noiseToggle").checked;
+    state.stream = await navigator.mediaDevices.getUserMedia({ audio: {
+      channelCount: 1, echoCancellation: clean, noiseSuppression: clean, autoGainControl: false } });
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = ctx.createAnalyser();
+    analyser.fftSize = 1024;
+    ctx.createMediaStreamSource(state.stream).connect(analyser);
+    const buf = new Float32Array(analyser.fftSize);
+    const tick = () => {
+      analyser.getFloatTimeDomainData(buf);
+      let peak = 0;
+      for (const v of buf) peak = Math.max(peak, Math.abs(v));
+      $("meter").firstElementChild.style.width = `${Math.min(100, peak * 140)}%`;
+      $("meter").classList.toggle("loud", peak > 0.95);
+      if (state.recording && peak > 0.98) $("warn").textContent = "Too loud: move the mic a little further away.";
+      meterRaf = requestAnimationFrame(tick);
+    };
+    tick();
+    return state.stream;
+  }
+  $("noiseToggle").addEventListener("change", () => {
+    if (state.stream) { state.stream.getTracks().forEach((t) => t.stop()); state.stream = null; cancelAnimationFrame(meterRaf); }
+  });
+
+  function pickMime() {
+    for (const m of ["audio/webm;codecs=opus", "audio/ogg;codecs=opus", "audio/mp4", "audio/webm"]) {
+      if (window.MediaRecorder && MediaRecorder.isTypeSupported(m)) return m;
+    }
+    return "";
+  }
+
+  async function toggleRecord() {
+    if (state.recording) { state.recorder.stop(); return; }
+    let stream;
+    try { stream = await getStream(); }
+    catch (err) { $("warn").textContent = "Microphone blocked. Allow microphone access and open this page via http://localhost (see README)."; return; }
+    $("warn").textContent = "";
+    const item = state.items[state.index];
+    const mime = pickMime();
+    state.chunks = [];
+    state.recorder = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+    state.recorder.ondataavailable = (e) => { if (e.data.size) state.chunks.push(e.data); };
+    state.recorder.onstop = async () => {
+      state.recording = false;
+      const seconds = (performance.now() - state.startedAt) / 1000;
+      const blob = new Blob(state.chunks, { type: state.recorder.mimeType || "audio/webm" });
+      if (seconds < 0.6) { $("warn").textContent = "That was very short, so it was not saved. Try again."; render(); return; }
+      if (state.kind === "sentences" && seconds > 20) $("warn").textContent = "Long clip (over 20 s). Shorter sentences train better.";
+      state.clips.set(item.id, blob);
+      await store("put", keyFor(item.id), blob);
+      render();
+    };
+    state.recording = true;
+    state.startedAt = performance.now();
+    state.recorder.start();
+    render();
+  }
+
+  function play() {
+    const blob = state.clips.get(state.items[state.index].id);
+    if (blob) new Audio(URL.createObjectURL(blob)).play();
+  }
+  function move(step) {
+    if (state.recording) return;
+    state.index = Math.max(0, Math.min(state.items.length - 1, state.index + step));
+    $("warn").textContent = "";
+    render();
+  }
+
+  $("recBtn").onclick = toggleRecord;
+  $("playBtn").onclick = play;
+  $("prevBtn").onclick = () => move(-1);
+  $("nextBtn").onclick = () => move(1);
+  document.addEventListener("keydown", (e) => {
+    if (!state.items.length || e.target.tagName === "INPUT") return;
+    if (e.code === "Space") { e.preventDefault(); toggleRecord(); }
+    else if (e.key === "Enter" || e.key === "ArrowRight") { e.preventDefault(); move(1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); move(-1); }
+    else if (e.key.toLowerCase() === "p") play();
+  });
+
+  $("clearBtn").onclick = async () => {
+    if (!confirm(`Delete all ${state.clips.size} recordings for ${state.source}? This cannot be undone.`)) return;
+    for (const id of state.clips.keys()) await store("delete", keyFor(id));
+    state.clips.clear();
+    render();
+  };
+
+  // ---------- download as a .zip (no library needed) ----------
+  const crcTable = (() => {
+    const t = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+      let c = n;
+      for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1;
+      t[n] = c >>> 0;
+    }
+    return t;
+  })();
+  function crc32(bytes) {
+    let c = 0xFFFFFFFF;
+    for (let i = 0; i < bytes.length; i++) c = crcTable[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+  function makeZip(files) {
+    // "store" (no compression) zip: audio is already compressed.
+    const enc = new TextEncoder();
+    const parts = [], central = [];
+    let offset = 0;
+    for (const f of files) {
+      const name = enc.encode(f.name), data = f.data, crc = crc32(data);
+      const local = new DataView(new ArrayBuffer(30));
+      local.setUint32(0, 0x04034b50, true); local.setUint16(4, 20, true); local.setUint16(6, 0x0800, true);
+      local.setUint32(14, crc, true); local.setUint32(18, data.length, true); local.setUint32(22, data.length, true);
+      local.setUint16(26, name.length, true);
+      parts.push(new Uint8Array(local.buffer), name, data);
+      const cd = new DataView(new ArrayBuffer(46));
+      cd.setUint32(0, 0x02014b50, true); cd.setUint16(4, 20, true); cd.setUint16(6, 20, true); cd.setUint16(8, 0x0800, true);
+      cd.setUint32(16, crc, true); cd.setUint32(20, data.length, true); cd.setUint32(24, data.length, true);
+      cd.setUint16(28, name.length, true); cd.setUint32(42, offset, true);
+      central.push(new Uint8Array(cd.buffer), name);
+      offset += 30 + name.length + data.length;
+    }
+    const cdSize = central.reduce((s, p) => s + p.length, 0);
+    const end = new DataView(new ArrayBuffer(22));
+    end.setUint32(0, 0x06054b50, true); end.setUint16(8, files.length, true); end.setUint16(10, files.length, true);
+    end.setUint32(12, cdSize, true); end.setUint32(16, offset, true);
+    return new Blob([...parts, ...central, new Uint8Array(end.buffer)], { type: "application/zip" });
+  }
+  const extFor = (type) => type.includes("ogg") ? "ogg" : type.includes("mp4") ? "m4a" : "webm";
+
+  $("downloadBtn").onclick = async () => {
+    const files = [], meta = [];
+    for (const item of state.items) {
+      const blob = state.clips.get(item.id);
+      if (!blob) continue;
+      const name = `${item.id}.${extFor(blob.type)}`;
+      files.push({ name, data: new Uint8Array(await blob.arrayBuffer()) });
+      meta.push(`${name}|${item.text.replace(/\s*\|\s*/g, " ")}`);
+    }
+    files.push({ name: "metadata.csv", data: new TextEncoder().encode(meta.join("\n") + "\n") });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(makeZip(files));
+    a.download = state.source.replace(/\.[^.]+$/, "") + "-recordings.zip";
+    a.click();
+  };
+})();
+</script>
+</body>
+</html>
