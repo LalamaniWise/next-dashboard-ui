@@ -28,6 +28,11 @@ export const LESSON_VIDEO_VOICES = [
   { value: "piper", label: "Piper voice (needs a voice file on the video service)" },
 ] as const;
 
+export const LESSON_VIDEO_BOARDS = [
+  { value: "white", label: "Whiteboard" },
+  { value: "black", label: "Chalkboard" },
+] as const;
+
 export type VideoJobStatus = "queued" | "writing" | "rendering" | "uploading" | "done" | "failed";
 
 // What the progress poll returns to the browser

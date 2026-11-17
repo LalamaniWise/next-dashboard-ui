@@ -466,6 +466,7 @@ export const lessonVideoSchema = z.object({
     .max(200, { message: "Keep the topic under 200 characters!" }),
   language: z.enum(["en", "af"], { message: "Choose English or Afrikaans!" }),
   voice: z.enum(["espeak", "piper"], { message: "Choose a voice!" }),
+  board: z.enum(["white", "black"], { message: "Choose a whiteboard or chalkboard!" }),
 });
 
 export type LessonVideoSchema = z.infer<typeof lessonVideoSchema>;

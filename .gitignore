@@ -66,3 +66,4 @@ __pycache__/
 /ai/service/jobs.json
 /ai/service/work/
 /ai/service/*.log
+/ai/video/*.log

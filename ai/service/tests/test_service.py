@@ -72,7 +72,7 @@ def test_short_secret_refuses_to_start(tmp_path):
 
 @pytest.mark.parametrize("change", [
     {"subject": "History"}, {"grade": 9}, {"grade": 13}, {"language": "fr"},
-    {"voice": "azure"}, {"topic": "  x "}, {"topic": "x" * 201},
+    {"voice": "azure"}, {"board": "green"}, {"topic": "  x "}, {"topic": "x" * 201},
 ])
 def test_rejects_bad_requests(tmp_path, change):
     with TestClient(create_app(make_settings(tmp_path), fake_result)) as client:
@@ -91,6 +91,17 @@ def test_job_runs_to_done_and_is_saved_to_file(tmp_path):
     assert job["subject"] == "Mathematics" and job["grade"] == 12
     saved = json.loads((tmp_path / "jobs.json").read_text(encoding="utf-8"))
     assert saved[0]["status"] == "done"
+
+
+def test_board_reaches_the_renderer(tmp_path):
+    seen = []
+    run = lambda job, progress: seen.append(job["board"]) or fake_result(job, progress)
+    with TestClient(create_app(make_settings(tmp_path), run)) as client:
+        black = client.post("/jobs", json={**BODY, "board": "black"}, headers=AUTH).json()["jobId"]
+        white = client.post("/jobs", json=BODY, headers=AUTH).json()["jobId"]
+        assert wait_for(client, black)["board"] == "black"
+        assert wait_for(client, white)["board"] == "white"
+    assert seen == ["black", "white"]
 
 
 def test_unknown_job_is_404(tmp_path):
@@ -229,13 +240,16 @@ def test_sample_writer_uses_the_sample_lesson(tmp_path):
     assert lesson["scenes"] and lesson["title"]
 
 
-def test_piper_uses_the_voice_for_the_language(tmp_path, monkeypatch):
+def test_render_gets_the_voice_and_board(tmp_path, monkeypatch):
     calls = {}
     fake = SimpleNamespace(render=lambda *a, **k: calls.update(args=a, kwargs=k) or a[1])
     monkeypatch.setitem(sys.modules, "render_lesson", fake)
     settings = make_settings(tmp_path, piper_voices={"en": "en.onnx", "af": "af.onnx"}, quality="l")
     pipeline.render_step("l.json", "o.mp4", {**BODY, "language": "af", "voice": "piper"}, settings)
-    assert calls["kwargs"] == {"tts_backend": "piper", "quality": "l", "voice_model": "af.onnx"}
+    assert calls["kwargs"] == {"tts_backend": "piper", "quality": "l", "voice_model": "af.onnx",
+                               "board": "white"}
+    pipeline.render_step("l.json", "o.mp4", {**BODY, "board": "black"}, settings)
+    assert calls["kwargs"]["board"] == "black"
 
 
 def test_youtube_titles_are_cleaned():

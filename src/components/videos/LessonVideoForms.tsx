@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
+  LESSON_VIDEO_BOARDS,
   LESSON_VIDEO_GRADES,
   LESSON_VIDEO_LANGUAGES,
   LESSON_VIDEO_SUBJECTS,
@@ -159,8 +160,9 @@ const CreateVideoDialog = ({ onClose }: { onClose: (started: boolean) => void })
         </button>
         <h2 className="text-lg font-semibold mb-1">Create a lesson video</h2>
         <p className="text-sm text-gray-500 mb-4">
-          AI writes the lesson, the video is rendered with animated working and a voice,
-          then uploaded to the school&apos;s YouTube channel. It takes a few minutes.
+          AI writes a 4 to 6 minute lesson for learners starting from zero. A stick-man teacher
+          explains it step by step on a whiteboard or chalkboard, then the video is uploaded to
+          the school&apos;s YouTube channel. It takes several minutes.
         </p>
         <AuditNotice />
 
@@ -216,6 +218,14 @@ const CreateVideoDialog = ({ onClose }: { onClose: (started: boolean) => void })
               <select id="lv-voice" name="voice" defaultValue="espeak" className="form-control">
                 {LESSON_VIDEO_VOICES.map((v) => (
                   <option key={v.value} value={v.value}>{v.label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <label htmlFor="lv-board" className={label}>Board</label>
+              <select id="lv-board" name="board" defaultValue="white" className="form-control">
+                {LESSON_VIDEO_BOARDS.map((b) => (
+                  <option key={b.value} value={b.value}>{b.label}</option>
                 ))}
               </select>
             </div>
