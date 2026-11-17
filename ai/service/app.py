@@ -33,6 +33,8 @@ class JobRequest(BaseModel):
     topic: str = Field(min_length=3, max_length=200)
     language: Literal["en", "af"]
     voice: Literal["espeak", "piper"]
+    # white = whiteboard, black = chalkboard
+    board: Literal["white", "black"] = "white"
 
     @field_validator("subject")
     @classmethod

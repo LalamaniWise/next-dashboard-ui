@@ -27,7 +27,7 @@ STEP_MESSAGES = {
     "failed": "Failed",
 }
 
-PUBLIC_FIELDS = ("id", "status", "step", "subject", "grade", "topic", "language", "voice",
+PUBLIC_FIELDS = ("id", "status", "step", "subject", "grade", "topic", "language", "voice", "board",
                  "title", "youtubeUrl", "privacy", "error", "createdAt", "updatedAt")
 
 
@@ -97,7 +97,7 @@ class JobStore:
                 "id": secrets.token_hex(16),
                 "status": "queued",
                 "step": STEP_MESSAGES["queued"],
-                **{k: request[k] for k in ("subject", "grade", "topic", "language", "voice")},
+                **{k: request[k] for k in ("subject", "grade", "topic", "language", "voice", "board")},
                 "title": None,
                 "youtubeUrl": None,
                 "privacy": None,

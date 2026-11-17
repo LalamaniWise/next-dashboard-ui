@@ -25,8 +25,9 @@ def write_step(job, settings) -> dict:
 def render_step(lesson_path, out_path, job, settings) -> str:
     from render_lesson import render
     voice_model = settings.piper_voices.get(job["language"]) if job["voice"] == "piper" else None
+    # Jobs saved before boards were added have no board: use the whiteboard
     return render(lesson_path, out_path, tts_backend=job["voice"], quality=settings.quality,
-                  voice_model=voice_model)
+                  voice_model=voice_model, board=job.get("board", "white"))
 
 
 def youtube_text(text, limit):
