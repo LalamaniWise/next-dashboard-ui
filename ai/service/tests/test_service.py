@@ -319,6 +319,41 @@ def test_wrong_asymptotes_are_rejected(lines, message):
         lesson_schema.validate_lesson(lesson_with(scene))
 
 
+@pytest.mark.parametrize("function, x_range, near", [
+    ("4/(x + 2) - 1", (-4, 4, 1), -2),
+    ("1/x", (-4.1, 4, 1), 0),
+    ("0.2/x", (-4, 4, 1), 0),
+    ("1/x**2", (-4, 4, 1), 0),
+    ("log(x + 3)", (-5, 5, 1), -3),
+    ("log(x)", (0, 5, 1), 0),
+])
+def test_unlisted_vertical_asymptotes_are_rejected(function, x_range, near):
+    with pytest.raises(lesson_schema.LessonError, match="list it in asymptotes"):
+        lesson_schema.validate_lesson(lesson_with(graph(function, x_range)))
+    scene = graph(function, x_range, asymptotes={"x": [near]})
+    lesson_schema.validate_lesson(lesson_with(scene))
+
+
+def test_tan_needs_each_of_its_asymptotes():
+    x = 1.5708
+    with pytest.raises(lesson_schema.LessonError, match="list it in asymptotes"):
+        lesson_schema.validate_lesson(lesson_with(graph("tan(x)", (-3, 3, 1), asymptotes={"x": [x]})))
+    lesson_schema.validate_lesson(lesson_with(graph("tan(x)", (-3, 3, 1), asymptotes={"x": [-x, x]})))
+
+
+@pytest.mark.parametrize("function, x_range, y_range", [
+    ("x**2", (-3, 3, 1), (-1, 9, 1)),
+    ("x**5", (-10, 10, 1), (-5, 5, 1)),
+    ("sqrt(x)", (-2, 5, 1), (-1, 3, 1)),
+    ("exp(x)", (-3, 3, 1), (-1, 9, 1)),
+    ("sin(x)", (-6, 6, 1), (-2, 2, 1)),
+    ("Abs(x)", (-3, 3, 1), (-1, 3, 1)),
+    ("2", (-3, 3, 1), (-1, 3, 1)),
+])
+def test_curves_without_vertical_asymptotes_need_none(function, x_range, y_range):
+    assert lesson_schema.vertical_asymptotes(graph(function, x_range, y_range)) == []
+
+
 @pytest.mark.parametrize("scene", [
     {"type": "title", "heading": "H", "subheading": r"Sketching $y = \frac{a}{x}$", "narration": "n"},
     {"type": "steps", "heading": r"Solve \(x\)", "lines": ["x = 1"], "narration": "n"},
