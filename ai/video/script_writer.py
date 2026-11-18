@@ -53,6 +53,10 @@ Rules
   exactly on the curve.
 - "narration" is read aloud: write maths in words ("x squared minus four"),
   never symbols or LaTeX. Keep each scene's narration under 90 words.
+- "heading" and "subheading" are plain text: never use LaTeX or $ in them. Put
+  equations in the lines, bullets or graph label instead.
+- If a graph's curve has asymptotes, list every one in "asymptotes" so they are
+  drawn on the board.
 - Language "af" means the whole lesson (headings, bullets, narration) is in Afrikaans.
 
 JSON format
@@ -66,9 +70,11 @@ JSON format
         // each line is LaTeX maths (no $), revealed one at a time; last line = result
     {"type": "graph", "heading": str, "function": str, "label": str,
      "x_range": [min, max, step], "y_range": [min, max, step],
-     "points": [{"x": num, "y": num, "label": str}], "narration": str}
+     "points": [{"x": num, "y": num, "label": str}],
+     "asymptotes": {"x": [num], "y": [num]}, "narration": str}
         // function in Python syntax using only x, numbers, + - * / ** ( ),
-        // sin cos tan sqrt exp log; label and point labels are LaTeX maths
+        // sin cos tan sqrt exp log; label and point labels are LaTeX maths;
+        // asymptotes: x holds vertical lines, y horizontal; omit if there are none
   ]
 }"""
 

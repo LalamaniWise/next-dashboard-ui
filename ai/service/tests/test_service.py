@@ -301,6 +301,33 @@ def test_only_turning_points_count_as_flat():
     assert not lesson_schema.is_turning_point(scene, 0)
 
 
+def test_real_asymptotes_are_accepted():
+    for function, lines in [("4/(x + 2) - 1", {"x": [-2], "y": [-1]}), ("log(x + 3)", {"x": [-3]}),
+                            ("exp(-x) + 1", {"y": [1]})]:
+        lesson_schema.validate_lesson(lesson_with(graph(function, asymptotes=lines)))
+
+
+@pytest.mark.parametrize("lines, message", [
+    ({"x": [1]}, "x = 1 is not an asymptote"),
+    ({"y": [2]}, "y = 2 is not an asymptote"),
+    ({"x": [9]}, "outside x_range"),
+    ({"y": [9]}, "outside y_range"),
+])
+def test_wrong_asymptotes_are_rejected(lines, message):
+    scene = graph("4/(x + 2) - 1", asymptotes=lines)
+    with pytest.raises(lesson_schema.LessonError, match=message):
+        lesson_schema.validate_lesson(lesson_with(scene))
+
+
+@pytest.mark.parametrize("scene", [
+    {"type": "title", "heading": "H", "subheading": r"Sketching $y = \frac{a}{x}$", "narration": "n"},
+    {"type": "steps", "heading": r"Solve \(x\)", "lines": ["x = 1"], "narration": "n"},
+])
+def test_latex_in_headings_is_rejected(scene):
+    with pytest.raises(lesson_schema.LessonError, match="plain text"):
+        lesson_schema.validate_lesson(lesson_with(scene))
+
+
 @pytest.mark.parametrize("text, expected", [
     ("Interest of 15%", r"Interest of 15\%"),
     (r"Already 15\%", r"Already 15\%"),
