@@ -92,7 +92,7 @@ def boxes_touch(a, b):
 def spots_around(pos, mob, directions):
     """Centres that put mob beside pos, close by first and then further out."""
     return [np.array(pos) + d * np.array([mob.width / 2 + gap, mob.height / 2 + gap, 0])
-            for gap in (0.2, 0.45, 0.7) for d in directions]
+            for gap in (0.12, 0.25, 0.45, 0.7) for d in directions]
 
 
 def place_clear(mob, spots, lines, taken, limits, owner=None, others=(), walls=()):
@@ -101,13 +101,13 @@ def place_clear(mob, spots, lines, taken, limits, owner=None, others=(), walls=(
     lines holds (points along a line, how much crossing it matters); taken
     holds the boxes of numbers, dots and labels; limits is the (left, right,
     bottom, top) allowed. A label for the dot at owner stays close to it,
-    nearer to it than to any of the other dots, and on its side of the walls,
-    given as (0, x) for vertical asymptotes and (1, y) for horizontal ones."""
+    clearly nearer to it than to any of the other dots, and on its side of the
+    walls, given as (0, x) for vertical asymptotes and (1, y) for horizontal ones."""
     def closeness(spot):
         if owner is None:
             return 0
         distance = np.linalg.norm(spot - owner)
-        misleading = any(np.linalg.norm(spot - other) < distance for other in others)
+        misleading = any(np.linalg.norm(spot - other) < 1.5 * distance for other in others)
         cut_off = any((owner[i] - at) * (spot[i] - at) < 0 for i, at in walls)
         return 3 * distance + 6 * misleading + 6 * cut_off
 
@@ -340,7 +340,8 @@ class LessonScene(Scene):
         lines += [(np.linspace(axis.get_start(), axis.get_end(), 100), 1)
                   for axis in (axes.x_axis, axes.y_axis)]
         taken =[bounds(n) for n in [*axes.x_axis.numbers, *axes.y_axis.numbers]]
-        taken += [bounds(Dot(axes.c2p(p["x"], p["y"]), radius=0.09)) for p in points]
+        dot_boxes = [bounds(Dot(axes.c2p(p["x"], p["y"]), radius=0.09)) for p in points]
+        taken += dot_boxes
         limits = (AREA_LEFT, AREA_RIGHT, -config.frame_height / 2 + 0.45, head.get_bottom()[1])
         sides = [RIGHT, LEFT, UP, DOWN, UR, UL, DR, DL]
 
@@ -371,16 +372,19 @@ class LessonScene(Scene):
             used += 0.5
 
         slot = max(POINT_TIME, (seconds - used) / max(1, len(points)))
-        for p in points:
+        for p, dot_box in zip(points, dot_boxes):
             pos = axes.c2p(p["x"], p["y"])
             self.point_at(pos, run_time=0.4)
             dot = Dot(pos, color=self.c["result"], radius=0.09)
             # Prefer above a maximum and below a minimum, if that spot is clear.
             first = UP if p["y"] >= float(f(p["x"] - 0.5)) else DOWN
             lab = MathTex(clean_maths(p.get("label", "")), color=self.c["result"]).scale(0.6)
+            # A label may sit right beside its own dot
+            taken.remove(dot_box)
             place_clear(lab, spots_around(pos, lab, [first, UR, UL, DR, DL, RIGHT, LEFT, -first]),
                         lines, taken, limits, owner=pos,
                         others=[axes.c2p(q["x"], q["y"]) for q in points if q is not p], walls=walls)
+            taken.append(dot_box)
             self.play(GrowFromCenter(dot), Flash(dot, color=self.c["result"]), run_time=0.8)
             marks = [Write(lab)]
             # Only a turning point has a horizontal tangent

@@ -205,8 +205,42 @@ def validate_lesson(lesson: dict) -> dict:
     return lesson
 
 
+def vertical_asymptotes(scene: dict, samples: int = 1000) -> list:
+    """Roughly where the curve shoots off to infinity within its x range."""
+    import numpy as np
+
+    f = make_function(scene["function"])
+    y_span = scene["y_range"][1] - scene["y_range"][0]
+    xs = np.linspace(scene["x_range"][0], scene["x_range"][1], samples)
+    ys = np.broadcast_to(f(xs), xs.shape)
+    size = np.nan_to_num(np.abs(ys), nan=0.0, posinf=np.inf)
+    found = [xs[i] for i in (0, -1) if np.isinf(ys[i])]
+
+    # Sharp spikes, as in 1/x
+    for i in range(5, samples - 5):
+        if (size[i] > y_span and size[i] >= max(size[i - 1], size[i + 1])
+                and size[i] > 3 * max(size[i - 5], size[i + 5])):
+            found.append(xs[i])
+
+    # Edges of the domain where the curve keeps growing, as in log(x)
+    defined = np.isfinite(ys)
+    for i in np.flatnonzero(defined[:-1] != defined[1:]):
+        bad, good = (xs[i], xs[i + 1]) if defined[i + 1] else (xs[i + 1], xs[i])
+        for _ in range(50):
+            middle = (bad + good) / 2
+            if np.isfinite(f(middle)):
+                good = middle
+            else:
+                bad = middle
+        side = 1 if good > bad else -1
+        if abs(f(good + side * 1e-9)) - abs(f(good + side * 1e-3)) > 5:
+            found.append(good)
+    return [float(x) for x in found]
+
+
 def verify_asymptotes(scene: dict, index: int = 0) -> None:
-    """Reject asymptotes that are off the axes or that the curve does not have."""
+    """Reject asymptotes that are off the axes or that the curve does not have,
+    and curves whose vertical asymptotes are not listed."""
     import numpy as np
 
     lines = scene.get("asymptotes") or {}
@@ -227,6 +261,11 @@ def verify_asymptotes(scene: dict, index: int = 0) -> None:
             gaps = np.abs(f(np.array([-1e6, 1e6])) - y)
         if not np.any(gaps < 0.01 * y_span):
             raise LessonError(f"scene {index}: y = {y} is not an asymptote of the curve")
+    tolerance = (x_max - x_min) / 100
+    for x in vertical_asymptotes(scene):
+        if not any(abs(x - listed) <= tolerance for listed in lines.get("x", [])):
+            raise LessonError(f"scene {index}: the curve has a vertical asymptote near "
+                              f"x = {x:.2f}; list it in asymptotes.x")
 
 
 def verify_graph_points(scene: dict, index: int = 0) -> None:
