@@ -17,6 +17,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 
 import pipeline  # noqa: E402
+import lesson_schema  # noqa: E402
 import youtube_upload  # noqa: E402
 from app import create_app  # noqa: E402
 from config import Settings  # noqa: E402
@@ -255,6 +256,76 @@ def test_render_gets_the_voice_and_board(tmp_path, monkeypatch):
 def test_youtube_titles_are_cleaned():
     title, _ = pipeline.video_details({"title": "<b>" + "x" * 200}, {**BODY})
     assert "<" not in title and len(title) == 100
+
+
+# --- lesson check ------------------------------------------------------------
+
+def graph(function, x_range=(-4, 4, 1), y_range=(-5, 5, 1), **extra):
+    return {"type": "graph", "heading": "G", "narration": "n", "function": function,
+            "x_range": list(x_range), "y_range": list(y_range), **extra}
+
+
+def lesson_with(scene):
+    return {"title": "T", "subject": "Mathematics", "grade": 12, "language": "en", "scenes": [scene]}
+
+
+@pytest.mark.parametrize("function, x_range, y_range, count", [
+    ("1/x", (-4, 4, 1), (-5, 5, 1), 2),
+    ("log(x)", (0, 5, 1), (-3, 3, 1), 1),
+    ("sqrt(x)", (-2, 5, 1), (-1, 3, 1), 1),
+    ("tan(x)", (-3, 3, 1), (-5, 5, 1), 3),
+    ("2", (-3, 3, 1), (-1, 3, 1), 1),
+])
+def test_curves_are_cut_into_pieces_on_the_axes(function, x_range, y_range, count):
+    pieces = lesson_schema.curve_pieces(graph(function, x_range, y_range))
+    assert len(pieces) == count
+    for _, ys in pieces:
+        assert ys.min() >= y_range[0] and ys.max() <= y_range[1]
+
+
+def test_curve_off_the_axes_is_rejected():
+    with pytest.raises(lesson_schema.LessonError, match="outside"):
+        lesson_schema.validate_lesson(lesson_with(graph("x + 100")))
+
+
+def test_point_where_the_curve_is_undefined_is_rejected():
+    scene = graph("1/x", points=[{"x": 0, "y": 0, "label": "A"}])
+    with pytest.raises(lesson_schema.LessonError, match="undefined"):
+        lesson_schema.validate_lesson(lesson_with(scene))
+
+
+def test_only_turning_points_count_as_flat():
+    scene = graph("x**3 - 3*x**2 - 9*x + 5", (-3, 5, 1), (-30, 20, 10))
+    assert lesson_schema.is_turning_point(scene, -1)
+    assert lesson_schema.is_turning_point(scene, 3)
+    assert not lesson_schema.is_turning_point(scene, 0)
+
+
+@pytest.mark.parametrize("text, expected", [
+    ("Interest of 15%", r"Interest of 15\%"),
+    (r"Already 15\%", r"Already 15\%"),
+    ("Profit & loss", r"Profit \& loss"),
+    ("Question #3 uses x_1", r"Question \#3 uses x\_1"),
+    ("x ≥ 2", r"x $\geq$ 2"),
+    ("Dit is ŉ reël", "Dit is 'n reël"),
+    ("So $x ≥ 2$", r"So $x \geq  2$"),
+])
+def test_bullets_are_made_safe_for_latex(text, expected):
+    assert lesson_schema.clean_bullet(text) == expected
+
+
+def test_maths_lines_are_made_safe_for_latex():
+    assert lesson_schema.clean_maths(r"x &= 15\% + 2%") == r"x = 15\% + 2\%"
+    assert lesson_schema.clean_maths(r"\text{R&D ≥ 2}") == r"\text{R\&D $\geq$ 2}"
+
+
+@pytest.mark.parametrize("bullet, message", [
+    ("costs $5", "unmatched"), ("$x{$", "braces"), ("√ of 4", "unsupported"),
+])
+def test_bad_bullets_are_rejected_with_their_scene(bullet, message):
+    scene = {"type": "bullets", "heading": "B", "narration": "n", "bullets": [bullet]}
+    with pytest.raises(lesson_schema.LessonError, match=f"scene 0.*{message}"):
+        lesson_schema.validate_lesson(lesson_with(scene))
 
 
 # --- YouTube upload ----------------------------------------------------------

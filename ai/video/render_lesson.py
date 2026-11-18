@@ -24,17 +24,18 @@ import tempfile
 
 import manimpango
 import numpy as np
-import sympy
 from manim import (
     DOWN, LEFT, RIGHT, UP,
     Arc, Axes, Circle, Create, DashedLine, Dot, Ellipse, FadeIn, FadeOut, Flash, GrowFromCenter,
-    Line, MathTex, Rectangle, Scene, Tex, Text, ValueTracker, VGroup, Write,
+    Line, MathTex, MoveAlongPath, Rectangle, Scene, Tex, Text, ValueTracker, VGroup, VMobject, Write,
     always_redraw, config, linear, tempconfig, there_and_back,
 )
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
-from lesson_schema import check_function, validate_lesson  # noqa: E402
+from lesson_schema import (  # noqa: E402
+    clean_bullet, clean_maths, curve_pieces, is_turning_point, make_function, validate_lesson,
+)
 from tts import synthesize  # noqa: E402
 
 BOARDS = {
@@ -57,6 +58,9 @@ AREA_LEFT, AREA_RIGHT = -6.4, 3.4
 AREA_CENTER = (AREA_LEFT + AREA_RIGHT) / 2
 TEACHER_X, FLOOR_Y = 5.3, -3.55
 
+# Seconds to draw the curve, and to mark one point on it
+CURVE_TIME, POINT_TIME = 2.0, 2.0
+
 
 def fit(mob, max_width):
     if mob.width > max_width:
@@ -64,11 +68,9 @@ def fit(mob, max_width):
     return mob
 
 
-def make_function(expr: str):
-    check_function(expr)
-    x = sympy.Symbol("x")
-    parsed = sympy.sympify(expr, locals={"x": x})
-    return sympy.lambdify(x, parsed, "numpy")
+def decimal_places(step):
+    """Decimals needed to label an axis with this step correctly."""
+    return next((d for d in range(3) if abs(round(step, d) - step) < 1e-9), 3)
 
 
 def unit(v):
@@ -234,7 +236,8 @@ class LessonScene(Scene):
         head, used = self.heading(s["heading"])
         # Shrink the rows together so they all stay the same size
         # \textbullet draws nothing with the default fonts, so use the maths bullet
-        rows = VGroup(*[Tex(r"$\bullet$\ " + b, color=self.c["ink"], tex_environment="flushleft")
+        rows = VGroup(*[Tex(r"$\bullet$\ " + clean_bullet(b), color=self.c["ink"],
+                            tex_environment="flushleft")
                         for b in s["bullets"]]).arrange(DOWN, aligned_edge=LEFT, buff=0.5)
         fit(rows, self.max_w - 0.3)
         if rows.height > config.frame_height - 2.8:
@@ -244,7 +247,8 @@ class LessonScene(Scene):
 
     def scene_steps(self, s, seconds):
         head, used = self.heading(s["heading"])
-        lines = VGroup(*[MathTex(line, color=self.c["ink"]).scale(1.15) for line in s["lines"]])
+        lines = VGroup(*[MathTex(clean_maths(line), color=self.c["ink"]).scale(1.15)
+                         for line in s["lines"]])
         lines.arrange(DOWN, aligned_edge=LEFT, buff=0.45)
         fit(lines, self.max_w - 0.3)
         if lines.height > config.frame_height - 2.8:
@@ -258,40 +262,53 @@ class LessonScene(Scene):
         head, used = self.heading(s["heading"])
         f = make_function(s["function"])
         xr, yr = s["x_range"], s["y_range"]
+        def numbers(step):
+            return {"decimal_number_config": {"color": self.c["muted"],
+                                              "num_decimal_places": decimal_places(step)}}
+
         axes = Axes(
             x_range=xr, y_range=yr, x_length=8, y_length=5.2,
-            axis_config={"color": self.c["muted"], "include_numbers": True, "font_size": 22,
-                         "decimal_number_config": {"color": self.c["muted"], "num_decimal_places": 0}},
+            axis_config={"color": self.c["muted"], "include_numbers": True, "font_size": 22},
+            x_axis_config=numbers(xr[2]), y_axis_config=numbers(yr[2]),
             tips=False,
         ).next_to(head, DOWN, buff=0.35).set_x(AREA_CENTER)
-        curve = axes.plot(lambda t: float(f(t)), x_range=[xr[0], xr[1]], color=self.c["accent"],
-                          stroke_width=5, discontinuities=None)
         self.play(Create(axes), run_time=1.0)
-        # The laser traces the curve as it is drawn
-        self.point_at(curve.get_start(), run_time=0.3)
-        self.play(Create(curve), self.tip.animate.move_to(curve.get_end()), run_time=2.0, rate_func=linear)
-        used += 3.3
+        used += 1.0
+        # The laser traces each piece of the curve as it is drawn
+        pieces = curve_pieces(s)
+        total = sum(len(xs) for xs, _ in pieces)
+        for xs, ys in pieces:
+            curve = VMobject(color=self.c["accent"], stroke_width=5)
+            curve.set_points_as_corners([axes.c2p(x, y) for x, y in zip(xs, ys)])
+            run_time = max(0.4, CURVE_TIME * len(xs) / total)
+            self.point_at(curve.get_start(), run_time=0.3)
+            self.play(Create(curve), MoveAlongPath(self.tip, curve), run_time=run_time, rate_func=linear)
+            used += 0.3 + run_time
         if s.get("label"):
-            label = MathTex(s["label"], color=self.c["accent"]).scale(0.7)
+            label = MathTex(clean_maths(s["label"]), color=self.c["accent"]).scale(0.7)
             label.align_to(axes, UP).align_to(axes, RIGHT)
             self.play(FadeIn(label), run_time=0.5)
             used += 0.5
 
         points = s.get("points", [])
-        slot = max(1.4, (seconds - used) / max(1, len(points)))
+        slot = max(POINT_TIME, (seconds - used) / max(1, len(points)))
         for p in points:
             pos = axes.c2p(p["x"], p["y"])
             self.point_at(pos, run_time=0.4)
             dot = Dot(pos, color=self.c["result"], radius=0.09)
-            tangent = DashedLine(axes.c2p(p["x"] - 0.7, p["y"]), axes.c2p(p["x"] + 0.7, p["y"]),
-                                 color=self.c["mark"], stroke_width=4)
             # Put the label above a maximum and below a minimum.
             above = p["y"] >= float(f(p["x"] - 0.5))
-            lab = MathTex(p.get("label", ""), color=self.c["result"]).scale(0.6)
+            lab = MathTex(clean_maths(p.get("label", "")), color=self.c["result"]).scale(0.6)
             lab.next_to(dot, UP if above else DOWN, buff=0.3)
             self.play(GrowFromCenter(dot), Flash(dot, color=self.c["result"]), run_time=0.8)
-            self.play(Create(tangent), Write(lab), run_time=0.8)
-            self.wait(max(0, slot - 2.0))
+            marks = [Write(lab)]
+            # Only a turning point has a horizontal tangent
+            if is_turning_point(s, p["x"]):
+                marks.append(Create(DashedLine(axes.c2p(p["x"] - 0.7, p["y"]), axes.c2p(p["x"] + 0.7, p["y"]),
+                                               color=self.c["mark"], stroke_width=4)))
+            self.play(*marks, run_time=0.8)
+            if slot - POINT_TIME >= 1 / config.frame_rate:
+                self.wait(slot - POINT_TIME)
             used += slot
         return used
 
