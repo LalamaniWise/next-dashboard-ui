@@ -25,7 +25,7 @@ import tempfile
 import manimpango
 import numpy as np
 from manim import (
-    DOWN, LEFT, RIGHT, UP,
+    DL, DOWN, DR, LEFT, RIGHT, UL, UP, UR,
     Arc, Axes, Circle, Create, DashedLine, Dot, Ellipse, FadeIn, FadeOut, Flash, GrowFromCenter,
     Line, MathTex, MoveAlongPath, Rectangle, Scene, Tex, Text, ValueTracker, VGroup, VMobject, Write,
     always_redraw, config, linear, tempconfig, there_and_back,
@@ -76,6 +76,54 @@ def decimal_places(step):
 def unit(v):
     n = np.linalg.norm(v)
     return v / n if n else v
+
+
+def bounds(mob, pad=0.05):
+    """(left, right, bottom, top) of a mobject, with a little room around it."""
+    x, y, _ = mob.get_center()
+    w, h = mob.width / 2 + pad, mob.height / 2 + pad
+    return x - w, x + w, y - h, y + h
+
+
+def boxes_touch(a, b):
+    return a[0] < b[1] and b[0] < a[1] and a[2] < b[3] and b[2] < a[3]
+
+
+def spots_around(pos, mob, directions):
+    """Centres that put mob beside pos, close by first and then further out."""
+    return [np.array(pos) + d * np.array([mob.width / 2 + gap, mob.height / 2 + gap, 0])
+            for gap in (0.2, 0.45, 0.7) for d in directions]
+
+
+def place_clear(mob, spots, lines, taken, limits, owner=None, others=(), walls=()):
+    """Move mob to the first spot with the least in its way, and claim it.
+
+    lines holds (points along a line, how much crossing it matters); taken
+    holds the boxes of numbers, dots and labels; limits is the (left, right,
+    bottom, top) allowed. A label for the dot at owner stays close to it,
+    nearer to it than to any of the other dots, and on its side of the walls,
+    given as (0, x) for vertical asymptotes and (1, y) for horizontal ones."""
+    def closeness(spot):
+        if owner is None:
+            return 0
+        distance = np.linalg.norm(spot - owner)
+        misleading = any(np.linalg.norm(spot - other) < distance for other in others)
+        cut_off = any((owner[i] - at) * (spot[i] - at) < 0 for i, at in walls)
+        return 3 * distance + 6 * misleading + 6 * cut_off
+
+    def cost(spot):
+        mob.move_to(spot)
+        box = bounds(mob)
+        left, right, bottom, top = box
+        crossed = sum(weight for pts, weight in lines
+                      if np.any((pts[:, 0] > left) & (pts[:, 0] < right)
+                                & (pts[:, 1] > bottom) & (pts[:, 1] < top)))
+        off_board = left < limits[0] or right > limits[1] or bottom < limits[2] or top > limits[3]
+        return (1000 * off_board + 50 * sum(boxes_touch(box, t) for t in taken) + crossed
+                + closeness(spot))
+
+    mob.move_to(min(spots, key=cost))
+    taken.append(bounds(mob))
 
 
 class LessonScene(Scene):
@@ -272,34 +320,67 @@ class LessonScene(Scene):
             x_axis_config=numbers(xr[2]), y_axis_config=numbers(yr[2]),
             tips=False,
         ).next_to(head, DOWN, buff=0.35).set_x(AREA_CENTER)
-        self.play(Create(axes), run_time=1.0)
-        used += 1.0
-        # The laser traces each piece of the curve as it is drawn
         pieces = curve_pieces(s)
         total = sum(len(xs) for xs, _ in pieces)
-        for xs, ys in pieces:
-            curve = VMobject(color=self.c["accent"], stroke_width=5)
-            curve.set_points_as_corners([axes.c2p(x, y) for x, y in zip(xs, ys)])
+        curves = [VMobject(color=self.c["accent"], stroke_width=5).set_points_as_corners(
+                      [axes.c2p(x, y) for x, y in zip(xs, ys)]) for xs, ys in pieces]
+
+        # (start, end, equation) of each asymptote
+        asymptotes = s.get("asymptotes") or {}
+        guides = [(axes.c2p(x, yr[1]), axes.c2p(x, yr[0]), f"x = {x:g}") for x in asymptotes.get("x", [])]
+        guides += [(axes.c2p(xr[1], y), axes.c2p(xr[0], y), f"y = {y:g}") for y in asymptotes.get("y", [])]
+
+        # Everything a label should keep clear of
+        points = s.get("points", [])
+        # Text reads fine over a faint axis, but not over the curve or an asymptote
+        lines = [(c.points, 8) for c in curves]
+        lines += [(np.linspace(a, b, 100), 8) for a, b, _ in guides]
+        walls = [(0, axes.c2p(x, 0)[0]) for x in asymptotes.get("x", [])]
+        walls += [(1, axes.c2p(0, y)[1]) for y in asymptotes.get("y", [])]
+        lines += [(np.linspace(axis.get_start(), axis.get_end(), 100), 1)
+                  for axis in (axes.x_axis, axes.y_axis)]
+        taken =[bounds(n) for n in [*axes.x_axis.numbers, *axes.y_axis.numbers]]
+        taken += [bounds(Dot(axes.c2p(p["x"], p["y"]), radius=0.09)) for p in points]
+        limits = (AREA_LEFT, AREA_RIGHT, -config.frame_height / 2 + 0.45, head.get_bottom()[1])
+        sides = [RIGHT, LEFT, UP, DOWN, UR, UL, DR, DL]
+
+        self.play(Create(axes), run_time=1.0)
+        used += 1.0
+        if guides:
+            drawn = []
+            for start, end, equation in guides:
+                tag = MathTex(equation, color=self.c["mark"]).scale(0.55)
+                place_clear(tag, spots_around(start, tag, sides) + spots_around(end, tag, sides),
+                            lines, taken, limits)
+                drawn += [Create(DashedLine(start, end, color=self.c["mark"], stroke_width=3)), Write(tag)]
+            self.play(*drawn, run_time=0.8)
+            used += 0.8
+        # The laser traces each piece of the curve as it is drawn
+        for curve, (xs, _) in zip(curves, pieces):
             run_time = max(0.4, CURVE_TIME * len(xs) / total)
             self.point_at(curve.get_start(), run_time=0.3)
             self.play(Create(curve), MoveAlongPath(self.tip, curve), run_time=run_time, rate_func=linear)
             used += 0.3 + run_time
         if s.get("label"):
             label = MathTex(clean_maths(s["label"]), color=self.c["accent"]).scale(0.7)
-            label.align_to(axes, UP).align_to(axes, RIGHT)
+            w, h = label.width / 2, label.height / 2
+            place_clear(label, [axes.get_corner(UR) - [w, h, 0], axes.get_corner(UL) + [w, -h, 0],
+                                axes.get_corner(DR) + [-w, h, 0], axes.get_corner(DL) + [w, h, 0]],
+                        lines, taken, limits)
             self.play(FadeIn(label), run_time=0.5)
             used += 0.5
 
-        points = s.get("points", [])
         slot = max(POINT_TIME, (seconds - used) / max(1, len(points)))
         for p in points:
             pos = axes.c2p(p["x"], p["y"])
             self.point_at(pos, run_time=0.4)
             dot = Dot(pos, color=self.c["result"], radius=0.09)
-            # Put the label above a maximum and below a minimum.
-            above = p["y"] >= float(f(p["x"] - 0.5))
+            # Prefer above a maximum and below a minimum, if that spot is clear.
+            first = UP if p["y"] >= float(f(p["x"] - 0.5)) else DOWN
             lab = MathTex(clean_maths(p.get("label", "")), color=self.c["result"]).scale(0.6)
-            lab.next_to(dot, UP if above else DOWN, buff=0.3)
+            place_clear(lab, spots_around(pos, lab, [first, UR, UL, DR, DL, RIGHT, LEFT, -first]),
+                        lines, taken, limits, owner=pos,
+                        others=[axes.c2p(q["x"], q["y"]) for q in points if q is not p], walls=walls)
             self.play(GrowFromCenter(dot), Flash(dot, color=self.c["result"]), run_time=0.8)
             marks = [Write(lab)]
             # Only a turning point has a horizontal tangent

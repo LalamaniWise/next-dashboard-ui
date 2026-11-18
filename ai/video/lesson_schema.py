@@ -7,7 +7,10 @@ voice says, written out in words, e.g. "x squared") plus visuals for its type:
   bullets  heading, bullets[]            (LaTeX text mode; inline maths in $...$)
   steps    heading, lines[]              (each line is LaTeX maths, shown one by one)
   graph    heading, function, label, x_range[min,max,step], y_range[...],
-           points[{x, y, label}]         (function uses Python syntax: x**2 - 3*x)
+           points[{x, y, label}],        (function uses Python syntax: x**2 - 3*x)
+           asymptotes{x[], y[]}          (optional, drawn as labelled dashed lines)
+
+Headings are plain text: LaTeX only works in bullets, lines and graph labels.
 """
 
 import re
@@ -154,6 +157,9 @@ def clean_bullet(text: str) -> str:
 
 
 def _check_latex(scene: dict) -> None:
+    for field in ("heading", "subheading"):
+        if re.search(r"[$\\]", scene.get(field, "")):
+            raise LessonError(f"{field} must be plain text without LaTeX: {scene[field]!r}")
     for bullet in scene.get("bullets", []):
         clean_bullet(bullet)
     for line in scene.get("lines", []):
@@ -191,11 +197,36 @@ def validate_lesson(lesson: dict) -> dict:
                 if not (isinstance(r, list) and len(r) == 3 and r[0] < r[1] and r[2] > 0):
                     raise LessonError(f"scene {i}: {rng} must be [min, max, step]")
             verify_graph_points(scene, i)
+            verify_asymptotes(scene, i)
             visible = sum(len(xs) for xs, _ in curve_pieces(scene, 1000))
             if visible < MIN_VISIBLE * 1000:
                 raise LessonError(f"scene {i}: the curve is almost entirely outside "
                                   "x_range and y_range; choose ranges that show it")
     return lesson
+
+
+def verify_asymptotes(scene: dict, index: int = 0) -> None:
+    """Reject asymptotes that are off the axes or that the curve does not have."""
+    import numpy as np
+
+    lines = scene.get("asymptotes") or {}
+    f = make_function(scene["function"])
+    x_min, x_max = scene["x_range"][:2]
+    y_min, y_max = scene["y_range"][:2]
+    y_span = y_max - y_min
+    for x in lines.get("x", []):
+        if not x_min <= x <= x_max:
+            raise LessonError(f"scene {index}: asymptote x = {x} is outside x_range")
+        near = f(np.array([x - 1e-3, x + 1e-3]))
+        if not np.isinf(f(x)) and not np.any(np.abs(near) > 10 * y_span):
+            raise LessonError(f"scene {index}: x = {x} is not an asymptote of the curve")
+    for y in lines.get("y", []):
+        if not y_min <= y <= y_max:
+            raise LessonError(f"scene {index}: asymptote y = {y} is outside y_range")
+        with np.errstate(all="ignore"):
+            gaps = np.abs(f(np.array([-1e6, 1e6])) - y)
+        if not np.any(gaps < 0.01 * y_span):
+            raise LessonError(f"scene {index}: y = {y} is not an asymptote of the curve")
 
 
 def verify_graph_points(scene: dict, index: int = 0) -> None:
