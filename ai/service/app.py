@@ -6,6 +6,8 @@ Only the Next.js server talks to it, on 127.0.0.1, with the shared secret
 in the X-Video-Secret header. See README.md.
 """
 
+import base64
+import binascii
 import hmac
 import logging
 import os
@@ -17,24 +19,44 @@ if HERE not in sys.path:
     sys.path.insert(0, HERE)
 
 from fastapi import Depends, FastAPI, Header, HTTPException  # noqa: E402
+from fastapi.responses import FileResponse  # noqa: E402
 from pydantic import BaseModel, Field, field_validator  # noqa: E402
-from typing import Literal  # noqa: E402
+from typing import Literal, Optional  # noqa: E402
 
-from config import GRADES, SUBJECTS, Settings, add_tools_to_path, load_settings  # noqa: E402
+from config import (  # noqa: E402
+    GRADES, JOB_FILES, MAX_SOURCE_MB, MAX_TOPIC, SUBJECTS, VOICES, Settings, add_tools_to_path,
+    load_settings,
+)
 from jobs import JobStore, QueueFull  # noqa: E402
 from pipeline import make_runner  # noqa: E402
+from sources import remove_source, save_source  # noqa: E402
 
 HOST = "127.0.0.1"
+
+
+class Source(BaseModel):
+    mediaType: Literal["application/pdf", "image/png", "image/jpeg", "image/webp"]
+    # base64 is a third longer than the file
+    data: str = Field(min_length=1, max_length=MAX_SOURCE_MB * 1024 * 1024 * 4 // 3 + 4)
 
 
 class JobRequest(BaseModel):
     subject: str
     grade: int = Field(ge=min(GRADES), le=max(GRADES))
-    topic: str = Field(min_length=3, max_length=200)
+    topic: str = Field(min_length=3, max_length=MAX_TOPIC)
     language: Literal["en", "af"]
-    voice: Literal["espeak", "piper"]
+    voice: str
     # white = whiteboard, black = chalkboard
     board: Literal["white", "black"] = "white"
+    # A PDF or picture to teach from
+    source: Optional[Source] = None
+
+    @field_validator("voice")
+    @classmethod
+    def known_voice(cls, value):
+        if value not in VOICES:
+            raise ValueError("unknown voice")
+        return value
 
     @field_validator("subject")
     @classmethod
@@ -77,9 +99,19 @@ def create_app(settings: Settings, run_job=None) -> FastAPI:
         problems = settings.problems(request.language, request.voice)
         if problems:
             raise HTTPException(status_code=503, detail=" ".join(problems))
+        fields = request.model_dump(exclude={"source"})
+        if request.source:
+            try:
+                data = base64.b64decode(request.source.data, validate=True)
+                fields["source"] = save_source(data, request.source.mediaType, settings.uploads_dir)
+            except binascii.Error:
+                raise HTTPException(status_code=400, detail="The attached file was damaged on the way.")
+            except ValueError as err:
+                raise HTTPException(status_code=400, detail=str(err))
         try:
-            job = store.submit(request.model_dump())
+            job = store.submit(fields)
         except QueueFull as err:
+            remove_source(fields.get("source"))
             raise HTTPException(status_code=429, detail=str(err))
         return {"jobId": job["id"]}
 
@@ -93,6 +125,15 @@ def create_app(settings: Settings, run_job=None) -> FastAPI:
         if not job:
             raise HTTPException(status_code=404, detail="No such job.")
         return job
+
+    @app.get("/jobs/{job_id}/files/{kind}", dependencies=[Depends(check_secret)])
+    def get_file(job_id: str, kind: Literal["video", "activity", "memo"]):
+        job = store.get(job_id)
+        name, media_type = JOB_FILES[kind]
+        path = os.path.join(settings.outputs_dir, job_id, name)
+        if not job or kind not in (job["files"] or []) or not os.path.exists(path):
+            raise HTTPException(status_code=404, detail="That file isn't available.")
+        return FileResponse(path, media_type=media_type)
 
     return app
 

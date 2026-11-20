@@ -11,6 +11,24 @@ from dataclasses import dataclass, field
 HERE = os.path.dirname(os.path.abspath(__file__))
 VIDEO_DIR = os.path.normpath(os.path.join(HERE, "..", "video"))
 SAMPLE_LESSON = os.path.join(VIDEO_DIR, "lessons", "gr12-maths-stationary-points.json")
+VOICE_DIR = os.path.normpath(os.path.join(HERE, "..", "voice", "voices"))
+
+# Ready-made English voices, fetched by ai/voice/get_voices.py. Their licences
+# require credit, so the credit goes in each video's YouTube description.
+PIPER_LIBRARY = {
+    "piper-cori": {
+        "path": "en/en_GB/cori/medium",
+        "file": "en_GB-cori-medium.onnx",
+        "credit": "Narration: Piper voice \"cori\", the voice of Cori Samuel, from the Hi-Fi "
+                  "Multi-Speaker English TTS Dataset by NVIDIA (CC BY 4.0).",
+    },
+    "piper-northern-male": {
+        "path": "en/en_GB/northern_english_male/medium",
+        "file": "en_GB-northern_english_male-medium.onnx",
+        "credit": "Narration: Piper voice \"northern_english_male\", from OpenSLR dataset 83 "
+                  "(CC BY-SA 4.0).",
+    },
+}
 
 # Same list as the Create video form in the app
 SUBJECTS = (
@@ -18,10 +36,24 @@ SUBJECTS = (
     "Physical Sciences", "Geography", "EGD", "Accounting", "Economics",
     "Business Studies", "English", "Afrikaans",
 )
-GRADES = (10, 11, 12)
+GRADES = (8, 9, 10, 11, 12)
 LANGUAGES = ("en", "af")
-VOICES = ("espeak", "piper")
+VOICES = ("espeak", "piper", *PIPER_LIBRARY)
 PRIVACY = ("private", "unlisted", "public")
+MAX_TOPIC = 1000
+MAX_SOURCE_MB = 10
+# What a finished job can hand back: name -> (file, content type)
+JOB_FILES = {
+    "video": ("lesson.mp4", "video/mp4"),
+    "activity": ("activity.pdf", "application/pdf"),
+    "memo": ("memo.pdf", "application/pdf"),
+}
+# Finished jobs whose files are kept
+KEEP_OUTPUTS = 30
+
+
+def library_model(voice: str) -> str:
+    return os.path.join(VOICE_DIR, PIPER_LIBRARY[voice]["file"])
 
 
 def load_env_file(path=os.path.join(HERE, ".env")):
@@ -62,6 +94,14 @@ class Settings:
     made_for_kids: bool = False
     max_queued: int = 20
 
+    @property
+    def uploads_dir(self) -> str:
+        return os.path.join(self.work_dir, "uploads")
+
+    @property
+    def outputs_dir(self) -> str:
+        return os.path.join(self.work_dir, "outputs")
+
     def problems(self, language: str, voice: str) -> list:
         """Reasons a job with these options can't run, so the app can say so
         straight away instead of after minutes of rendering."""
@@ -71,6 +111,12 @@ class Settings:
         if voice == "piper" and not self.piper_voices.get(language):
             name = "PIPER_VOICE_" + language.upper()
             found.append(f"The piper voice needs {name} (a .onnx voice file) set for the video service.")
+        if voice in PIPER_LIBRARY:
+            model = library_model(voice)
+            if language != "en":
+                found.append("That voice only speaks English.")
+            elif not (os.path.exists(model) and os.path.exists(model + ".json")):
+                found.append("That voice isn't downloaded yet: run python ai/voice/get_voices.py.")
         if not self.dry_run and not (
             self.youtube_client_id and self.youtube_client_secret and self.youtube_refresh_token
         ):

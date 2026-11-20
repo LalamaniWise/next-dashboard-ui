@@ -39,6 +39,18 @@ SYMBOLS = {
     "π": r"\pi", "θ": r"\theta", "α": r"\alpha", "β": r"\beta", "Δ": r"\Delta",
 }
 
+# TeX commands that reach files or redefine things. Lessons can be written from
+# an uploaded file, so its text must never get to run any of these. ^^ is TeX's
+# way of spelling any character, including the backslash.
+_FORBIDDEN_TEX = re.compile(
+    r"\^\^|filecontents"
+    r"|\\(?:input|include|verbatim|lstinput|pdf)[a-zA-Z]*"
+    r"|\\(?:usepackage|RequirePackage|documentclass|openin|openout|read|readline|write"
+    r"|immediate|newread|newwrite|catcode|def|edef|gdef|xdef|let|futurelet|csname"
+    r"|expandafter|special|directlua|newcommand|renewcommand|providecommand|loop"
+    r"|jobname|shipout)(?![a-zA-Z])"
+)
+
 # A curve must show on at least this share of its x range
 MIN_VISIBLE = 0.05
 # A point counts as a turning point if the curve looks flat there on the axes
@@ -112,6 +124,13 @@ def _check_braces(tex: str) -> str:
     return tex
 
 
+def _check_commands(tex: str) -> str:
+    bad = _FORBIDDEN_TEX.search(tex)
+    if bad:
+        raise LessonError(f"{bad.group()!r} is not allowed in {tex!r}")
+    return tex
+
+
 def _clean_text_mode(text: str) -> str:
     text = re.sub(r"(?<!\\)([%&#_])", r"\\\1", text.replace("ŉ", "'n"))
     text = re.sub(r"(?<!\\)\^", r"\\^{}", text)
@@ -144,12 +163,12 @@ def _clean_maths_parts(tex: str) -> str:
 
 def clean_maths(tex: str) -> str:
     """Make a line of LaTeX maths safe to compile."""
-    return _check_braces(_clean_maths_parts(tex))
+    return _check_braces(_clean_maths_parts(_check_commands(tex)))
 
 
 def clean_bullet(text: str) -> str:
     """Make a bullet (LaTeX text with $...$ maths) safe to compile."""
-    parts = re.split(r"(?<!\\)\$", text)
+    parts = re.split(r"(?<!\\)\$", _check_commands(text))
     if len(parts) % 2 == 0:
         raise LessonError(f"unmatched $ in {text!r}")
     return _check_braces("".join(f"${_clean_maths_parts(p)}$" if i % 2 else _clean_text_mode(p)

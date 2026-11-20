@@ -40,7 +40,9 @@ python render_lesson.py lessons/newton2.json
 ```
 
 - **Look:** a stick-man teacher stands at the board and points a laser at each line as it is
-  written. `--board white` (default) is a whiteboard, `--board black` a chalkboard.
+  written, and circles the answer.
+  Every video opens and closes with the CMS Extra Classes messages (`BRAND` in
+  `video/render_lesson.py`), except with `--tts recorded`. `--board white` (default) is a whiteboard, `--board black` a chalkboard.
   Lessons are written for learners starting from zero and run about 4 to 6 minutes.
 - **Your own voice:** `--tts recorded --voice-dir <folder>` uses your recordings, and
   `--tts piper --voice-model my_voice.onnx` uses a voice model trained on your voice.

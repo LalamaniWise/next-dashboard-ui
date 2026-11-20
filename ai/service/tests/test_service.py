@@ -4,8 +4,11 @@
     python -m pytest
 """
 
+import base64
+import io
 import json
 import os
+import shutil
 import sys
 import threading
 import time
@@ -16,8 +19,12 @@ import pytest
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.dirname(HERE))
 
+import config  # noqa: E402
 import pipeline  # noqa: E402
 import lesson_schema  # noqa: E402
+import script_writer  # noqa: E402
+import sources  # noqa: E402
+import worksheet  # noqa: E402
 import youtube_upload  # noqa: E402
 from app import create_app  # noqa: E402
 from config import Settings  # noqa: E402
@@ -72,8 +79,9 @@ def test_short_secret_refuses_to_start(tmp_path):
 
 
 @pytest.mark.parametrize("change", [
-    {"subject": "History"}, {"grade": 9}, {"grade": 13}, {"language": "fr"},
-    {"voice": "azure"}, {"board": "green"}, {"topic": "  x "}, {"topic": "x" * 201},
+    {"subject": "History"}, {"grade": 7}, {"grade": 13}, {"language": "fr"},
+    {"voice": "azure"}, {"board": "green"}, {"topic": "  x "}, {"topic": "x" * 1001},
+    {"source": {"mediaType": "text/html", "data": "eA=="}},
 ])
 def test_rejects_bad_requests(tmp_path, change):
     with TestClient(create_app(make_settings(tmp_path), fake_result)) as client:
@@ -208,19 +216,21 @@ def test_pipeline_uploads_and_deletes_the_mp4(tmp_path, monkeypatch):
         seen["upload"] = (os.path.exists(path), title, description, language)
         return "VIDEO123456", "private"
 
-    monkeypatch.setattr(pipeline, "write_step", lambda job, s: LESSON)
+    monkeypatch.setattr(pipeline, "write_step", lambda job, s, source=None: LESSON)
+    monkeypatch.setattr(pipeline, "documents_step", lambda *a: None)
     monkeypatch.setattr(pipeline, "render_step", render)
     monkeypatch.setitem(sys.modules, "youtube_upload", SimpleNamespace(upload=upload))
     steps = []
     job = {"id": "job1", **BODY}
     result = pipeline.make_runner(settings)(job, lambda status, **f: steps.append(status))
 
-    assert steps == ["rendering", "uploading"]
+    assert steps == ["documents", "rendering", "uploading"]
     assert result == {"title": "Stationary points of a cubic",
                       "youtubeUrl": "https://www.youtube.com/watch?v=VIDEO123456",
-                      "privacy": "private"}
+                      "privacy": "private", "files": ["activity", "memo"]}
     exists, title, description, language = seen["upload"]
     assert exists and title == "Stationary points of a cubic" and language == "en"
+    assert "Title: Stationary points of a cubic" in description
     assert "Subject: Mathematics" in description and "Grade: 12" in description
     assert "Topic: Stationary points" in description
     assert not os.path.exists(seen["mp4"])
@@ -234,6 +244,141 @@ def test_dry_run_skips_youtube(tmp_path, monkeypatch):
     assert privacy == "dry-run"
     assert url.startswith("https://www.youtube.com/watch?v=")
     assert len(url.rsplit("=", 1)[1]) == 11
+
+
+def png_bytes(size=(40, 20)):
+    from PIL import Image
+    out = io.BytesIO()
+    Image.new("RGB", size, "red").save(out, "PNG")
+    return out.getvalue()
+
+
+def attached(data, media_type):
+    return {"mediaType": media_type, "data": base64.b64encode(data).decode()}
+
+
+def test_dry_run_keeps_the_files_to_download(tmp_path, monkeypatch):
+    settings = make_settings(tmp_path)
+
+    def documents(job, lesson, source, out_dir, s):
+        for name in ("activity.pdf", "memo.pdf"):
+            with open(os.path.join(out_dir, name), "wb") as fh:
+                fh.write(b"%PDF-")
+
+    def render(lesson_path, out_path, job, s):
+        with open(out_path, "wb") as fh:
+            fh.write(b"mp4")
+        return out_path
+
+    monkeypatch.setattr(pipeline, "write_step", lambda job, s, source=None: LESSON)
+    monkeypatch.setattr(pipeline, "documents_step", documents)
+    monkeypatch.setattr(pipeline, "render_step", render)
+    with TestClient(create_app(settings, pipeline.make_runner(settings))) as client:
+        job = wait_for(client, client.post("/jobs", json=BODY, headers=AUTH).json()["jobId"])
+        assert job["files"] == ["video", "activity", "memo"]
+        url = f"/jobs/{job['id']}/files"
+        assert client.get(f"{url}/memo").status_code == 401
+        assert client.get(f"{url}/video", headers=AUTH).content == b"mp4"
+        assert client.get(f"{url}/memo", headers=AUTH).headers["content-type"] == "application/pdf"
+        assert client.get(f"{url}/secrets", headers=AUTH).status_code == 422
+        assert client.get("/jobs/nope/files/memo", headers=AUTH).status_code == 404
+
+
+def test_attached_picture_reaches_the_writer_and_is_then_deleted(tmp_path, monkeypatch):
+    settings = make_settings(tmp_path)
+    seen = {}
+
+    def write(job, s, source=None):
+        seen.update(source)
+        raise RuntimeError("stop here")
+
+    monkeypatch.setattr(pipeline, "write_step", write)
+    body = {**BODY, "source": attached(png_bytes((3000, 1000)), "image/png")}
+    with TestClient(create_app(settings, pipeline.make_runner(settings))) as client:
+        job = wait_for(client, client.post("/jobs", json=body, headers=AUTH).json()["jobId"])
+    assert job["status"] == "failed" and "source" not in job
+    assert seen["media_type"] == "image/jpeg"
+    from PIL import Image
+    assert max(Image.open(io.BytesIO(base64.b64decode(seen["data"]))).size) == sources.IMAGE_EDGE
+    assert os.listdir(settings.uploads_dir) == []
+
+
+@pytest.mark.parametrize("source", [
+    attached(b"<html>", "application/pdf"),
+    attached(b"not a picture", "image/png"),
+    attached(png_bytes(), "image/jpeg"),
+    {"mediaType": "image/png", "data": "***"},
+])
+def test_bad_attachments_are_refused(tmp_path, source):
+    with TestClient(create_app(make_settings(tmp_path), fake_result)) as client:
+        assert client.post("/jobs", json={**BODY, "source": source}, headers=AUTH).status_code == 400
+
+
+def test_source_goes_before_the_request_text():
+    pdf = {"media_type": "application/pdf", "data": "AAAA"}
+    content = script_writer.with_source("Topic", pdf)
+    assert content[0] == {"type": "document", "source": {"type": "base64", **pdf}}
+    assert content[1]["text"].startswith("Topic")
+    assert script_writer.with_source("Topic", None) == "Topic"
+    picture = {"media_type": "image/jpeg", "data": "AAAA"}
+    assert script_writer.with_source("Topic", picture)[0]["type"] == "image"
+
+
+def test_unreadable_file_stops_without_retrying(monkeypatch):
+    calls = []
+    monkeypatch.setattr(script_writer, "call_model",
+                        lambda *a: calls.append(1) or '{"unreadable": "the photo is blurry"}')
+    with pytest.raises(script_writer.SourceError, match="blurry"):
+        script_writer.write_lesson("Mathematics", 9, "Explain this")
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize("text", [
+    r"\input{secret}", r"$\input{secret}$", r"\include{a}", r"$x^^5cinput$", r"$\def\a{1}$",
+    r"\immediate\write18{dir}", r"\begin{filecontents}{a}",
+])
+def test_tex_that_reaches_files_is_rejected(text):
+    with pytest.raises(lesson_schema.LessonError, match="not allowed"):
+        lesson_schema.clean_bullet(text)
+
+
+def test_ordinary_maths_commands_are_allowed():
+    assert lesson_schema.clean_maths(r"\left(\frac{1}{2}\right)^{2} \leq \delta")
+
+
+ACTIVITY = {"title": "50% & more_", "instructions": "Show all working.", "questions": [
+    {"text": "Simplify $2^3 \\times 2^2$.", "marks": 2, "answer": ["$2^{3+2}$", "$= 2^5$"]},
+    {"text": "Calculate $3^2$.", "marks": 1, "answer": ["$9$"]},
+    {"text": "Calculate $5^0$.", "marks": 1, "answer": ["$1$"]},
+]}
+DETAILS = {"subject": "Mathematics", "grade": 9, "language": "en"}
+
+
+@pytest.mark.parametrize("change, message", [
+    ({"questions": []}, "questions"),
+    ({"title": " "}, "title"),
+    ({"questions": [{**ACTIVITY["questions"][0], "marks": 0}] * 3}, "marks"),
+    ({"questions": [{**ACTIVITY["questions"][0], "answer": []}] * 3}, "answer"),
+    ({"questions": [{**ACTIVITY["questions"][0], "text": r"\\input{x}"}] * 3}, "not allowed"),
+])
+def test_bad_activities_are_rejected(change, message):
+    with pytest.raises(lesson_schema.LessonError, match=message):
+        worksheet.validate_activity({**ACTIVITY, **change})
+
+
+def test_only_the_memo_has_the_answers():
+    activity = worksheet.tex_document(ACTIVITY, DETAILS, memo=False)
+    memo = worksheet.tex_document(ACTIVITY, DETAILS, memo=True)
+    assert "2^{3+2}" in memo and "2^{3+2}" not in activity
+    assert "Name:" in activity and "Name:" not in memo
+    assert r"50\% \& more\_" in activity and "Total: 4 marks" in memo
+
+
+@pytest.mark.skipif(not shutil.which("pdflatex"), reason="needs LaTeX")
+def test_pdfs_are_typeset(tmp_path):
+    worksheet.make_pdfs(worksheet.validate_activity(ACTIVITY), {**DETAILS, "language": "af"}, str(tmp_path))
+    for name in ("activity.pdf", "memo.pdf"):
+        assert (tmp_path / name).read_bytes().startswith(b"%PDF-")
 
 
 def test_sample_writer_uses_the_sample_lesson(tmp_path):
@@ -251,6 +396,33 @@ def test_render_gets_the_voice_and_board(tmp_path, monkeypatch):
                                "board": "white"}
     pipeline.render_step("l.json", "o.mp4", {**BODY, "board": "black"}, settings)
     assert calls["kwargs"]["board"] == "black"
+
+
+def test_library_voice_uses_its_own_file(tmp_path, monkeypatch):
+    calls = {}
+    fake = SimpleNamespace(render=lambda *a, **k: calls.update(k) or a[1])
+    monkeypatch.setitem(sys.modules, "render_lesson", fake)
+    pipeline.render_step("l.json", "o.mp4", {**BODY, "voice": "piper-cori"}, make_settings(tmp_path))
+    assert calls["tts_backend"] == "piper"
+    assert calls["voice_model"] == config.library_model("piper-cori")
+
+
+@pytest.mark.parametrize("voice", config.PIPER_LIBRARY)
+def test_library_voices_are_credited(voice):
+    _, description = pipeline.video_details({"title": "T"}, {**BODY, "voice": voice})
+    assert config.PIPER_LIBRARY[voice]["credit"] in description
+    _, plain = pipeline.video_details({"title": "T"}, {**BODY})
+    assert "Narration" not in plain
+
+
+def test_library_voice_problems_are_reported(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "VOICE_DIR", str(tmp_path))
+    settings = make_settings(tmp_path)
+    assert "get_voices" in " ".join(settings.problems("en", "piper-cori"))
+    (tmp_path / "en_GB-cori-medium.onnx").write_bytes(b"x")
+    (tmp_path / "en_GB-cori-medium.onnx.json").write_text("{}")
+    assert settings.problems("en", "piper-cori") == []
+    assert "only speaks English" in " ".join(settings.problems("af", "piper-cori"))
 
 
 def test_youtube_titles_are_cleaned():
