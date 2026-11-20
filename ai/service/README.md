@@ -35,6 +35,20 @@ an activity PDF and a memo PDF, typeset with LaTeX. Admins and teachers download
 from the Videos page; the service keeps the files of the last 30 jobs. In a dry run
 the video is kept to download too.
 
+### Covers
+
+Every video starts with a 3-second **cover**: the school logo, subject, grade, topic
+and subtopic. Teachers can type the topic and subtopic on the Create video form; empty
+ones are filled in by the AI. The same picture (`cover.jpg`, also downloadable) is
+uploaded as the video's **YouTube thumbnail**. Custom thumbnails only work once the
+school's YouTube channel is phone-verified (youtube.com/verify); until then YouTube
+refuses, the video keeps YouTube's own thumbnail, and nothing else is affected.
+The logo and name come from `SCHOOL_LOGO` and `SCHOOL_NAME` (see `.env.example`).
+Draw a cover by hand with `python ai/video/cover.py --help`.
+
+The app draws the same cover for its video lists (`src/lib/coverImage.tsx`), so videos
+added from a YouTube link and playlist videos get covers too. Keep the two designs in step.
+
 ## Voices
 
 - **Computer voice:** espeak, nothing to set up.

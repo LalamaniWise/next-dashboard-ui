@@ -195,6 +195,11 @@ def validate_lesson(lesson: dict) -> dict:
             raise LessonError(f"lesson is missing '{key}'")
     if lesson["language"] not in LANGUAGES:
         raise LessonError(f"language must be one of {sorted(LANGUAGES)}")
+    # The cover's topic and subtopic: short labels, optional in older lessons
+    for key, limit in (("topic", 80), ("subtopic", 120)):
+        value = lesson.get(key)
+        if value is not None and (not isinstance(value, str) or len(value) > limit):
+            raise LessonError(f"'{key}' must be short text (at most {limit} characters)")
     if not isinstance(lesson["scenes"], list) or not lesson["scenes"]:
         raise LessonError("lesson.scenes must be a non-empty list")
 

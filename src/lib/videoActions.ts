@@ -65,8 +65,8 @@ export const saveVideo = async (_state: State, formData: FormData): Promise<Stat
   if (!userId || !isStaff(role)) return fail("Only admins and teachers can change videos.");
   const parsed = videoSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return fail(firstIssue(parsed.error));
-  const { id, youtubeUrl, title, subject, grade } = parsed.data;
-  const fields = { title, subjectName: subject, grade };
+  const { id, youtubeUrl, title, subject, grade, topic, subtopic } = parsed.data;
+  const fields = { title, subjectName: subject, grade, topic: topic || null, subtopic: subtopic || null };
 
   if (id) {
     const video = await prisma.video.findUnique({ where: { id }, select: { status: true } });

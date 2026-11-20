@@ -50,6 +50,15 @@ class JobRequest(BaseModel):
     board: Literal["white", "black"] = "white"
     # A PDF or picture to teach from
     source: Optional[Source] = None
+    # On the video's cover; the AI fills in whichever is empty
+    coverTopic: Optional[str] = Field(default=None, max_length=80)
+    subtopic: Optional[str] = Field(default=None, max_length=120)
+
+    @field_validator("coverTopic", "subtopic")
+    @classmethod
+    def clean_cover_text(cls, value):
+        value = " ".join((value or "").split())
+        return value or None
 
     @field_validator("voice")
     @classmethod
@@ -127,7 +136,7 @@ def create_app(settings: Settings, run_job=None) -> FastAPI:
         return job
 
     @app.get("/jobs/{job_id}/files/{kind}", dependencies=[Depends(check_secret)])
-    def get_file(job_id: str, kind: Literal["video", "activity", "memo"]):
+    def get_file(job_id: str, kind: Literal["video", "activity", "memo", "cover"]):
         job = store.get(job_id)
         name, media_type = JOB_FILES[kind]
         path = os.path.join(settings.outputs_dir, job_id, name)

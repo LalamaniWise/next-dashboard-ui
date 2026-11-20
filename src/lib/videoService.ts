@@ -20,6 +20,9 @@ export type VideoJob = {
   grade: number;
   topic: string;
   title: string | null;
+  // The short topic and subtopic on the video's cover (from the form, or the AI's)
+  lessonTopic?: string | null;
+  subtopic?: string | null;
   youtubeUrl: string | null;
   privacy: string | null;
   files: LessonVideoFile[] | null;
@@ -109,7 +112,14 @@ export const saveFinishedVideo = async (job: VideoJob) => {
   const title = (job.title || job.topic).trim().slice(0, 150);
   return prisma.video.upsert({
     where: { youtubeUrl },
-    create: { title, youtubeUrl, subjectName: job.subject, grade: job.grade },
+    create: {
+      title,
+      youtubeUrl,
+      subjectName: job.subject,
+      grade: job.grade,
+      topic: job.lessonTopic?.trim().slice(0, 80) || null,
+      subtopic: job.subtopic?.trim().slice(0, 120) || null,
+    },
     update: {},
   });
 };

@@ -33,6 +33,7 @@ export const LESSON_VIDEO_FILES = {
   video: { label: "Video", suffix: "video.mp4", type: "video/mp4" },
   activity: { label: "Activity PDF", suffix: "activity.pdf", type: "application/pdf" },
   memo: { label: "Memo PDF", suffix: "memo.pdf", type: "application/pdf" },
+  cover: { label: "Cover picture", suffix: "cover.jpg", type: "image/jpeg" },
 } as const;
 export type LessonVideoFile = keyof typeof LESSON_VIDEO_FILES;
 

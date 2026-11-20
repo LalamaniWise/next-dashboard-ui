@@ -250,6 +250,21 @@ const CreateVideoDialog = ({ onClose }: { onClose: (started: boolean) => void })
                 placeholder="e.g. Explain exponent laws step by step with examples"
               />
             </div>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="lv-cover-topic" className={label}>
+                Topic <span className="text-gray-400 font-normal">(on the cover)</span>
+              </label>
+              <input id="lv-cover-topic" name="coverTopic" maxLength={80} className="form-control" placeholder="e.g. Differential calculus" />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="lv-subtopic" className={label}>
+                Subtopic <span className="text-gray-400 font-normal">(on the cover)</span>
+              </label>
+              <input id="lv-subtopic" name="subtopic" maxLength={120} className="form-control" placeholder="e.g. Stationary points" />
+            </div>
+            <p className="sm:col-span-2 -mt-2 text-xs text-gray-500">
+              Leave these empty and the AI fills them in. The cover shows the school logo, subject, grade, topic and subtopic.
+            </p>
             <div className="flex flex-col gap-1.5 sm:col-span-2">
               <label htmlFor="lv-file" className={label}>
                 PDF or picture <span className="text-gray-400 font-normal">(optional, up to {MAX_LESSON_SOURCE_MB} MB)</span>
@@ -373,7 +388,14 @@ const useFormResult = (state: typeof initial, onDone: () => void) => {
   }, [state, onDone, router]);
 };
 
-export type EditableVideo = { id: number; title: string; subjectName: string; grade: number };
+export type EditableVideo = {
+  id: number;
+  title: string;
+  subjectName: string;
+  grade: number;
+  topic: string | null;
+  subtopic: string | null;
+};
 
 const VideoForm = ({ video, onDone }: { video?: EditableVideo; onDone: () => void }) => {
   const [state, action, pending] = useActionState(saveVideo, initial);
@@ -410,6 +432,18 @@ const VideoForm = ({ video, onDone }: { video?: EditableVideo; onDone: () => voi
             <option key={g} value={g}>Grade {g}</option>
           ))}
         </select>
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="vf-topic" className={label}>
+          Topic <span className="text-gray-400 font-normal">(on the cover)</span>
+        </label>
+        <input id="vf-topic" name="topic" maxLength={80} defaultValue={video?.topic ?? ""} className="form-control" placeholder="e.g. Algebra" />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="vf-subtopic" className={label}>
+          Subtopic <span className="text-gray-400 font-normal">(on the cover)</span>
+        </label>
+        <input id="vf-subtopic" name="subtopic" maxLength={120} defaultValue={video?.subtopic ?? ""} className="form-control" placeholder="e.g. Factorising trinomials" />
       </div>
       {state.error && <p role="alert" className="sm:col-span-2 text-sm text-red-500">{state.message}</p>}
       <button className="btn-primary sm:col-span-2" disabled={pending}>

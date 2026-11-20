@@ -85,9 +85,15 @@ def tex_document(activity: dict, details: dict, memo: bool) -> str:
         r"\usepackage{lmodern}",
         r"\usepackage[margin=2cm]{geometry}",
         r"\usepackage{amsmath,amssymb}",
+        r"\usepackage{graphicx}",
         r"\setlength{\parindent}{0pt}",
         r"\begin{document}",
         r"\begin{center}",
+    ]
+    if details.get("logo"):
+        # compile_pdf copies the logo next to the .tex file as logo.png/.jpg
+        lines.append(rf"\includegraphics[height=2.2cm]{{logo{os.path.splitext(details['logo'])[1].lower()}}}\\[4pt]")
+    lines += [
         rf"{{\Large\bfseries {plain(BRAND)}}}\\[4pt]",
         rf"{{\large\bfseries {plain(activity['title'])}: {plain(kind)}}}\\[2pt]",
         rf"{plain(details['subject'])} \textbullet{{}} {words['grade']} {int(details['grade'])}",
@@ -111,10 +117,12 @@ def tex_document(activity: dict, details: dict, memo: bool) -> str:
     return "\n".join(lines)
 
 
-def compile_pdf(tex: str, out_path: str) -> None:
+def compile_pdf(tex: str, out_path: str, logo: str = None) -> None:
     with tempfile.TemporaryDirectory(prefix="worksheet_") as work:
         with open(os.path.join(work, "sheet.tex"), "w", encoding="utf-8") as fh:
             fh.write(tex)
+        if logo:
+            shutil.copy(logo, os.path.join(work, "logo" + os.path.splitext(logo)[1].lower()))
         # paranoid: TeX may only read and write inside this folder
         env = {**os.environ, "openin_any": "p", "openout_any": "p"}
         done = subprocess.run(
@@ -132,5 +140,9 @@ def compile_pdf(tex: str, out_path: str) -> None:
 def make_pdfs(activity: dict, details: dict, out_dir: str) -> None:
     """Write activity.pdf and memo.pdf into out_dir."""
     os.makedirs(out_dir, exist_ok=True)
-    compile_pdf(tex_document(activity, details, memo=False), os.path.join(out_dir, "activity.pdf"))
-    compile_pdf(tex_document(activity, details, memo=True), os.path.join(out_dir, "memo.pdf"))
+    logo = details.get("logo")
+    if logo and (not os.path.exists(logo) or os.path.splitext(logo)[1].lower() not in (".png", ".jpg", ".jpeg")):
+        details = {**details, "logo": None}  # pdflatex can only place PNG and JPG
+        logo = None
+    compile_pdf(tex_document(activity, details, memo=False), os.path.join(out_dir, "activity.pdf"), logo)
+    compile_pdf(tex_document(activity, details, memo=True), os.path.join(out_dir, "memo.pdf"), logo)

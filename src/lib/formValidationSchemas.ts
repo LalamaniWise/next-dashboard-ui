@@ -466,6 +466,9 @@ export const lessonVideoSchema = z.object({
   language: z.enum(["en", "af"], { message: "Choose English or Afrikaans!" }),
   voice: z.enum(["espeak", "piper", "piper-cori", "piper-northern-male"], { message: "Choose a voice!" }),
   board: z.enum(["white", "black"], { message: "Choose a whiteboard or chalkboard!" }),
+  // Shown on the video's cover; the AI fills in whichever is empty
+  coverTopic: z.string().trim().max(80, { message: "Keep the topic under 80 characters!" }).optional(),
+  subtopic: z.string().trim().max(120, { message: "Keep the subtopic under 120 characters!" }).optional(),
 });
 
 export type LessonVideoSchema = z.infer<typeof lessonVideoSchema>;
@@ -477,6 +480,8 @@ export const videoSchema = z.object({
   title: z.string().trim().min(1, { message: "Give the video a title!" }).max(150),
   subject: z.enum(LESSON_VIDEO_SUBJECTS, { message: "Choose a subject!" }),
   grade: lessonVideoGrade,
+  topic: z.string().trim().max(80, { message: "Keep the topic under 80 characters!" }).optional(),
+  subtopic: z.string().trim().max(120, { message: "Keep the subtopic under 120 characters!" }).optional(),
 });
 
 // An admin publishing a video to one or more of the school's grades (Grade ids)

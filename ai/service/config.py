@@ -47,6 +47,7 @@ JOB_FILES = {
     "video": ("lesson.mp4", "video/mp4"),
     "activity": ("activity.pdf", "application/pdf"),
     "memo": ("memo.pdf", "application/pdf"),
+    "cover": ("cover.jpg", "image/jpeg"),
 }
 # Finished jobs whose files are kept
 KEEP_OUTPUTS = 30
@@ -93,6 +94,10 @@ class Settings:
     youtube_privacy: str = "unlisted"
     made_for_kids: bool = False
     max_queued: int = 20
+    # On the video cover and worksheets. Defaults: the app's built-in logo
+    # (public/logo.png) and the school's name
+    logo_path: str = ""
+    school_name: str = "Capital Mathematics Studies"
 
     @property
     def uploads_dir(self) -> str:
@@ -147,6 +152,8 @@ def load_settings() -> Settings:
         youtube_privacy=privacy,
         # The learners are high-school age, so videos are not "made for kids"
         made_for_kids=_flag("YOUTUBE_MADE_FOR_KIDS"),
+        logo_path=os.environ.get("SCHOOL_LOGO", "").strip(),
+        school_name=os.environ.get("SCHOOL_NAME", "").strip() or "Capital Mathematics Studies",
     )
 
 

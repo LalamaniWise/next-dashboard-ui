@@ -1,5 +1,6 @@
 import "server-only";
 import { PDFDocument, PDFFont, PDFPage, rgb, StandardFonts } from "pdf-lib";
+import { loadLogo } from "./brandAssets";
 import { getAccount, periodLabel } from "./fees";
 import { formatRand } from "./money";
 
@@ -52,17 +53,34 @@ const writer = async () => {
   const gap = (h: number) => {
     y -= h;
   };
-  return { doc, font, bold, width, ensure, text, line, gap };
+  // Draws the school logo with its top at the current line
+  const logo = async (height: number) => {
+    const file = await loadLogo();
+    if (!file) return 0;
+    try {
+      const img = file.type === "png" ? await doc.embedPng(file.bytes) : await doc.embedJpg(file.bytes);
+      const w = (img.width / img.height) * height;
+      page.drawImage(img, { x: MARGIN, y: y + 14 - height, width: w, height });
+      return w;
+    } catch {
+      return 0; // a damaged logo shouldn't stop the PDF
+    }
+  };
+  return { doc, font, bold, width, ensure, text, line, gap, logo };
 };
 
 type W = Awaited<ReturnType<typeof writer>>;
 
-const header = (w: W, school: School, title: string, account: Account) => {
-  w.text(school.schoolName, 0, { size: 18, f: w.bold });
+const LOGO_HEIGHT = 64;
+
+const header = async (w: W, school: School, title: string, account: Account) => {
+  const logoWidth = await w.logo(LOGO_HEIGHT);
+  const nameX = logoWidth ? logoWidth + 14 : 0;
+  w.text(school.schoolName, nameX, { size: 18, f: w.bold });
   w.text(title, w.width, { size: 18, f: w.bold, right: true, color: rgb(0.3, 0.3, 0.6) });
   w.gap(18);
   w.text(`Date: ${date(new Date())}`, w.width, { right: true, color: GREY });
-  w.gap(28);
+  w.gap(logoWidth ? LOGO_HEIGHT - 4 : 28);
 
   const { student } = account;
   const billTo = student.parent ? `${student.parent.name} ${student.parent.surname}` : `${student.name} ${student.surname}`;
@@ -96,7 +114,7 @@ const COLS = { date: 0, desc: 80, debit: 380, credit: 440, balance: 495 };
 // Every invoice and payment in date order with a running balance
 export const statementPdf = async (account: Account, school: School) => {
   const w = await writer();
-  header(w, school, "STATEMENT", account);
+  await header(w, school, "STATEMENT", account);
 
   // By day; on the same day invoices come before payments (so the running
   // balance doesn't dip below zero) and monthly invoices go in month order
@@ -173,7 +191,7 @@ export const invoicePdf = async (
   school: School
 ) => {
   const w = await writer();
-  header(w, school, "INVOICE", account);
+  await header(w, school, "INVOICE", account);
   const status = account.allocation.get(invoice.id)!;
 
   w.text(`Invoice number: ${invoice.number}`, 0, { f: w.bold });
