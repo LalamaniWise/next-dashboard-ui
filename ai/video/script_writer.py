@@ -63,7 +63,9 @@ Rules
 
 JSON format
 {
-  "title": str, "subject": str, "grade": int, "topic": str, "language": "en" | "af",
+  "title": str, "subject": str, "grade": int, "topic": str, "subtopic": str, "language": "en" | "af",
+  // topic and subtopic go on the video's cover: short CAPS names, e.g.
+  // "Differential calculus" and "Stationary points" (at most 6 words each)
   "scenes": [
     {"type": "title", "heading": str, "subheading": str, "narration": str},
     {"type": "bullets", "heading": str, "bullets": [str], "narration": str},
@@ -194,8 +196,13 @@ def ask_until_valid(content, validate, what, backend, model, attempts, system=SY
 
 
 def write_lesson(subject, grade, topic, language="en", backend="anthropic",
-                 model=None, attempts=3, source=None):
+                 model=None, attempts=3, source=None, cover_topic=None, subtopic=None):
     text = f"Subject: {subject}\nGrade: {grade}\nTopic or request: {topic}\nLanguage: {language}"
+    # The teacher's own cover topic and subtopic: the lesson must use them
+    if cover_topic:
+        text += f"\nUse exactly this as the lesson's \"topic\": {cover_topic}"
+    if subtopic:
+        text += f"\nUse exactly this as the lesson's \"subtopic\" and focus the lesson on it: {subtopic}"
     return ask_until_valid(with_source(text, source), validate_lesson, "lesson",
                            backend, model, attempts)
 

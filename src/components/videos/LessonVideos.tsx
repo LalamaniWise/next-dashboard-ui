@@ -3,7 +3,7 @@ import Link from "next/link";
 import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { recentJobs, saveFinishedVideos, VideoJob, videoGradesFor, VideoServiceError } from "@/lib/videoService";
-import { embedUrl, parseYouTubeId, thumbnailUrl } from "@/lib/youtube";
+import { embedUrl, parseYouTubeId } from "@/lib/youtube";
 import {
   JobDownloads,
   JobProgress,
@@ -227,7 +227,7 @@ const LessonVideos = async ({
                           )}
                           {isAdmin && !published && <VideoDelete id={v.id} title={v.title} decline />}
                           <VideoEdit
-                            video={{ id: v.id, title: v.title, subjectName: v.subjectName, grade: v.grade }}
+                            video={{ id: v.id, title: v.title, subjectName: v.subjectName, grade: v.grade, topic: v.topic, subtopic: v.subtopic }}
                           />
                           {(published || !isAdmin) && <VideoDelete id={v.id} title={v.title} />}
                         </div>
@@ -275,7 +275,7 @@ const LessonVideos = async ({
                     className={`flex gap-3 rounded-lg p-2 transition ${active ? "bg-lamaSkyLight" : "hover:bg-gray-50"}`}
                   >
                     <div className="relative h-14 w-24 shrink-0 overflow-hidden rounded-md bg-gray-100">
-                      {id && <Image src={thumbnailUrl(id)} alt="" fill unoptimized className="object-cover" />}
+                      {id && <Image src={`/api/covers/video/${v.id}`} alt="" fill unoptimized className="object-cover" />}
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-gray-900 line-clamp-2">{v.title}</p>

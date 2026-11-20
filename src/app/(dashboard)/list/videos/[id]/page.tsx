@@ -5,7 +5,7 @@ import { AddVideoForm, PlaylistDelete, VideoControls } from "@/components/videos
 import { auth } from "@/lib/auth";
 import { materialAccessWhere } from "@/lib/materials";
 import prisma from "@/lib/prisma";
-import { embedUrl, thumbnailUrl, watchUrl } from "@/lib/youtube";
+import { embedUrl, watchUrl } from "@/lib/youtube";
 
 const PlaylistPage = async ({
   params,
@@ -137,7 +137,7 @@ const PlaylistPage = async ({
                       className="flex min-w-0 flex-1 items-center gap-3"
                     >
                       <Image
-                        src={thumbnailUrl(video.youtubeId)}
+                        src={`/api/covers/playlist-video/${video.id}`}
                         alt=""
                         width={112}
                         height={63}

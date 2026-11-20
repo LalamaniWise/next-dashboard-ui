@@ -627,6 +627,9 @@ model Video {
   subjectName String
   // The grade it was made for (8 to 12)
   grade       Int
+  // Shown on the video's cover, e.g. "Differential calculus" / "Stationary points"
+  topic       String?
+  subtopic    String?
   // Learners only see it once an admin publishes it; declined videos are removed
   status      VideoStatus @default(PENDING)
   // Who sees it once published: learners in these grades
@@ -639,4 +642,20 @@ model Video {
 enum VideoStatus {
   PENDING
   PUBLISHED
+}
+
+// A photo on the public website's gallery (classes, events, achievements).
+// The file is kept outside /public, in storage/gallery.
+model GalleryPhoto {
+  id           Int      @id @default(autoincrement())
+  caption      String?
+  // One of GALLERY_CATEGORIES in src/lib/gallery.ts
+  category     String
+  storedName   String   @unique
+  mimeType     String
+  size         Int
+  uploadedById String
+  createdAt    DateTime @default(now())
+
+  @@index([category])
 }

@@ -201,6 +201,59 @@ def test_restart_fails_half_done_jobs_and_resumes_queued_ones(tmp_path):
 
 # --- pipeline ----------------------------------------------------------------
 
+def fake_cover_step(mp4, lesson, job, outputs, settings):
+    cover = os.path.join(outputs, "cover.jpg")
+    with open(cover, "wb") as fh:
+        fh.write(b"jpg")
+    with_cover = mp4.replace(".mp4", "-cover.mp4")
+    os.replace(mp4, with_cover)
+    return with_cover, cover, pipeline.cover_details(lesson, job)
+
+
+def test_cover_prefers_the_teachers_topic_and_subtopic():
+    job = {**BODY, "coverTopic": "Calculus", "subtopic": "Turning points"}
+    d = pipeline.cover_details(LESSON, job)
+    assert (d["topic"], d["subtopic"], d["grades"], d["subject"]) == ("Calculus", "Turning points", [12], "Mathematics")
+    # without them: the AI's topic and subtopic
+    d = pipeline.cover_details({**LESSON, "topic": "Differential Calculus", "subtopic": "Stationary points"}, BODY)
+    assert (d["topic"], d["subtopic"]) == ("Differential Calculus", "Stationary points")
+    # an old lesson without a topic: the start of the request
+    d = pipeline.cover_details(LESSON, BODY)
+    assert d["topic"] == BODY["topic"][:80]
+
+
+def test_a_refused_thumbnail_does_not_fail_the_video(tmp_path, monkeypatch):
+    settings = make_settings(tmp_path, dry_run=False)
+
+    def refuse(video_id, image, s):
+        raise RuntimeError("<HttpError 403 ... 'forbidden'>")
+
+    monkeypatch.setitem(sys.modules, "youtube_upload", SimpleNamespace(set_thumbnail=refuse))
+    assert pipeline.thumbnail_step("VIDEO123456", "cover.jpg", settings) == "not-allowed"
+
+
+def test_job_request_cleans_the_cover_text(tmp_path):
+    from app import JobRequest
+    request = JobRequest(**{**BODY, "coverTopic": "  Differential   calculus ", "subtopic": "   "})
+    assert request.coverTopic == "Differential calculus" and request.subtopic is None
+    settings = make_settings(tmp_path)
+    with TestClient(create_app(settings, lambda job, progress: {"title": "t"})) as client:
+        too_long = client.post("/jobs", json={**BODY, "subtopic": "x" * 121}, headers=AUTH)
+        assert too_long.status_code == 422
+
+
+def test_cover_picture_is_drawn(tmp_path):
+    import cover
+    out = cover.make_cover({"subject": "Mathematics", "grades": [10, 11, 12], "topic": "Algebra",
+                            "subtopic": "Factorising trinomials", "language": "en"}, str(tmp_path / "c.jpg"))
+    from PIL import Image
+    assert Image.open(out).size == (1280, 720)
+    assert cover.grades_label([12]) == "Grade 12"
+    assert cover.grades_label([10, 11, 12]) == "Grades 10–12"
+    assert cover.grades_label([8, 12]) == "Grades 8 & 12"
+    assert cover.grades_label([11], "af") == "Graad 11"
+
+
 def test_pipeline_uploads_and_deletes_the_mp4(tmp_path, monkeypatch):
     settings = make_settings(tmp_path, dry_run=False, writer="anthropic")
     seen = {}
@@ -213,13 +266,17 @@ def test_pipeline_uploads_and_deletes_the_mp4(tmp_path, monkeypatch):
         return out_path
 
     def upload(path, title, description, language, s):
-        seen["upload"] = (os.path.exists(path), title, description, language)
+        seen["upload"] = (os.path.exists(path), title, description, language, path)
         return "VIDEO123456", "private"
+
+    def set_thumbnail(video_id, image, s):
+        seen["thumbnail"] = (video_id, os.path.basename(image))
 
     monkeypatch.setattr(pipeline, "write_step", lambda job, s, source=None: LESSON)
     monkeypatch.setattr(pipeline, "documents_step", lambda *a: None)
     monkeypatch.setattr(pipeline, "render_step", render)
-    monkeypatch.setitem(sys.modules, "youtube_upload", SimpleNamespace(upload=upload))
+    monkeypatch.setattr(pipeline, "cover_step", fake_cover_step)
+    monkeypatch.setitem(sys.modules, "youtube_upload", SimpleNamespace(upload=upload, set_thumbnail=set_thumbnail))
     steps = []
     job = {"id": "job1", **BODY}
     result = pipeline.make_runner(settings)(job, lambda status, **f: steps.append(status))
@@ -227,8 +284,11 @@ def test_pipeline_uploads_and_deletes_the_mp4(tmp_path, monkeypatch):
     assert steps == ["documents", "rendering", "uploading"]
     assert result == {"title": "Stationary points of a cubic",
                       "youtubeUrl": "https://www.youtube.com/watch?v=VIDEO123456",
-                      "privacy": "private", "files": ["activity", "memo"]}
-    exists, title, description, language = seen["upload"]
+                      "privacy": "private", "files": ["activity", "memo", "cover"],
+                      "lessonTopic": "Stationary points", "subtopic": None, "thumbnail": "set"}
+    exists, title, description, language, uploaded = seen["upload"]
+    assert uploaded.endswith("-cover.mp4")  # the video with its cover is what goes up
+    assert seen["thumbnail"] == ("VIDEO123456", "cover.jpg")
     assert exists and title == "Stationary points of a cubic" and language == "en"
     assert "Title: Stationary points of a cubic" in description
     assert "Subject: Mathematics" in description and "Grade: 12" in description
@@ -240,7 +300,7 @@ def test_pipeline_uploads_and_deletes_the_mp4(tmp_path, monkeypatch):
 def test_dry_run_skips_youtube(tmp_path, monkeypatch):
     settings = make_settings(tmp_path)
     monkeypatch.setitem(sys.modules, "youtube_upload", None)  # importing it would fail
-    url, privacy = pipeline.upload_step("x.mp4", LESSON, {"id": "j", **BODY}, settings)
+    video_id, url, privacy = pipeline.upload_step("x.mp4", LESSON, {"id": "j", **BODY}, settings)
     assert privacy == "dry-run"
     assert url.startswith("https://www.youtube.com/watch?v=")
     assert len(url.rsplit("=", 1)[1]) == 11
@@ -273,9 +333,11 @@ def test_dry_run_keeps_the_files_to_download(tmp_path, monkeypatch):
     monkeypatch.setattr(pipeline, "write_step", lambda job, s, source=None: LESSON)
     monkeypatch.setattr(pipeline, "documents_step", documents)
     monkeypatch.setattr(pipeline, "render_step", render)
+    monkeypatch.setattr(pipeline, "cover_step", fake_cover_step)
     with TestClient(create_app(settings, pipeline.make_runner(settings))) as client:
         job = wait_for(client, client.post("/jobs", json=BODY, headers=AUTH).json()["jobId"])
-        assert job["files"] == ["video", "activity", "memo"]
+        assert job["files"] == ["video", "activity", "memo", "cover"]
+        assert client.get(f"/jobs/{job['id']}/files/cover", headers=AUTH).headers["content-type"] == "image/jpeg"
         url = f"/jobs/{job['id']}/files"
         assert client.get(f"{url}/memo").status_code == 401
         assert client.get(f"{url}/video", headers=AUTH).content == b"mp4"

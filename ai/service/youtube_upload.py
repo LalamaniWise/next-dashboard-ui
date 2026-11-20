@@ -77,3 +77,14 @@ def upload(path, title, description, language, settings, sleep=time.sleep):
     if "id" not in response:
         raise RuntimeError(f"YouTube upload failed: {response}")
     return response["id"], response.get("status", {}).get("privacyStatus")
+
+
+def set_thumbnail(video_id, image_path, settings):
+    """Uploads the cover as the video's thumbnail. YouTube answers 403
+    "forbidden" until the channel is phone-verified (youtube.com/verify)."""
+    from googleapiclient.discovery import build
+    from googleapiclient.http import MediaFileUpload
+
+    youtube = build("youtube", "v3", credentials=credentials(settings), cache_discovery=False)
+    mimetype = "image/png" if image_path.lower().endswith(".png") else "image/jpeg"
+    youtube.thumbnails().set(videoId=video_id, media_body=MediaFileUpload(image_path, mimetype=mimetype)).execute()

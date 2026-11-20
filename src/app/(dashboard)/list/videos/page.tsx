@@ -10,7 +10,6 @@ import { resolveOrderBy, SortMap, sortOptions, toOptions } from "@/lib/listQuery
 import { materialAccessWhere } from "@/lib/materials";
 import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
-import { thumbnailUrl } from "@/lib/youtube";
 import { Prisma } from "@prisma/client";
 
 const SORTS: SortMap<Prisma.PlaylistOrderByWithRelationInput> = {
@@ -146,7 +145,7 @@ const VideoPlaylistsPage = async ({
                 <div className="relative aspect-video bg-gray-100">
                   {pl.videos[0] ? (
                     <Image
-                      src={thumbnailUrl(pl.videos[0].youtubeId)}
+                      src={`/api/covers/playlist/${pl.id}`}
                       alt=""
                       fill
                       unoptimized

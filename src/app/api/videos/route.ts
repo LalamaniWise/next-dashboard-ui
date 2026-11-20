@@ -35,7 +35,7 @@ export async function POST(request: Request) {
   }
 
   const parsed = lessonVideoSchema.safeParse(Object.fromEntries(
-    ["subject", "grade", "topic", "language", "voice", "board"].map((k) => [k, form.get(k) ?? ""])
+    ["subject", "grade", "topic", "language", "voice", "board", "coverTopic", "subtopic"].map((k) => [k, form.get(k) ?? ""])
   ));
   if (!parsed.success) return fail(parsed.error.issues[0]?.message ?? "Check the form.");
 

@@ -9,6 +9,7 @@ const NAV = [
   { href: "/about", label: "About" },
   { href: "/subjects", label: "Subjects" },
   { href: "/online-classes", label: "Online classes" },
+  { href: "/gallery", label: "Gallery" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -38,7 +39,7 @@ const SiteLayout = async ({ children }: { children: React.ReactNode }) => {
       <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
           <Link href="/" className="flex items-center gap-2 min-w-0">
-            <Image src={logoUrl} alt="" width={36} height={36} unoptimized className="h-9 w-9 object-contain" />
+            <Image src={logoUrl} alt="" width={56} height={56} unoptimized className="h-12 w-12 sm:h-14 sm:w-14 object-contain" />
             <span className="truncate font-semibold">{settings.schoolName}</span>
           </Link>
           <nav aria-label="Main" className="hidden lg:flex items-center gap-1">
@@ -74,6 +75,7 @@ const SiteLayout = async ({ children }: { children: React.ReactNode }) => {
       <footer className="border-t border-gray-100 bg-gray-50">
         <div className="mx-auto grid max-w-6xl gap-8 px-4 py-10 sm:grid-cols-2 lg:grid-cols-4 text-sm">
           <div className="flex flex-col gap-2">
+            <Image src={logoUrl} alt="" width={96} height={96} unoptimized className="h-24 w-24 rounded-xl bg-white p-1.5 object-contain shadow-sm" />
             <span className="font-semibold text-gray-900">{settings.schoolName}</span>
             <p className="text-gray-500">{siteContent(settings).tagline}</p>
           </div>
