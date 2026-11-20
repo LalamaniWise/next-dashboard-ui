@@ -1,6 +1,11 @@
 import "server-only";
 import type { LessonVideoSchema } from "./formValidationSchemas";
-import { LESSON_VIDEO_GRADES, LESSON_VIDEO_SUBJECTS, VideoJobStatus } from "./lessonVideoOptions";
+import {
+  LESSON_VIDEO_GRADES,
+  LESSON_VIDEO_SUBJECTS,
+  LessonVideoFile,
+  VideoJobStatus,
+} from "./lessonVideoOptions";
 import prisma from "./prisma";
 import { parseYouTubeId, watchUrl } from "./youtube";
 
@@ -17,6 +22,7 @@ export type VideoJob = {
   title: string | null;
   youtubeUrl: string | null;
   privacy: string | null;
+  files: LessonVideoFile[] | null;
   error: string | null;
   createdAt: string;
   updatedAt: string;
@@ -26,7 +32,7 @@ export class VideoServiceError extends Error {}
 
 export const JOB_ID = /^[a-f0-9]{32}$/;
 
-const serviceFetch = async <T>(path: string, init?: RequestInit): Promise<T> => {
+const serviceResponse = async (path: string, init?: RequestInit, timeoutMs = 10_000) => {
   const base = process.env.VIDEO_SERVICE_URL;
   const secret = process.env.VIDEO_SERVICE_SECRET;
   if (!base || !secret) {
@@ -41,7 +47,7 @@ const serviceFetch = async <T>(path: string, init?: RequestInit): Promise<T> => 
       ...init,
       headers: { "X-Video-Secret": secret, "Content-Type": "application/json" },
       cache: "no-store",
-      signal: AbortSignal.timeout(10_000),
+      signal: AbortSignal.timeout(timeoutMs),
     });
   } catch {
     throw new VideoServiceError(
@@ -60,14 +66,23 @@ const serviceFetch = async <T>(path: string, init?: RequestInit): Promise<T> => 
       typeof detail === "string" ? detail : `The video service answered with error ${res.status}.`
     );
   }
-  return res.json() as Promise<T>;
+  return res;
 };
 
-export const startJob = async (request: LessonVideoSchema) =>
+const serviceFetch = async <T>(path: string, init?: RequestInit, timeoutMs?: number): Promise<T> =>
+  (await serviceResponse(path, init, timeoutMs)).json() as Promise<T>;
+
+export type LessonSource = { mediaType: string; data: string };
+
+// An attached file travels with the request, so allow it more time
+export const startJob = async (request: LessonVideoSchema & { source?: LessonSource }) =>
   (await serviceFetch<{ jobId: string }>("/jobs", {
     method: "POST",
     body: JSON.stringify(request),
-  })).jobId;
+  }, 60_000)).jobId;
+
+export const jobFile = (jobId: string, kind: LessonVideoFile) =>
+  serviceResponse(`/jobs/${jobId}/files/${kind}`, undefined, 120_000);
 
 export const getJob = (jobId: string) => serviceFetch<VideoJob>(`/jobs/${jobId}`);
 

@@ -13,6 +13,8 @@ import secrets
 import threading
 import time
 
+from sources import remove_source
+
 log = logging.getLogger("video-service")
 
 FINISHED = ("done", "failed")
@@ -21,6 +23,7 @@ KEEP_JOBS = 200
 STEP_MESSAGES = {
     "queued": "Waiting for other videos to finish...",
     "writing": "Writing lesson...",
+    "documents": "Writing the activity and memo...",
     "rendering": "Rendering...",
     "uploading": "Uploading to YouTube...",
     "done": "Done",
@@ -28,7 +31,7 @@ STEP_MESSAGES = {
 }
 
 PUBLIC_FIELDS = ("id", "status", "step", "subject", "grade", "topic", "language", "voice", "board",
-                 "title", "youtubeUrl", "privacy", "error", "createdAt", "updatedAt")
+                 "title", "youtubeUrl", "privacy", "files", "error", "createdAt", "updatedAt")
 
 
 class QueueFull(Exception):
@@ -74,6 +77,7 @@ class JobStore:
                 self.queue.put(job["id"])
             elif job["status"] not in FINISHED:
                 # It was half-way through when the service stopped
+                remove_source(job.get("source"))
                 job.update(status="failed", step=STEP_MESSAGES["failed"], updatedAt=_now(),
                            error="The video service restarted before this video was finished. "
                                  "Please create it again.")
@@ -98,9 +102,11 @@ class JobStore:
                 "status": "queued",
                 "step": STEP_MESSAGES["queued"],
                 **{k: request[k] for k in ("subject", "grade", "topic", "language", "voice", "board")},
+                "source": request.get("source"),
                 "title": None,
                 "youtubeUrl": None,
                 "privacy": None,
+                "files": None,
                 "error": None,
                 "createdAt": _now(),
                 "updatedAt": _now(),

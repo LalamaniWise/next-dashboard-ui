@@ -2,24 +2,27 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
+import { FormEvent, ReactNode, useActionState, useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import {
+  LESSON_SOURCE_TYPES,
   LESSON_VIDEO_BOARDS,
+  LESSON_VIDEO_FILES,
   LESSON_VIDEO_GRADES,
   LESSON_VIDEO_LANGUAGES,
   LESSON_VIDEO_SUBJECTS,
   LESSON_VIDEO_VOICES,
+  LessonVideoFile,
+  MAX_LESSON_SOURCE_MB,
   PROGRESS_POLL_MS,
   VideoProgress,
 } from "@/lib/lessonVideoOptions";
-import { deleteVideo, startVideo, videoProgress } from "@/lib/videoActions";
+import { deleteVideo, publishVideo, saveVideo, videoProgress } from "@/lib/videoActions";
 
 const initial = { success: false, error: false } as {
   success: boolean;
   error: boolean;
   message?: string;
-  jobId?: string;
 };
 
 const label = "text-xs font-medium text-gray-600";
@@ -34,6 +37,17 @@ export const AuditNotice = () => (
       and parents can&apos;t watch it. After the audit is approved, new videos are
       uploaded as unlisted, and earlier ones can be changed to unlisted in YouTube Studio.
     </p>
+  </div>
+);
+
+// Download links for what a finished job made
+export const JobDownloads = ({ jobId, files }: { jobId: string; files: LessonVideoFile[] }) => (
+  <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+    {files.map((kind) => (
+      <a key={kind} href={`/api/videos/${jobId}/${kind}`} className="text-indigo-600 hover:underline">
+        Download {LESSON_VIDEO_FILES[kind].label}
+      </a>
+    ))}
   </div>
 );
 
@@ -77,18 +91,24 @@ export const JobProgress = ({ jobId, initialStep }: { jobId: string; initialStep
   }
   if (progress.status === "done" && progress.privacy === "dry-run") {
     return (
-      <p role="status" className="text-sm text-green-600">
-        Done: &quot;{progress.title}&quot; was rendered. Dry run: nothing was uploaded to YouTube or
-        added to the list.
-      </p>
+      <div role="status" className="flex flex-col gap-1">
+        <p className="text-sm text-green-600">
+          Done: &quot;{progress.title}&quot; is ready to download. Test mode: nothing was uploaded to
+          YouTube or added to the list.
+        </p>
+        <JobDownloads jobId={jobId} files={progress.files ?? []} />
+      </div>
     );
   }
   if (progress.status === "done") {
     return (
-      <p role="status" className="text-sm text-green-600">
-        Done: &quot;{progress.title}&quot; is on YouTube and in the list below.
-        {progress.privacy === "private" && " YouTube has made it private for now (see the note above)."}
-      </p>
+      <div role="status" className="flex flex-col gap-1">
+        <p className="text-sm text-green-600">
+          Done: &quot;{progress.title}&quot; is on YouTube and in the list below, waiting for an admin to publish it.
+          {progress.privacy === "private" && " YouTube has made it private for now (see the note above)."}
+        </p>
+        <JobDownloads jobId={jobId} files={progress.files ?? []} />
+      </div>
     );
   }
   return (
@@ -140,9 +160,35 @@ export const LessonVideoCreate = () => {
 };
 
 const CreateVideoDialog = ({ onClose }: { onClose: (started: boolean) => void }) => {
-  const [state, action, pending] = useActionState(startVideo, initial);
-  const jobId = state.success ? state.jobId : undefined;
+  const [jobId, setJobId] = useState<string>();
+  const [error, setError] = useState<string>();
+  const [pending, setPending] = useState(false);
   const close = () => onClose(!!jobId);
+
+  const submit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = new FormData(e.currentTarget);
+    const file = form.get("file");
+    const hasFile = file instanceof File && file.size > 0;
+    if (!hasFile) form.delete("file");
+    if (!hasFile && !String(form.get("topic")).trim()) {
+      return setError("Type what the video should explain, or attach a file.");
+    }
+    if (hasFile && file.size > MAX_LESSON_SOURCE_MB * 1024 * 1024) {
+      return setError(`Files can be at most ${MAX_LESSON_SOURCE_MB} MB.`);
+    }
+    setError(undefined);
+    setPending(true);
+    try {
+      const res = await fetch("/api/videos", { method: "POST", body: form });
+      const body = await res.json().catch(() => null);
+      if (res.ok && body?.jobId) setJobId(body.jobId);
+      else setError(body?.error ?? "The video couldn't be started. Please try again.");
+    } catch {
+      setError("The video couldn't be started. Check your connection and try again.");
+    }
+    setPending(false);
+  };
 
   return (
     <div
@@ -160,9 +206,9 @@ const CreateVideoDialog = ({ onClose }: { onClose: (started: boolean) => void })
         </button>
         <h2 className="text-lg font-semibold mb-1">Create a lesson video</h2>
         <p className="text-sm text-gray-500 mb-4">
-          AI writes a 4 to 6 minute lesson for learners starting from zero. A stick-man teacher
-          explains it step by step on a whiteboard or chalkboard, then the video is uploaded to
-          the school&apos;s YouTube channel. It takes several minutes.
+          Type what to teach, attach a PDF or picture to teach from, or both. AI writes a 4 to 6
+          minute lesson that a stick-man teacher explains step by step, plus an activity PDF and a
+          memo PDF to download. Check them before you share them. It takes several minutes.
         </p>
         <AuditNotice />
 
@@ -174,7 +220,7 @@ const CreateVideoDialog = ({ onClose }: { onClose: (started: boolean) => void })
             </p>
           </div>
         ) : (
-          <form action={action} className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <form onSubmit={submit} className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label htmlFor="lv-subject" className={label}>Subject</label>
               <select id="lv-subject" name="subject" required defaultValue="" className="form-control">
@@ -194,15 +240,26 @@ const CreateVideoDialog = ({ onClose }: { onClose: (started: boolean) => void })
               </select>
             </div>
             <div className="flex flex-col gap-1.5 sm:col-span-2">
-              <label htmlFor="lv-topic" className={label}>Topic</label>
-              <input
+              <label htmlFor="lv-topic" className={label}>What should the video explain?</label>
+              <textarea
                 id="lv-topic"
                 name="topic"
-                required
-                minLength={3}
-                maxLength={200}
+                rows={3}
+                maxLength={1000}
                 className="form-control"
-                placeholder="e.g. Stationary points of a cubic function"
+                placeholder="e.g. Explain exponent laws step by step with examples"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5 sm:col-span-2">
+              <label htmlFor="lv-file" className={label}>
+                PDF or picture <span className="text-gray-400 font-normal">(optional, up to {MAX_LESSON_SOURCE_MB} MB)</span>
+              </label>
+              <input
+                id="lv-file"
+                name="file"
+                type="file"
+                accept={Object.keys(LESSON_SOURCE_TYPES).join(",")}
+                className="form-control"
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -229,7 +286,7 @@ const CreateVideoDialog = ({ onClose }: { onClose: (started: boolean) => void })
                 ))}
               </select>
             </div>
-            {state.error && <p role="alert" className="sm:col-span-2 text-sm text-red-500">{state.message}</p>}
+            {error && <p role="alert" className="sm:col-span-2 text-sm text-red-500">{error}</p>}
             <button className="btn-primary sm:col-span-2" disabled={pending}>
               {pending ? "Starting..." : "Create video"}
             </button>
@@ -240,7 +297,9 @@ const CreateVideoDialog = ({ onClose }: { onClose: (started: boolean) => void })
   );
 };
 
-export const VideoDelete = ({ id, title }: { id: number; title: string }) => {
+// Removes a video from the app. With decline, an admin turns down a video
+// waiting for approval.
+export const VideoDelete = ({ id, title, decline = false }: { id: number; title: string; decline?: boolean }) => {
   const [state, action, pending] = useActionState(deleteVideo, initial);
 
   useEffect(() => {
@@ -248,21 +307,215 @@ export const VideoDelete = ({ id, title }: { id: number; title: string }) => {
     else if (state.error) toast.error(state.message);
   }, [state]);
 
+  const question = decline
+    ? `Decline "${title}" and remove it from the app? It stays on YouTube.`
+    : `Remove "${title}" from the app? It stays on YouTube.`;
+
   return (
     <form
       action={action}
       onSubmit={(e) => {
-        if (!confirm(`Remove "${title}" from the app? It stays on YouTube.`)) e.preventDefault();
+        if (!confirm(question)) e.preventDefault();
       }}
     >
       <input type="hidden" name="id" value={id} />
+      {decline ? (
+        <>
+          <input type="hidden" name="decline" value="1" />
+          <button
+            disabled={pending}
+            className="rounded-md border border-red-200 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+          >
+            Decline
+          </button>
+        </>
+      ) : (
+        <button
+          title="Remove from the app"
+          disabled={pending}
+          className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple hover:brightness-95 disabled:opacity-50"
+        >
+          <Image src="/delete.png" alt="Remove" width={16} height={16} />
+        </button>
+      )}
+    </form>
+  );
+};
+
+const Dialog = ({ title, onClose, children }: { title: string; onClose: () => void; children: ReactNode }) => (
+  <div
+    className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    onClick={(e) => e.target === e.currentTarget && onClose()}
+  >
+    <div role="dialog" aria-modal="true" className="bg-white p-6 rounded-2xl shadow-xl relative w-full max-w-lg max-h-[90vh] overflow-y-auto">
       <button
-        title="Remove from the app"
-        disabled={pending}
-        className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaPurple hover:brightness-95 disabled:opacity-50"
+        type="button"
+        aria-label="Close"
+        className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+        onClick={onClose}
       >
-        <Image src="/delete.png" alt="Remove" width={16} height={16} />
+        ✕
+      </button>
+      <h2 className="text-lg font-semibold mb-4">{title}</h2>
+      {children}
+    </div>
+  </div>
+);
+
+// Closes the dialog and shows a toast once a form's action has worked
+const useFormResult = (state: typeof initial, onDone: () => void) => {
+  const router = useRouter();
+  useEffect(() => {
+    if (!state.success) return;
+    toast(state.message);
+    onDone();
+    router.refresh();
+  }, [state, onDone, router]);
+};
+
+export type EditableVideo = { id: number; title: string; subjectName: string; grade: number };
+
+const VideoForm = ({ video, onDone }: { video?: EditableVideo; onDone: () => void }) => {
+  const [state, action, pending] = useActionState(saveVideo, initial);
+  useFormResult(state, onDone);
+
+  return (
+    <form action={action} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {video ? (
+        <input type="hidden" name="id" value={video.id} />
+      ) : (
+        <div className="flex flex-col gap-1.5 sm:col-span-2">
+          <label htmlFor="vf-url" className={label}>YouTube link</label>
+          <input id="vf-url" name="youtubeUrl" required className="form-control" placeholder="https://www.youtube.com/watch?v=..." />
+        </div>
+      )}
+      <div className="flex flex-col gap-1.5 sm:col-span-2">
+        <label htmlFor="vf-title" className={label}>Title</label>
+        <input id="vf-title" name="title" required maxLength={150} defaultValue={video?.title} className="form-control" />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="vf-subject" className={label}>Subject</label>
+        <select id="vf-subject" name="subject" required defaultValue={video?.subjectName ?? ""} className="form-control">
+          <option value="" disabled>Select a subject</option>
+          {LESSON_VIDEO_SUBJECTS.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="vf-grade" className={label}>Made for</label>
+        <select id="vf-grade" name="grade" required defaultValue={video?.grade ?? ""} className="form-control">
+          <option value="" disabled>Select a grade</option>
+          {LESSON_VIDEO_GRADES.map((g) => (
+            <option key={g} value={g}>Grade {g}</option>
+          ))}
+        </select>
+      </div>
+      {state.error && <p role="alert" className="sm:col-span-2 text-sm text-red-500">{state.message}</p>}
+      <button className="btn-primary sm:col-span-2" disabled={pending}>
+        {pending ? "Saving..." : video ? "Save" : "Add video"}
       </button>
     </form>
+  );
+};
+
+// Adds an existing YouTube video. It waits for an admin to publish it.
+export const VideoAdd = () => {
+  const [open, setOpen] = useState(false);
+  const close = useCallback(() => setOpen(false), []);
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(true)} className="rounded-md border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+        Add YouTube video
+      </button>
+      {open && (
+        <Dialog title="Add a YouTube video" onClose={close}>
+          <p className="text-sm text-gray-500 mb-4">Learners see it once an admin publishes it.</p>
+          <VideoForm onDone={close} />
+        </Dialog>
+      )}
+    </>
+  );
+};
+
+export const VideoEdit = ({ video }: { video: EditableVideo }) => {
+  const [open, setOpen] = useState(false);
+  const close = useCallback(() => setOpen(false), []);
+  return (
+    <>
+      <button
+        type="button"
+        title="Edit"
+        onClick={() => setOpen(true)}
+        className="w-7 h-7 flex items-center justify-center rounded-full bg-lamaSky hover:brightness-95"
+      >
+        <Image src="/update.png" alt="Edit" width={16} height={16} />
+      </button>
+      {open && (
+        <Dialog title="Edit video" onClose={close}>
+          <VideoForm video={video} onDone={close} />
+        </Dialog>
+      )}
+    </>
+  );
+};
+
+// An admin picks the grades that see a video, publishing it if it was waiting
+export const VideoPublish = ({
+  id,
+  title,
+  published,
+  grades,
+  selected,
+}: {
+  id: number;
+  title: string;
+  published: boolean;
+  grades: { id: number; level: number }[];
+  selected: number[];
+}) => {
+  const [open, setOpen] = useState(false);
+  const close = useCallback(() => setOpen(false), []);
+  const [state, action, pending] = useActionState(publishVideo, initial);
+  useFormResult(state, close);
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className={
+          published
+            ? "rounded-md border border-gray-300 px-2 py-1 text-xs font-medium text-gray-700 hover:bg-gray-50"
+            : "rounded-md bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700"
+        }
+      >
+        {published ? "Grades" : "Approve"}
+      </button>
+      {open && (
+        <Dialog title={published ? "Change who sees this video" : "Approve and publish"} onClose={close}>
+          <p className="text-sm text-gray-500 mb-4">
+            &quot;{title}&quot; shows for students and parents in the grades you tick.
+          </p>
+          <form action={action} className="flex flex-col gap-4">
+            <input type="hidden" name="id" value={id} />
+            <fieldset className="flex flex-wrap gap-3">
+              <legend className={`${label} mb-2`}>Grades</legend>
+              {grades.map((g) => (
+                <label key={g.id} className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-sm">
+                  <input type="checkbox" name="grades" value={g.id} defaultChecked={selected.includes(g.id)} />
+                  Grade {g.level}
+                </label>
+              ))}
+            </fieldset>
+            {grades.length === 0 && <p className="text-sm text-gray-500">Add the school&apos;s grades first.</p>}
+            {state.error && <p role="alert" className="text-sm text-red-500">{state.message}</p>}
+            <button className="btn-primary" disabled={pending || grades.length === 0}>
+              {pending ? "Publishing..." : published ? "Save grades" : "Publish"}
+            </button>
+          </form>
+        </Dialog>
+      )}
+    </>
   );
 };

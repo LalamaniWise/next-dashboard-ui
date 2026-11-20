@@ -27,6 +27,22 @@ every request needs the shared secret, so the browser never sees either.
    Put the same `VIDEO_SERVICE_SECRET`, plus `VIDEO_SERVICE_URL=http://127.0.0.1:8765`,
    in the app's `.env`.
 
+## What a video job makes
+
+On **Create video**, type what the lesson should explain, attach a PDF or a picture
+(up to 10 MB) for it to teach from, or do both. Each job makes the video plus
+an activity PDF and a memo PDF, typeset with LaTeX. Admins and teachers download them
+from the Videos page; the service keeps the files of the last 30 jobs. In a dry run
+the video is kept to download too.
+
+## Voices
+
+- **Computer voice:** espeak, nothing to set up.
+- **Cori and Northern English man:** ready-made English Piper voices. Run
+  `python ai/voice/get_voices.py` once to download them (about 63 MB each). Their
+  licences require credit, so it is added to each video's YouTube description.
+- **Your trained voice:** set `PIPER_VOICE_EN` or `PIPER_VOICE_AF` (see `../voice/README.md`).
+
 ## Test it without Claude or YouTube
 
 In `ai/service/.env`:

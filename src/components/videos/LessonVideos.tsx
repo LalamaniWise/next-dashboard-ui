@@ -1,9 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { recentJobs, saveFinishedVideos, VideoJob, videoGradesFor, VideoServiceError } from "@/lib/videoService";
 import { embedUrl, parseYouTubeId, thumbnailUrl } from "@/lib/youtube";
-import { JobProgress, LessonVideoCreate, VideoDelete } from "./LessonVideoForms";
+import {
+  JobDownloads,
+  JobProgress,
+  LessonVideoCreate,
+  VideoAdd,
+  VideoDelete,
+  VideoEdit,
+  VideoPublish,
+} from "./LessonVideoForms";
 
 const PER_PAGE = 10;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -21,9 +30,9 @@ const hrefWith = (query: Query, changes: Query) => {
   return `/list/videos${text ? `?${text}` : ""}#lesson-videos`;
 };
 
-// Videos being made, and ones that failed in the last day. Finished ones
-// nobody waited for are saved here.
-const serviceJobs = async (): Promise<{ jobs: VideoJob[]; problem?: string }> => {
+// Videos being made, ones that failed in the last day, and finished ones with
+// files to download. Finished ones nobody waited for are saved here.
+const serviceJobs = async (): Promise<{ jobs: VideoJob[]; ready: VideoJob[]; problem?: string }> => {
   try {
     const jobs = await recentJobs();
     await saveFinishedVideos(jobs);
@@ -33,11 +42,13 @@ const serviceJobs = async (): Promise<{ jobs: VideoJob[]; problem?: string }> =>
           !["done", "failed"].includes(j.status) ||
           (j.status === "failed" && Date.now() - Date.parse(j.updatedAt) < DAY_MS)
       ),
+      ready: jobs.filter((j) => j.status === "done" && j.files?.length),
     };
   } catch (err) {
     if (!(err instanceof VideoServiceError)) console.log(err);
     return {
       jobs: [],
+      ready: [],
       problem: err instanceof VideoServiceError ? err.message : "The video service couldn't be checked.",
     };
   }
@@ -53,19 +64,29 @@ const LessonVideos = async ({
   query: Query;
 }) => {
   const canCreate = role === "admin" || role === "teacher";
+  const isAdmin = role === "admin";
   const grades = await videoGradesFor(role, userId);
-  const where = grades ? { grade: { in: grades } } : {};
+  // Learners see published videos for their grades; staff see every video,
+  // those waiting for approval first
+  const where: Prisma.VideoWhereInput = grades
+    ? { status: "PUBLISHED", grades: { some: { level: { in: grades } } } }
+    : {};
   const page = Math.max(1, parseInt(query.lvpage ?? "1") || 1);
 
-  const [videos, count, service] = await Promise.all([
+  // Finished jobs are saved before the list is read, so new videos show straight away
+  const service = canCreate
+    ? await serviceJobs()
+    : { jobs: [] as VideoJob[], ready: [] as VideoJob[], problem: undefined };
+  const [videos, count, schoolGrades] = await Promise.all([
     prisma.video.findMany({
       where,
-      orderBy: { createdAt: "desc" },
+      include: { grades: { select: { id: true, level: true }, orderBy: { level: "asc" } } },
+      orderBy: [...(canCreate ? [{ status: "asc" as const }] : []), { createdAt: "desc" }],
       take: PER_PAGE,
       skip: PER_PAGE * (page - 1),
     }),
     prisma.video.count({ where }),
-    canCreate ? serviceJobs() : Promise.resolve({ jobs: [] as VideoJob[], problem: undefined }),
+    isAdmin ? prisma.grade.findMany({ select: { id: true, level: true }, orderBy: { level: "asc" } }) : [],
   ]);
 
   // Learners and parents with nothing to watch don't need this section
@@ -98,14 +119,26 @@ const LessonVideos = async ({
           <h1 className="text-lg font-semibold">Lesson videos</h1>
           <p className="text-xs text-gray-500">
             {canCreate
-              ? "Short lessons written by AI, animated, and uploaded to the school's YouTube channel."
+              ? "Short AI lessons from your request or file, with an activity and memo to download."
               : role === "parent"
               ? "Short video lessons for your children's grades."
               : "Short video lessons for your grade."}
           </p>
         </div>
-        {canCreate && <LessonVideoCreate />}
+        {canCreate && (
+          <div className="flex items-center gap-2">
+            <VideoAdd />
+            <LessonVideoCreate />
+          </div>
+        )}
       </div>
+      {canCreate && (
+        <p className="mt-2 text-xs text-gray-500">
+          {isAdmin
+            ? "New videos wait for you to approve them. Approve one to publish it to the grades you choose, or decline it to remove it."
+            : "New videos wait for an admin to approve them before students and parents can see them."}
+        </p>
+      )}
 
       {canCreate && (service.problem || service.jobs.length > 0) && (
         <div className="mt-4 flex flex-col gap-3 rounded-lg border border-gray-200 p-3">
@@ -121,6 +154,20 @@ const LessonVideos = async ({
         </div>
       )}
 
+      {service.ready.length > 0 && (
+        <div className="mt-4 flex flex-col gap-3 rounded-lg border border-gray-200 p-3">
+          <h2 className="text-sm font-semibold text-gray-900">Ready to download</h2>
+          {service.ready.map((job) => (
+            <div key={job.id} className="flex flex-col gap-1">
+              <p className="text-xs text-gray-500">
+                {job.title ?? job.topic} · {job.subject} · Grade {job.grade}
+              </p>
+              <JobDownloads jobId={job.id} files={job.files ?? []} />
+            </div>
+          ))}
+        </div>
+      )}
+
       {canCreate ? (
         count === 0 ? (
           <p className="mt-4 text-sm text-gray-500">No lesson videos yet. Use Create video to make one.</p>
@@ -131,29 +178,63 @@ const LessonVideos = async ({
                 <tr className="text-left text-gray-500">
                   <th className="py-2 pr-4 font-medium">Title</th>
                   <th className="py-2 pr-4 font-medium hidden md:table-cell">Subject</th>
+                  <th className="py-2 pr-4 font-medium">Status</th>
                   <th className="py-2 pr-4 font-medium">YouTube</th>
                   <th className="py-2 pr-4 font-medium hidden md:table-cell">Added</th>
                   <th className="py-2 font-medium"><span className="sr-only">Actions</span></th>
                 </tr>
               </thead>
               <tbody>
-                {videos.map((v) => (
-                  <tr key={v.id} className="border-t border-gray-100 even:bg-slate-50">
-                    <td className="py-2 pr-4 font-medium text-gray-900">{v.title}</td>
-                    <td className="py-2 pr-4 hidden md:table-cell text-gray-600">
-                      {v.subjectName} · Grade {v.grade}
-                    </td>
-                    <td className="py-2 pr-4">
-                      <a href={v.youtubeUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">
-                        Open
-                      </a>
-                    </td>
-                    <td className="py-2 pr-4 hidden md:table-cell text-gray-600">{dateText(v.createdAt)}</td>
-                    <td className="py-2">
-                      <VideoDelete id={v.id} title={v.title} />
-                    </td>
-                  </tr>
-                ))}
+                {videos.map((v) => {
+                  const published = v.status === "PUBLISHED";
+                  return (
+                    <tr key={v.id} className="border-t border-gray-100 even:bg-slate-50">
+                      <td className="py-2 pr-4 font-medium text-gray-900">{v.title}</td>
+                      <td className="py-2 pr-4 hidden md:table-cell text-gray-600">
+                        {v.subjectName} · Made for Grade {v.grade}
+                      </td>
+                      <td className="py-2 pr-4">
+                        {published ? (
+                          <span className="text-xs text-green-700">
+                            Published · {v.grades.map((g) => `Grade ${g.level}`).join(", ")}
+                          </span>
+                        ) : (
+                          <span className="rounded-full bg-lamaYellowLight px-2 py-0.5 text-xs font-medium text-gray-700">
+                            Waiting for approval
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-2 pr-4">
+                        <a href={v.youtubeUrl} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:underline">
+                          Open
+                        </a>
+                      </td>
+                      <td className="py-2 pr-4 hidden md:table-cell text-gray-600">{dateText(v.createdAt)}</td>
+                      <td className="py-2">
+                        <div className="flex items-center gap-2">
+                          {isAdmin && (
+                            <VideoPublish
+                              id={v.id}
+                              title={v.title}
+                              published={published}
+                              grades={schoolGrades}
+                              selected={
+                                published
+                                  ? v.grades.map((g) => g.id)
+                                  : schoolGrades.filter((g) => g.level === v.grade).map((g) => g.id)
+                              }
+                            />
+                          )}
+                          {isAdmin && !published && <VideoDelete id={v.id} title={v.title} decline />}
+                          <VideoEdit
+                            video={{ id: v.id, title: v.title, subjectName: v.subjectName, grade: v.grade }}
+                          />
+                          {(published || !isAdmin) && <VideoDelete id={v.id} title={v.title} />}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

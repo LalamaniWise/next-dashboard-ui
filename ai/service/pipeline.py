@@ -1,4 +1,5 @@
-"""One lesson video: write the lesson, render it, upload it to YouTube."""
+"""One lesson video: write the lesson, its activity and memo, render it, and
+upload it to YouTube."""
 
 import json
 import os
@@ -6,7 +7,8 @@ import secrets
 import shutil
 import sys
 
-from config import SAMPLE_LESSON, VIDEO_DIR
+from config import JOB_FILES, KEEP_OUTPUTS, PIPER_LIBRARY, SAMPLE_LESSON, VIDEO_DIR, library_model
+from sources import load_source, remove_source
 
 if VIDEO_DIR not in sys.path:
     sys.path.insert(0, VIDEO_DIR)
@@ -14,19 +16,35 @@ if VIDEO_DIR not in sys.path:
 LANGUAGE_NAMES = {"en": "English", "af": "Afrikaans"}
 
 
-def write_step(job, settings) -> dict:
+def write_step(job, settings, source=None) -> dict:
     if settings.writer == "sample":
         with open(SAMPLE_LESSON, encoding="utf-8") as fh:
             return json.load(fh)
     from script_writer import write_lesson
-    return write_lesson(job["subject"], job["grade"], job["topic"], job["language"])
+    return write_lesson(job["subject"], job["grade"], job["topic"], job["language"], source=source)
+
+
+def documents_step(job, lesson, source, out_dir, settings):
+    """Writes activity.pdf and memo.pdf. A worksheet that won't typeset goes back
+    to the writer to fix."""
+    from worksheet import SAMPLE_ACTIVITY, make_pdfs, validate_activity
+    details = {k: job[k] for k in ("subject", "grade", "language")}
+    if settings.writer == "sample":
+        make_pdfs(validate_activity(SAMPLE_ACTIVITY), details, out_dir)
+        return
+    from script_writer import write_activity
+    write_activity(job["subject"], job["grade"], job["topic"], job["language"], lesson, source=source,
+                   check=lambda activity: make_pdfs(activity, details, out_dir))
 
 
 def render_step(lesson_path, out_path, job, settings) -> str:
     from render_lesson import render
-    voice_model = settings.piper_voices.get(job["language"]) if job["voice"] == "piper" else None
+    backend = job["voice"]
+    voice_model = settings.piper_voices.get(job["language"]) if backend == "piper" else None
+    if backend in PIPER_LIBRARY:
+        backend, voice_model = "piper", library_model(backend)
     # Jobs saved before boards were added have no board: use the whiteboard
-    return render(lesson_path, out_path, tts_backend=job["voice"], quality=settings.quality,
+    return render(lesson_path, out_path, tts_backend=backend, quality=settings.quality,
                   voice_model=voice_model, board=job.get("board", "white"))
 
 
@@ -39,11 +57,14 @@ def youtube_text(text, limit):
 def video_details(lesson, job):
     title = youtube_text(lesson.get("title") or job["topic"], 100)
     description = (
+        f"Title: {title}\n"
         f"Subject: {job['subject']}\n"
         f"Grade: {job['grade']}\n"
         f"Topic: {youtube_text(job['topic'], 500)}\n"
         f"Language: {LANGUAGE_NAMES.get(job['language'], job['language'])}"
     )
+    if job["voice"] in PIPER_LIBRARY:
+        description += "\n\n" + PIPER_LIBRARY[job["voice"]]["credit"]
     return title, description
 
 
@@ -58,26 +79,49 @@ def upload_step(mp4_path, lesson, job, settings):
     return f"https://www.youtube.com/watch?v={video_id}", privacy
 
 
+def prune_outputs(settings):
+    folders = [e for e in os.scandir(settings.outputs_dir) if e.is_dir()]
+    folders.sort(key=lambda e: e.stat().st_mtime, reverse=True)
+    for old in folders[KEEP_OUTPUTS:]:
+        shutil.rmtree(old.path, ignore_errors=True)
+
+
 def make_runner(settings):
     def run(job, progress):
         work = os.path.join(settings.work_dir, job["id"])
+        outputs = os.path.join(settings.outputs_dir, job["id"])
         os.makedirs(work, exist_ok=True)
+        os.makedirs(outputs, exist_ok=True)
 
-        lesson = write_step(job, settings)
-        title, _ = video_details(lesson, job)
-        lesson_path = os.path.join(work, "lesson.json")
-        with open(lesson_path, "w", encoding="utf-8") as fh:
-            json.dump(lesson, fh, indent=2, ensure_ascii=False)
+        try:
+            source = load_source(job.get("source"))
+            lesson = write_step(job, settings, source)
+            title, _ = video_details(lesson, job)
+            lesson_path = os.path.join(work, "lesson.json")
+            with open(lesson_path, "w", encoding="utf-8") as fh:
+                json.dump(lesson, fh, indent=2, ensure_ascii=False)
 
-        progress("rendering", title=title)
-        mp4 = render_step(lesson_path, os.path.join(work, "lesson.mp4"), job, settings)
+            # Before rendering, so a problem shows up in seconds, not minutes
+            progress("documents", title=title)
+            documents_step(job, lesson, source, outputs, settings)
 
-        progress("uploading")
-        url, privacy = upload_step(mp4, lesson, job, settings)
+            progress("rendering")
+            mp4 = render_step(lesson_path, os.path.join(work, "lesson.mp4"), job, settings)
 
-        # Only the YouTube copy is kept. After a failure the files stay in
-        # work/ so the video can be checked or uploaded by hand.
+            progress("uploading")
+            url, privacy = upload_step(mp4, lesson, job, settings)
+        finally:
+            remove_source(job.get("source"))
+
+        # With YouTube only its copy of the video is kept; a dry run keeps the
+        # file to download. After a failure the files stay in work/ so the
+        # video can be checked or uploaded by hand.
+        files = ["activity", "memo"]
+        if settings.dry_run:
+            shutil.move(mp4, os.path.join(outputs, JOB_FILES["video"][0]))
+            files.insert(0, "video")
         shutil.rmtree(work, ignore_errors=True)
-        return {"title": title, "youtubeUrl": url, "privacy": privacy}
+        prune_outputs(settings)
+        return {"title": title, "youtubeUrl": url, "privacy": privacy, "files": files}
 
     return run

@@ -12,18 +12,18 @@ datasource db {
 // Login accounts. The id matches the person's Admin/Teacher/Student/Parent
 // row, and password is a bcrypt hash.
 model User {
-  id                 String   @id @default(cuid())
-  username           String   @unique
+  id                 String                 @id @default(cuid())
+  username           String                 @unique
   password           String
   role               String
-  createdAt          DateTime @default(now())
+  createdAt          DateTime               @default(now())
   // Set when an admin sets the password; the user must choose their own
-  mustChangePassword Boolean  @default(false)
+  mustChangePassword Boolean                @default(false)
   // Sessions issued before this are rejected, so changing a password signs
   // out every other device
-  passwordChangedAt  DateTime @default(now())
+  passwordChangedAt  DateTime               @default(now())
   // When on, signing in also needs a code sent to the account's email
-  twoFactorEnabled   Boolean  @default(false)
+  twoFactorEnabled   Boolean                @default(false)
   resetTokens        PasswordResetToken[]
   emailCodes         EmailCode[]
   resetRequests      PasswordResetRequest[]
@@ -154,6 +154,7 @@ model Grade {
   registrations StudentRegistration[]
   materials     Material[]
   playlists     Playlist[]
+  videos        Video[]
 }
 
 model Class {
@@ -616,17 +617,26 @@ model Enquiry {
   @@index([status])
 }
 
-// A lesson video made by the AI video service and uploaded to YouTube. Only
-// its name and link are kept here; the video itself lives on YouTube.
+// A lesson video on YouTube, made by the AI video service or added by a
+// teacher. Only its name and link are kept here; the video lives on YouTube.
 // Not to be confused with Lesson (a timetable slot).
 model Video {
-  id          Int      @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   title       String
-  youtubeUrl  String   @unique
-  // Who sees it: learners in this grade (10 to 12)
+  youtubeUrl  String      @unique
   subjectName String
+  // The grade it was made for (8 to 12)
   grade       Int
-  createdAt   DateTime @default(now())
+  // Learners only see it once an admin publishes it; declined videos are removed
+  status      VideoStatus @default(PENDING)
+  // Who sees it once published: learners in these grades
+  grades      Grade[]
+  createdAt   DateTime    @default(now())
 
-  @@index([grade])
+  @@index([status])
+}
+
+enum VideoStatus {
+  PENDING
+  PUBLISHED
 }

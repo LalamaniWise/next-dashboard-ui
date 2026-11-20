@@ -7,8 +7,10 @@
     python render_lesson.py lesson.json --tts piper --voice-model my-voice.onnx
 
 The lesson is written on a whiteboard (--board white) or a chalkboard
-(--board black) while a stick-man teacher talks and points with a laser at
-each line as it is written.
+(--board black) while a stick-man teacher talks and points with a laser at each
+line as it is written, and circles the answer. Every video opens and closes with the
+CMS Extra Classes messages, except with --tts recorded, which has one recording
+for each lesson scene only.
 
 Each scene's narration is turned into audio first; the animation for that
 scene is then timed to fill exactly the length of its audio, so the picture
@@ -27,7 +29,8 @@ import numpy as np
 from manim import (
     DL, DOWN, DR, LEFT, RIGHT, UL, UP, UR,
     Arc, Axes, Circle, Create, DashedLine, Dot, Ellipse, FadeIn, FadeOut, Flash, GrowFromCenter,
-    Line, MathTex, MoveAlongPath, Rectangle, Scene, Tex, Text, ValueTracker, VGroup, VMobject, Write,
+    Line, MathTex, MoveAlongPath, Rectangle, RoundedRectangle, Scene, Tex, Text,
+    ValueTracker, VGroup, VMobject, Write,
     always_redraw, config, linear, tempconfig, there_and_back,
 )
 
@@ -58,8 +61,34 @@ AREA_LEFT, AREA_RIGHT = -6.4, 3.4
 AREA_CENTER = (AREA_LEFT + AREA_RIGHT) / 2
 TEACHER_X, FLOOR_Y = 5.3, -3.55
 
-# Seconds to draw the curve, and to mark one point on it
-CURVE_TIME, POINT_TIME = 2.0, 2.0
+# Seconds to draw the curve, to mark one point on it, and to circle something
+CURVE_TIME, POINT_TIME, EMPHASIS_TIME = 2.0, 3.0, 1.0
+
+# Opening and closing of every video
+BRAND = {
+    "en": {
+        "intro": {"type": "intro", "heading": "CMS Extra Classes",
+                  "narration": "Hi everyone, this is CMS Extra Classes."},
+        "outro": {"type": "outro", "heading": "Thank you for watching!",
+                  "lines": ["Like, follow and share", "Follow us on YouTube and Facebook",
+                            "Links: check the bio and the comments", "Comment with your question"],
+                  "narration": "Thank you for learning with CMS Extra Classes. If this lesson helped you, "
+                               "please like, follow and share. Follow us on YouTube and Facebook. "
+                               "You will find the links in our bio and in the comment section. "
+                               "And if you have a question, write it in the comments. See you next time!"},
+    },
+    "af": {
+        "intro": {"type": "intro", "heading": "CMS Extra Classes",
+                  "narration": "Hallo almal, dit is CMS Extra Classes."},
+        "outro": {"type": "outro", "heading": "Dankie dat jy gekyk het!",
+                  "lines": ["Like, volg en deel", "Volg ons op YouTube en Facebook",
+                            "Skakels: kyk in die bio en kommentaar", "Los jou vraag in die kommentaar"],
+                  "narration": "Dankie dat jy saam met CMS Extra Classes geleer het. As hierdie les jou "
+                               "gehelp het, like, volg en deel dit asseblief. Volg ons op YouTube en "
+                               "Facebook. Jy kry die skakels in ons bio en in die kommentaar. "
+                               "En as jy 'n vraag het, skryf dit in die kommentaar. Tot volgende keer!"},
+    },
+}
 
 
 def fit(mob, max_width):
@@ -223,7 +252,7 @@ class LessonScene(Scene):
         parts = [body, always_redraw(mouth), always_redraw(pointing_arm), always_redraw(free_arm),
                  always_redraw(laser)]
         self.add(*parts)
-        return parts + [self.tip]
+        return parts + [self.tip, self.beam, self.wave]
 
     def point_at(self, where, run_time=0.4):
         self.play(self.tip.animate.move_to(where), self.beam.animate.set_value(1), run_time=run_time)
@@ -259,26 +288,61 @@ class LessonScene(Scene):
                   run_time=run_time, rate_func=linear)
         return 0.3 + run_time
 
-    def reveal(self, items, seconds, used):
-        """Write items one at a time, spread evenly over the narration."""
+    def emphasise(self, mark):
+        """Draw a circle with the laser."""
+        self.point_at(mark.get_start(), run_time=0.3)
+        self.play(Create(mark), MoveAlongPath(self.tip, mark), run_time=EMPHASIS_TIME - 0.3,
+                  rate_func=linear)
+        return EMPHASIS_TIME
+
+    def circle(self, item):
+        height = item.height + 0.28
+        return RoundedRectangle(width=item.width + 0.4, height=height, corner_radius=height / 2,
+                                color=self.c["result"], stroke_width=4).move_to(item)
+
+    def reveal(self, items, seconds, used, circle_last=False):
+        """Write items one at a time, spread evenly over the narration. With
+        circle_last, the teacher circles the last one."""
         slot = max(1.0, (seconds - used) / max(1, len(items)))
         for item in items:
-            spent = self.write_along(item, min(2.5, slot * 0.6))
-            self.wait(max(0, slot - spent))
+            rest = slot - self.write_along(item, min(2.5, slot * 0.5))
+            if circle_last and item is items[-1] and rest >= EMPHASIS_TIME:
+                rest -= self.emphasise(self.circle(item))
+            if rest >= 1 / config.frame_rate:
+                self.wait(rest)
             used += slot
         return used
 
     # --- scene types ---------------------------------------------------------
+    def scene_intro(self, s, seconds):
+        name = fit(self.text(s["heading"], 1.25, self.c["accent"], bold=True), self.max_w)
+        line = Line(LEFT * 2.5, RIGHT * 2.5, color=self.c["result"], stroke_width=8)
+        VGroup(name, line).arrange(DOWN, buff=0.35).move_to([AREA_CENTER, 0.3, 0])
+        used = self.write_along(name, 1.2)
+        self.play(GrowFromCenter(line), run_time=0.3)
+        self.lower_laser()
+        return used + 0.6 + self.wave_hello()
+
+    def scene_outro(self, s, seconds):
+        head, used = self.heading(s["heading"])
+        rows = VGroup(*[self.text(line, 0.7) for line in s["lines"]]).arrange(
+            DOWN, aligned_edge=LEFT, buff=0.55)
+        fit(rows, self.max_w - 0.3)
+        rows.next_to(head, DOWN, buff=0.7).set_x(AREA_LEFT + rows.width / 2)
+        used = self.reveal(list(rows), seconds, used + 1.6)
+        self.lower_laser()
+        self.wave_hello()
+        return used
+
     def scene_title(self, s, seconds):
         title = fit(self.text(s["heading"], 0.95, bold=True), self.max_w)
         sub = fit(self.text(s.get("subheading", ""), 0.5, self.c["muted"]), self.max_w)
         sub.next_to(title, DOWN, buff=0.4)
         line = Line(LEFT * 2, RIGHT * 2, color=self.c["result"], stroke_width=8).next_to(sub, DOWN, buff=0.4)
         VGroup(title, sub, line).move_to([AREA_CENTER, 0.3, 0])
-        used = self.wave_hello()
         self.play(Write(title), run_time=1.5)
         self.play(Write(sub), GrowFromCenter(line), run_time=1.0)
-        return used + 2.5
+        return 2.5
 
     def scene_bullets(self, s, seconds):
         head, used = self.heading(s["heading"])
@@ -304,7 +368,7 @@ class LessonScene(Scene):
         lines.next_to(head, DOWN, buff=0.6).set_x(AREA_LEFT + lines.width / 2)
         # The last line is the result: give it a highlight colour.
         lines[-1].set_color(self.c["result"])
-        return self.reveal(list(lines), seconds, used)
+        return self.reveal(list(lines), seconds, used, circle_last=True)
 
     def scene_graph(self, s, seconds):
         head, used = self.heading(s["heading"])
@@ -392,6 +456,7 @@ class LessonScene(Scene):
                 marks.append(Create(DashedLine(axes.c2p(p["x"] - 0.7, p["y"]), axes.c2p(p["x"] + 0.7, p["y"]),
                                                color=self.c["mark"], stroke_width=4)))
             self.play(*marks, run_time=0.8)
+            self.emphasise(Circle(radius=0.2, color=self.c["mark"], stroke_width=4).move_to(pos))
             if slot - POINT_TIME >= 1 / config.frame_rate:
                 self.wait(slot - POINT_TIME)
             used += slot
@@ -404,6 +469,10 @@ def render(lesson_path, out_path, tts_backend="espeak", quality="m",
         raise ValueError(f"board must be one of {', '.join(BOARDS)}")
     with open(lesson_path, encoding="utf-8") as fh:
         lesson = validate_lesson(json.load(fh))
+
+    if tts_backend != "recorded":
+        brand = BRAND[lesson["language"]]
+        lesson = {**lesson, "scenes": [brand["intro"], *lesson["scenes"], brand["outro"]]}
 
     work = tempfile.mkdtemp(prefix="lesson_")
     audio = []

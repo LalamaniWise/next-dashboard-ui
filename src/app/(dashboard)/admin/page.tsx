@@ -2,6 +2,7 @@ import Announcements from "@/components/Announcements";
 import AttendanceChartContainer from "@/components/AttendanceChartContainer";
 import CountChartContainer from "@/components/CountChartContainer";
 import EventCalendarContainer from "@/components/EventCalendarContainer";
+import LessonVideosCard from "@/components/videos/LessonVideosCard";
 
 import ScoreTrendChartContainer from "@/components/ScoreTrendChartContainer";
 import UserCard from "@/components/UserCard";
@@ -41,6 +42,7 @@ const AdminPage = async ({
       {/* RIGHT */}
       <div className="w-full lg:w-1/3 flex flex-col gap-8">
         <EventCalendarContainer searchParams={searchParams}/>
+        <LessonVideosCard role="admin" />
         <Announcements />
       </div>
     </div>
