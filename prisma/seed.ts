@@ -29,8 +29,8 @@ async function main() {
     },
   });
 
-  // GRADE
-  for (let i = 1; i <= 6; i++) {
+  // GRADE: 1 to 7 are primary, 8 to 12 secondary
+  for (let i = 1; i <= 12; i++) {
     await prisma.grade.create({
       data: {
         level: i,

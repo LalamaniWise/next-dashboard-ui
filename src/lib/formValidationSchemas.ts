@@ -451,25 +451,39 @@ export const playlistVideoSchema = z.object({
   title: z.string().trim().max(150).optional().or(z.literal("")),
 });
 
+const lessonVideoGrade = z.coerce
+  .number()
+  .int()
+  .refine((g) => (LESSON_VIDEO_GRADES as readonly number[]).includes(g), {
+    message: "Choose a grade!",
+  });
+
 export const lessonVideoSchema = z.object({
   subject: z.enum(LESSON_VIDEO_SUBJECTS, { message: "Choose a subject!" }),
-  grade: z.coerce
-    .number()
-    .int()
-    .refine((g) => (LESSON_VIDEO_GRADES as readonly number[]).includes(g), {
-      message: "Choose grade 10, 11 or 12!",
-    }),
-  topic: z
-    .string()
-    .trim()
-    .min(3, { message: "Describe the topic in a few words!" })
-    .max(200, { message: "Keep the topic under 200 characters!" }),
+  grade: lessonVideoGrade,
+  // May be empty when a file is attached
+  topic: z.string().trim().max(1000, { message: "Keep your request under 1000 characters!" }),
   language: z.enum(["en", "af"], { message: "Choose English or Afrikaans!" }),
-  voice: z.enum(["espeak", "piper"], { message: "Choose a voice!" }),
+  voice: z.enum(["espeak", "piper", "piper-cori", "piper-northern-male"], { message: "Choose a voice!" }),
   board: z.enum(["white", "black"], { message: "Choose a whiteboard or chalkboard!" }),
 });
 
 export type LessonVideoSchema = z.infer<typeof lessonVideoSchema>;
+
+// Adding a lesson video from a YouTube link, or editing one (id set, no link)
+export const videoSchema = z.object({
+  id: z.coerce.number().int().positive().optional(),
+  youtubeUrl: z.string().trim().max(300).optional(),
+  title: z.string().trim().min(1, { message: "Give the video a title!" }).max(150),
+  subject: z.enum(LESSON_VIDEO_SUBJECTS, { message: "Choose a subject!" }),
+  grade: lessonVideoGrade,
+});
+
+// An admin publishing a video to one or more of the school's grades (Grade ids)
+export const publishVideoSchema = z.object({
+  id: z.coerce.number().int().positive(),
+  grades: z.array(z.coerce.number().int().positive()).min(1, { message: "Choose at least one grade!" }),
+});
 
 // FEES (amounts arrive as text like "450" or "450.50" and become cents)
 

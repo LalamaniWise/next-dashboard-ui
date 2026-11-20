@@ -1,6 +1,7 @@
 import Announcements from "@/components/Announcements";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import OnlineClassesCard from "@/components/OnlineClassesCard";
+import LessonVideosCard from "@/components/videos/LessonVideosCard";
 import { auth } from "@/lib/auth";
 
 
@@ -18,6 +19,7 @@ const TeacherPage = async () => {
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-8">
         <OnlineClassesCard role="teacher" userId={userId!} />
+        <LessonVideosCard role="teacher" />
         <Announcements />
       </div>
     </div>
