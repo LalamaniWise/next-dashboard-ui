@@ -57,6 +57,7 @@ __pycache__/
 /ai/finetune/outputs/
 /ai/video/media/
 /ai/video/*.mp4
+/ai/video/algebra-series/
 /ai/voice/recordings/
 /ai/voice/dataset_*/
 *.onnx
