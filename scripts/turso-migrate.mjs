@@ -1,56 +1,64 @@
-// Applies new Prisma migrations (prisma/migrations) to the Turso database.
-// `prisma migrate deploy` only works on the local file, so after making a
-// migration locally with `prisma migrate dev`, run:
+// Creates or updates the tables in your Turso database from
+// prisma/migrations. Safe to run again: it remembers which migrations
+// it has applied, and skips tables/columns that already exist.
 //
-//   node --env-file=.env scripts/turso-migrate.mjs
-//
-// It records each one in _prisma_migrations, the same way Prisma does.
+// PowerShell:
+//   $env:TURSO_DATABASE_URL = "libsql://your-db.turso.io"
+//   $env:TURSO_AUTH_TOKEN   = "your token"
+//   npm run db:turso
 import { createClient } from "@libsql/client";
-import { createHash, randomUUID } from "crypto";
-import { readdir, readFile } from "fs/promises";
-import path from "path";
+import { readdirSync, readFileSync, existsSync } from "node:fs";
+import path from "node:path";
 
-const { TURSO_DATABASE_URL: url, TURSO_AUTH_TOKEN: authToken } = process.env;
-if (!url || !authToken) {
-  console.error("Set TURSO_DATABASE_URL and TURSO_AUTH_TOKEN in .env first.");
+const url = process.env.TURSO_DATABASE_URL;
+if (!url) {
+  console.error("Set TURSO_DATABASE_URL (and TURSO_AUTH_TOKEN) first.");
   process.exit(1);
 }
-const db = createClient({ url, authToken });
 
-await db.execute(`CREATE TABLE IF NOT EXISTS "_prisma_migrations" (
-  "id" TEXT PRIMARY KEY NOT NULL,
-  "checksum" TEXT NOT NULL,
-  "finished_at" DATETIME,
-  "migration_name" TEXT NOT NULL,
-  "logs" TEXT,
-  "rolled_back_at" DATETIME,
-  "started_at" DATETIME NOT NULL DEFAULT current_timestamp,
-  "applied_steps_count" INTEGER UNSIGNED NOT NULL DEFAULT 0
-)`);
+const db = createClient({ url, authToken: process.env.TURSO_AUTH_TOKEN });
+const dir = path.join(process.cwd(), "prisma", "migrations");
 
-const applied = new Set(
-  (await db.execute("SELECT migration_name FROM _prisma_migrations WHERE finished_at IS NOT NULL")).rows.map(
-    (r) => r.migration_name
-  )
+await db.execute(
+  "CREATE TABLE IF NOT EXISTS _turso_migrations (name TEXT PRIMARY KEY, applied_at TEXT NOT NULL)",
+);
+const done = new Set(
+  (await db.execute("SELECT name FROM _turso_migrations")).rows.map((r) => r.name),
 );
 
-const dir = path.join("prisma", "migrations");
-const names = (await readdir(dir, { withFileTypes: true }))
-  .filter((d) => d.isDirectory())
+// Already there from an earlier, manual setup
+const harmless = /already exists|duplicate column/i;
+
+const names = readdirSync(dir, { withFileTypes: true })
+  .filter((d) => d.isDirectory() && existsSync(path.join(dir, d.name, "migration.sql")))
   .map((d) => d.name)
   .sort();
 
-let count = 0;
+let applied = 0;
 for (const name of names) {
-  if (applied.has(name)) continue;
-  const sql = await readFile(path.join(dir, name, "migration.sql"), "utf8");
-  const now = new Date().toISOString();
-  await db.executeMultiple(sql);
+  if (done.has(name)) continue;
+  const sql = readFileSync(path.join(dir, name, "migration.sql"), "utf8");
+  const statements = sql
+    .split(/;\s*(?:\r?\n|$)/)
+    .map((s) => s.split(/\r?\n/).filter((l) => !l.trim().startsWith("--")).join("\n").trim())
+    .filter(Boolean);
+
+  for (const statement of statements) {
+    try {
+      await db.execute(statement);
+    } catch (err) {
+      if (!harmless.test(String(err?.message))) {
+        console.error(`\n${name} failed on:\n${statement}\n\n${err?.message}`);
+        process.exit(1);
+      }
+    }
+  }
   await db.execute({
-    sql: "INSERT INTO _prisma_migrations (id, checksum, finished_at, migration_name, started_at, applied_steps_count) VALUES (?, ?, ?, ?, ?, 1)",
-    args: [randomUUID(), createHash("sha256").update(sql).digest("hex"), new Date().toISOString(), name, now],
+    sql: "INSERT INTO _turso_migrations (name, applied_at) VALUES (?, ?)",
+    args: [name, new Date().toISOString()],
   });
-  console.log(`Applied ${name}`);
-  count++;
+  console.log(`applied  ${name}`);
+  applied++;
 }
-console.log(count ? `Done: ${count} migration(s).` : "Turso is up to date.");
+
+console.log(applied ? `\nDone: ${applied} migration(s) applied.` : "Already up to date.");
