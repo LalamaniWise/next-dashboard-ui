@@ -40,6 +40,7 @@ export const videoProgress = async (jobId: string): Promise<VideoProgress> => {
       title: job.title,
       privacy: job.privacy,
       files: job.files,
+      shareCaption: job.shareCaption,
       error: job.error,
     };
   } catch (err) {

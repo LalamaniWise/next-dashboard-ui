@@ -63,7 +63,12 @@ export type VideoProgress = {
   title?: string | null;
   privacy?: string | null;
   files?: LessonVideoFile[] | null;
+  shareCaption?: string | null;
   error?: string | null;
 };
+
+// The YouTube, TikTok and Facebook name on the app's video covers. The video
+// service's SOCIAL_HANDLE puts it on the videos themselves, so change both.
+export const LESSON_VIDEO_HANDLE = "Lalamani Ramaru";
 
 export const PROGRESS_POLL_MS = 5000;

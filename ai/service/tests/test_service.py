@@ -254,7 +254,7 @@ def test_cover_picture_is_drawn(tmp_path):
     assert cover.grades_label([11], "af") == "Graad 11"
 
 
-def test_pipeline_uploads_and_deletes_the_mp4(tmp_path, monkeypatch):
+def test_pipeline_uploads_and_keeps_the_mp4_to_share(tmp_path, monkeypatch):
     settings = make_settings(tmp_path, dry_run=False, writer="anthropic")
     seen = {}
 
@@ -282,10 +282,14 @@ def test_pipeline_uploads_and_deletes_the_mp4(tmp_path, monkeypatch):
     result = pipeline.make_runner(settings)(job, lambda status, **f: steps.append(status))
 
     assert steps == ["documents", "rendering", "uploading"]
+    caption = result.pop("shareCaption")
     assert result == {"title": "Stationary points of a cubic",
                       "youtubeUrl": "https://www.youtube.com/watch?v=VIDEO123456",
-                      "privacy": "private", "files": ["activity", "memo", "cover"],
+                      "privacy": "private", "files": ["video", "activity", "memo", "cover"],
                       "lessonTopic": "Stationary points", "subtopic": None, "thumbnail": "set"}
+    assert caption.startswith("Stationary points of a cubic\nMathematics · Grade 12\n")
+    assert "Follow Lalamani Ramaru on YouTube, TikTok and Facebook" in caption
+    assert caption.endswith("#Mathematics #Grade12 #StationaryPoints #LearnOnTikTok #StudyTok")
     exists, title, description, language, uploaded = seen["upload"]
     assert uploaded.endswith("-cover.mp4")  # the video with its cover is what goes up
     assert seen["thumbnail"] == ("VIDEO123456", "cover.jpg")
@@ -293,8 +297,19 @@ def test_pipeline_uploads_and_deletes_the_mp4(tmp_path, monkeypatch):
     assert "Title: Stationary points of a cubic" in description
     assert "Subject: Mathematics" in description and "Grade: 12" in description
     assert "Topic: Stationary points" in description
+    assert "Follow Lalamani Ramaru on YouTube, TikTok and Facebook" in description
     assert not os.path.exists(seen["mp4"])
     assert not os.path.exists(os.path.join(settings.work_dir, "job1"))
+    with open(os.path.join(settings.outputs_dir, "job1", "lesson.mp4"), "rb") as fh:
+        assert fh.read() == b"mp4"
+
+
+def test_no_handle_leaves_it_off(tmp_path):
+    job = {**BODY, "voice": "piper-cori"}
+    _, description = pipeline.video_details(LESSON, job, "")
+    assert "Follow" not in description and "Cori Samuel" in description
+    caption = pipeline.share_caption("T", pipeline.cover_details(LESSON, job), job, "")
+    assert "Follow" not in caption and "Cori Samuel" in caption
 
 
 def test_dry_run_skips_youtube(tmp_path, monkeypatch):
@@ -337,6 +352,9 @@ def test_dry_run_keeps_the_files_to_download(tmp_path, monkeypatch):
     with TestClient(create_app(settings, pipeline.make_runner(settings))) as client:
         job = wait_for(client, client.post("/jobs", json=BODY, headers=AUTH).json()["jobId"])
         assert job["files"] == ["video", "activity", "memo", "cover"]
+        # what the app saves and shows comes back with the job
+        assert job["lessonTopic"] == "Stationary points" and job["thumbnail"] == "dry-run"
+        assert "Lalamani Ramaru" in job["shareCaption"]
         assert client.get(f"/jobs/{job['id']}/files/cover", headers=AUTH).headers["content-type"] == "image/jpeg"
         url = f"/jobs/{job['id']}/files"
         assert client.get(f"{url}/memo").status_code == 401

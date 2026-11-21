@@ -31,6 +31,7 @@ WHITE = (255, 255, 255)
 COVER_SECONDS = 3.0
 GRADE_WORD = {"en": ("Grade", "Grades"), "af": ("Graad", "Grade")}
 LABEL = {"en": "Lesson video", "af": "Lesvideo"}
+FOLLOW = {"en": "Follow", "af": "Volg"}
 
 
 def font(weight, size):
@@ -81,9 +82,10 @@ def pill(draw, x, y, text, fnt, fill, ink, pad_x=26, pad_y=12):
     return h
 
 
-def make_cover(details, out_path, logo_path=None, school=None):
+def make_cover(details, out_path, logo_path=None, school=None, handle=None):
     """details: subject, grades (list of numbers), topic, subtopic (optional),
-    language. Writes a 1280x720 JPG (YouTube thumbnails must be under 2 MB)."""
+    language. handle is the social media name shown on the bar. Writes a
+    1280x720 JPG (YouTube thumbnails must be under 2 MB)."""
     img = Image.new("RGB", (W, H), WHITE)
     d = ImageDraw.Draw(img)
     language = details.get("language", "en")
@@ -124,8 +126,16 @@ def make_cover(details, out_path, logo_path=None, school=None):
     d.rectangle((40, H - 47, 62, H - 25), fill=YELLOW)
     d.rectangle((76, H - 47, 98, H - 25), fill=BLUE)
     f_bar = font("Regular", 26)
-    bar = f"{(school or DEFAULT_SCHOOL)[:60]} · {LABEL.get(language, LABEL['en'])}"
-    d.text((120, H - 36 - (f_bar.getbbox('Hg')[1] + f_bar.getbbox('Hg')[3]) / 2), bar, font=f_bar, fill=WHITE)
+    bar_y = H - 36 - (f_bar.getbbox('Hg')[1] + f_bar.getbbox('Hg')[3]) / 2
+    left_end = W - 40
+    handle = " ".join(str(handle or "").split())[:40]
+    if handle:
+        f_handle = font("SemiBold", 26)
+        follow = f"{FOLLOW.get(language, FOLLOW['en'])} {handle}"
+        left_end = W - 40 - d.textlength(follow, font=f_handle) - 32
+        d.text((W - 40 - d.textlength(follow, font=f_handle), bar_y), follow, font=f_handle, fill=YELLOW)
+    bar = wrap(d, f"{(school or DEFAULT_SCHOOL)[:60]} · {LABEL.get(language, LABEL['en'])}", f_bar, left_end - 120, 1)[0]
+    d.text((120, bar_y), bar, font=f_bar, fill=WHITE)
 
     img.save(out_path, "JPEG", quality=90, optimize=True)
     return out_path
@@ -175,6 +185,7 @@ def main():
     ap.add_argument("--language", choices=["en", "af"], default="en")
     ap.add_argument("--logo", help=f"default: {DEFAULT_LOGO}")
     ap.add_argument("--school", default=DEFAULT_SCHOOL)
+    ap.add_argument("--handle", help="social media name shown on the bar")
     ap.add_argument("--video", help="put the cover at the start of this video")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
@@ -182,10 +193,10 @@ def main():
                "subtopic": a.subtopic, "language": a.language}
     if a.video:
         with tempfile.TemporaryDirectory() as tmp:
-            cover = make_cover(details, os.path.join(tmp, "cover.jpg"), a.logo, a.school)
+            cover = make_cover(details, os.path.join(tmp, "cover.jpg"), a.logo, a.school, a.handle)
             prepend_cover(a.video, cover, a.out)
     else:
-        make_cover(details, a.out, a.logo, a.school)
+        make_cover(details, a.out, a.logo, a.school, a.handle)
     print(f"saved {a.out}")
 
 

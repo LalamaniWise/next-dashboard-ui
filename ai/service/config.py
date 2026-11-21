@@ -98,6 +98,8 @@ class Settings:
     # (public/logo.png) and the school's name
     logo_path: str = ""
     school_name: str = "Capital Mathematics Studies"
+    # On the cover, the YouTube description and the share caption; empty leaves it off
+    social_handle: str = "Lalamani Ramaru"
 
     @property
     def uploads_dir(self) -> str:
@@ -154,6 +156,7 @@ def load_settings() -> Settings:
         made_for_kids=_flag("YOUTUBE_MADE_FOR_KIDS"),
         logo_path=os.environ.get("SCHOOL_LOGO", "").strip(),
         school_name=os.environ.get("SCHOOL_NAME", "").strip() or "Capital Mathematics Studies",
+        social_handle=os.environ.get("SOCIAL_HANDLE", "Lalamani Ramaru").strip(),
     )
 
 

@@ -26,6 +26,8 @@ export type VideoJob = {
   youtubeUrl: string | null;
   privacy: string | null;
   files: LessonVideoFile[] | null;
+  // Text to post with the video on TikTok or Facebook
+  shareCaption?: string | null;
   error: string | null;
   createdAt: string;
   updatedAt: string;
