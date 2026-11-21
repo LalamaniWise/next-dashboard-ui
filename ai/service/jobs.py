@@ -104,6 +104,9 @@ class JobStore:
                 "step": STEP_MESSAGES["queued"],
                 **{k: request[k] for k in ("subject", "grade", "topic", "language", "voice", "board")},
                 "source": request.get("source"),
+                # The teacher's own cover topic and subtopic (None: the AI writes them)
+                "coverTopic": request.get("coverTopic"),
+                "subtopic": request.get("subtopic"),
                 "title": None,
                 "youtubeUrl": None,
                 "privacy": None,
