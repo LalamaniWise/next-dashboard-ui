@@ -41,15 +41,52 @@ export const AuditNotice = () => (
 );
 
 // Download links for what a finished job made
-export const JobDownloads = ({ jobId, files }: { jobId: string; files: LessonVideoFile[] }) => (
-  <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
-    {files.map((kind) => (
-      <a key={kind} href={`/api/videos/${jobId}/${kind}`} className="text-indigo-600 hover:underline">
-        Download {LESSON_VIDEO_FILES[kind].label}
-      </a>
-    ))}
+// With a caption, also a button to copy it for posting the video on TikTok or Facebook
+export const JobDownloads = ({
+  jobId,
+  files,
+  caption,
+}: {
+  jobId: string;
+  files: LessonVideoFile[];
+  caption?: string | null;
+}) => (
+  <div className="flex flex-col gap-2">
+    <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">
+      {files.map((kind) => (
+        <a key={kind} href={`/api/videos/${jobId}/${kind}`} className="text-indigo-600 hover:underline">
+          Download {LESSON_VIDEO_FILES[kind].label}
+        </a>
+      ))}
+    </div>
+    {caption && files.includes("video") && <ShareCaption caption={caption} />}
   </div>
 );
+
+const ShareCaption = ({ caption }: { caption: string }) => {
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(caption);
+      toast("Caption copied. Paste it when you post the video.");
+    } catch {
+      toast.error("Couldn't copy. Select the caption and copy it yourself.");
+    }
+  };
+  return (
+    <details className="text-sm">
+      <summary className="cursor-pointer text-gray-600">Share on TikTok or Facebook</summary>
+      <div className="mt-2 flex flex-col gap-2 rounded-lg bg-slate-50 p-3">
+        <p className="text-xs text-gray-500">
+          Download the video, upload it in the TikTok or Facebook app, and paste this caption.
+        </p>
+        <textarea readOnly value={caption} rows={6} className="form-control text-xs" aria-label="Caption" />
+        <button type="button" onClick={copy} className="self-start rounded-md border border-gray-300 px-3 py-1 text-xs font-medium text-gray-700 hover:bg-white">
+          Copy caption
+        </button>
+      </div>
+    </details>
+  );
+};
 
 // Follows one video job, asking the server every 5 seconds
 export const JobProgress = ({ jobId, initialStep }: { jobId: string; initialStep?: string }) => {
@@ -96,7 +133,7 @@ export const JobProgress = ({ jobId, initialStep }: { jobId: string; initialStep
           Done: &quot;{progress.title}&quot; is ready to download. Test mode: nothing was uploaded to
           YouTube or added to the list.
         </p>
-        <JobDownloads jobId={jobId} files={progress.files ?? []} />
+        <JobDownloads jobId={jobId} files={progress.files ?? []} caption={progress.shareCaption} />
       </div>
     );
   }
@@ -107,7 +144,7 @@ export const JobProgress = ({ jobId, initialStep }: { jobId: string; initialStep
           Done: &quot;{progress.title}&quot; is on YouTube and in the list below, waiting for an admin to publish it.
           {progress.privacy === "private" && " YouTube has made it private for now (see the note above)."}
         </p>
-        <JobDownloads jobId={jobId} files={progress.files ?? []} />
+        <JobDownloads jobId={jobId} files={progress.files ?? []} caption={progress.shareCaption} />
       </div>
     );
   }

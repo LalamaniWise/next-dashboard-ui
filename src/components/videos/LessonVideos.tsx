@@ -162,7 +162,7 @@ const LessonVideos = async ({
               <p className="text-xs text-gray-500">
                 {job.title ?? job.topic} · {job.subject} · Grade {job.grade}
               </p>
-              <JobDownloads jobId={job.id} files={job.files ?? []} />
+              <JobDownloads jobId={job.id} files={job.files ?? []} caption={job.shareCaption} />
             </div>
           ))}
         </div>

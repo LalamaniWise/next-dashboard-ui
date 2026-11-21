@@ -32,8 +32,16 @@ every request needs the shared secret, so the browser never sees either.
 On **Create video**, type what the lesson should explain, attach a PDF or a picture
 (up to 10 MB) for it to teach from, or do both. Each job makes the video plus
 an activity PDF and a memo PDF, typeset with LaTeX. Admins and teachers download them
-from the Videos page; the service keeps the files of the last 30 jobs. In a dry run
-the video is kept to download too.
+from the Videos page; the service keeps the files of the last 30 jobs, the MP4 too.
+
+### Sharing on TikTok and Facebook
+
+Download a finished video from the Videos page and upload it in the TikTok or
+Facebook app. Under **Share on TikTok or Facebook** there is a ready caption to copy:
+title, subject, grade, a line asking viewers to follow `SOCIAL_HANDLE` (default
+"Lalamani Ramaru"), the voice credit when one is needed, and hashtags. The same
+follow line is in the YouTube description, and the handle is on the cover.
+Leave `SOCIAL_HANDLE` empty to leave it off.
 
 ### Covers
 

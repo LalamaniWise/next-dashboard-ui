@@ -3,6 +3,7 @@ upload it to YouTube."""
 
 import json
 import os
+import re
 import secrets
 import shutil
 import sys
@@ -66,7 +67,8 @@ def cover_step(mp4_path, lesson, job, outputs, settings):
     from cover import make_cover, prepend_cover
     details = cover_details(lesson, job)
     cover = make_cover(details, os.path.join(outputs, JOB_FILES["cover"][0]),
-                       logo_path=settings.logo_path or None, school=settings.school_name)
+                       logo_path=settings.logo_path or None, school=settings.school_name,
+                       handle=settings.social_handle)
     with_cover = os.path.splitext(mp4_path)[0] + "-cover.mp4"
     prepend_cover(mp4_path, cover, with_cover)
     return with_cover, cover, details
@@ -92,7 +94,11 @@ def youtube_text(text, limit):
     return text[:limit].rstrip()
 
 
-def video_details(lesson, job):
+def follow_line(handle):
+    return f"Follow {handle} on YouTube, TikTok and Facebook for more lessons." if handle else ""
+
+
+def video_details(lesson, job, handle=""):
     title = youtube_text(lesson.get("title") or job["topic"], 100)
     description = (
         f"Title: {title}\n"
@@ -101,14 +107,35 @@ def video_details(lesson, job):
         f"Topic: {youtube_text(job['topic'], 500)}\n"
         f"Language: {LANGUAGE_NAMES.get(job['language'], job['language'])}"
     )
+    if handle:
+        description += "\n\n" + youtube_text(follow_line(handle), 200)
     if job["voice"] in PIPER_LIBRARY:
         description += "\n\n" + PIPER_LIBRARY[job["voice"]]["credit"]
     return title, description
 
 
+def hashtag(text):
+    return "#" + "".join(w[:1].upper() + w[1:] for w in re.findall(r"[A-Za-z0-9]+", text))
+
+
+def share_caption(title, details, job, handle=""):
+    """Text to paste with the video on TikTok or Facebook: title, subject,
+    grade, the handle and hashtags. A voice that needs credit is credited."""
+    lines = [title, f"{job['subject']} · Grade {job['grade']}"]
+    if details.get("subtopic"):
+        lines[1] += f" · {details['subtopic']}"
+    if handle:
+        lines += ["", follow_line(handle)]
+    if job["voice"] in PIPER_LIBRARY:
+        lines += ["", PIPER_LIBRARY[job["voice"]]["credit"]]
+    tags = [hashtag(job["subject"]), f"#Grade{job['grade']}", hashtag(details["topic"]), "#LearnOnTikTok", "#StudyTok"]
+    lines += ["", " ".join(dict.fromkeys(t for t in tags if 1 < len(t) <= 40))]
+    return "\n".join(lines)
+
+
 def upload_step(mp4_path, lesson, job, settings):
     """Returns (video id, youtube url, privacy status)."""
-    title, description = video_details(lesson, job)
+    title, description = video_details(lesson, job, settings.social_handle)
     if settings.dry_run:
         fake_id = secrets.token_urlsafe(9)[:11]
         return fake_id, f"https://www.youtube.com/watch?v={fake_id}", "dry-run"
@@ -153,16 +180,15 @@ def make_runner(settings):
         finally:
             remove_source(job.get("source"))
 
-        # With YouTube only its copy of the video is kept; a dry run keeps the
-        # file to download. After a failure the files stay in work/ so the
+        # The video is kept with the worksheets, to download and share on
+        # TikTok or Facebook. After a failure the files stay in work/ so the
         # video can be checked or uploaded by hand.
-        files = ["activity", "memo", "cover"]
-        if settings.dry_run:
-            shutil.move(mp4, os.path.join(outputs, JOB_FILES["video"][0]))
-            files.insert(0, "video")
+        shutil.move(mp4, os.path.join(outputs, JOB_FILES["video"][0]))
         shutil.rmtree(work, ignore_errors=True)
         prune_outputs(settings)
-        return {"title": title, "youtubeUrl": url, "privacy": privacy, "files": files,
-                "lessonTopic": details["topic"], "subtopic": details["subtopic"], "thumbnail": thumbnail}
+        return {"title": title, "youtubeUrl": url, "privacy": privacy,
+                "files": ["video", "activity", "memo", "cover"],
+                "lessonTopic": details["topic"], "subtopic": details["subtopic"], "thumbnail": thumbnail,
+                "shareCaption": share_caption(title, details, job, settings.social_handle)}
 
     return run

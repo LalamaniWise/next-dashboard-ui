@@ -1,6 +1,7 @@
 import "server-only";
 import { ImageResponse } from "next/og";
 import { BRAND_BLUE, BRAND_YELLOW, loadFont, loadLogo, logoDataUrl } from "./brandAssets";
+import { LESSON_VIDEO_HANDLE } from "./lessonVideoOptions";
 
 // A lesson video's cover (1280x720): logo, subject, topic, subtopic and
 // grades. ai/video/cover.py draws the same design for the video's opening
@@ -67,8 +68,13 @@ export const coverImage = async (info: CoverInfo) => {
           <div style={{ display: "flex", width: 22, height: 22, background: BRAND_YELLOW }} />
           <div style={{ display: "flex", width: 22, height: 22, background: BRAND_BLUE }} />
           <span style={{ color: "#fff", fontSize: 26, fontWeight: 400, marginLeft: 8 }}>
-            {clip(info.school, 60)} · Lesson video
+            {clip(info.school, LESSON_VIDEO_HANDLE ? 40 : 60)} · Lesson video
           </span>
+          {LESSON_VIDEO_HANDLE && (
+            <span style={{ color: BRAND_YELLOW, fontSize: 26, fontWeight: 600, marginLeft: "auto" }}>
+              Follow {LESSON_VIDEO_HANDLE}
+            </span>
+          )}
         </div>
       </div>
     ),

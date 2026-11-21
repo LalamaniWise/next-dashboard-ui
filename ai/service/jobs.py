@@ -31,7 +31,8 @@ STEP_MESSAGES = {
 }
 
 PUBLIC_FIELDS = ("id", "status", "step", "subject", "grade", "topic", "language", "voice", "board",
-                 "title", "youtubeUrl", "privacy", "files", "error", "createdAt", "updatedAt")
+                 "title", "youtubeUrl", "privacy", "files", "lessonTopic", "subtopic", "thumbnail",
+                 "shareCaption", "error", "createdAt", "updatedAt")
 
 
 class QueueFull(Exception):
