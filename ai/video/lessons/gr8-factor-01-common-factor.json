@@ -1,0 +1,99 @@
+{
+  "title": "Factorising with a Common Factor",
+  "subject": "Mathematics",
+  "grade": 8,
+  "topic": "Factorisation",
+  "subtopic": "Taking out the highest common factor",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Factorising with a Common Factor",
+      "subheading": "Grade 8 Mathematics · Factorisation and equations, part 1",
+      "narration": "Welcome to part one of our series on factorisation and equations. In this lesson we learn to factorise by taking out the highest common factor."
+    },
+    {
+      "type": "bullets",
+      "heading": "Expanding and factorising",
+      "bullets": [
+        "Expanding: $3(x + 2) = 3x + 6$",
+        "Factorising goes the other way: $3x + 6 = 3(x + 2)$",
+        "We take out the highest common factor, the HCF"
+      ],
+      "narration": "You already know how to expand: three times, x plus two, is three x plus six. Factorising goes the other way. We start with three x plus six, and write it as three times, x plus two. To do this, we take out the highest common factor, called the H C F."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1: Numbers",
+      "lines": [
+        "8x + 12",
+        "\\text{HCF of } 8 \\text{ and } 12: \\ 4",
+        "= 4(2x + 3)"
+      ],
+      "narration": "Factorise eight x plus twelve. The highest common factor of eight and twelve is four. Divide each term by four: eight x divided by four is two x, and twelve divided by four is three. So the answer is four times, two x plus three."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: Variables too",
+      "lines": [
+        "5a^2 - 15a",
+        "\\text{HCF: } 5a",
+        "= 5a(a - 3)"
+      ],
+      "narration": "Factorise five a squared minus fifteen a. The HCF of five and fifteen is five, and both terms have at least one a. So the HCF is five a. Five a squared divided by five a is a. Negative fifteen a divided by five a is negative three. The answer is five a times, a minus three."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3: Three terms",
+      "lines": [
+        "6x^3 + 9x^2 - 3x",
+        "\\text{HCF: } 3x",
+        "= 3x(2x^2 + 3x - 1)"
+      ],
+      "narration": "Factorise six x cubed, plus nine x squared, minus three x. The HCF is three x. Six x cubed divided by three x is two x squared. Nine x squared divided by three x is three x. And negative three x divided by three x is negative one, not zero. So the answer is three x times, two x squared, plus three x, minus one."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 4: A negative common factor",
+      "lines": [
+        "-4y - 10",
+        "\\text{HCF: } -2",
+        "= -2(2y + 5)"
+      ],
+      "narration": "Factorise negative four y minus ten. When the first term is negative, take out a negative common factor. The HCF is negative two. Negative four y divided by negative two is two y. Negative ten divided by negative two is positive five. So the answer is negative two times, two y plus five."
+    },
+    {
+      "type": "steps",
+      "heading": "Check by expanding",
+      "lines": [
+        "5a(a - 3)",
+        "= 5a^2 - 15a",
+        "\\text{Same as the question, so it is correct}"
+      ],
+      "narration": "Always check your answer by expanding it. Five a times, a minus three, is five a squared minus fifteen a. That is exactly the expression we started with, so our factorising is correct."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "Take out the highest common factor, not just any factor",
+        "A term divided by itself leaves 1, not 0",
+        "If the first term is negative, take out a negative factor",
+        "Check by expanding"
+      ],
+      "narration": "Four tips. Take out the highest common factor, not just any common factor. A term divided by itself leaves one, not zero. If the first term is negative, take out a negative factor, and watch the signs change. And always check by expanding."
+    }
+  ],
+  "activity": {
+    "title": "Factorising with a common factor",
+    "instructions": "Factorise fully.",
+    "questions": [
+      {"text": "$7x + 14$", "marks": 1, "answer": ["$= 7(x + 2)$"]},
+      {"text": "$10a - 25$", "marks": 2, "answer": ["$= 5(2a - 5)$"]},
+      {"text": "$x^2 + 6x$", "marks": 1, "answer": ["$= x(x + 6)$"]},
+      {"text": "$12m^2 - 8m$", "marks": 2, "answer": ["$= 4m(3m - 2)$"]},
+      {"text": "$4x^3 - 2x^2 + 6x$", "marks": 2, "answer": ["$= 2x(2x^2 - x + 3)$"]},
+      {"text": "$-6y - 9$", "marks": 2, "answer": ["$= -3(2y + 3)$"]}
+    ]
+  }
+}

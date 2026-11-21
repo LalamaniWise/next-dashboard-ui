@@ -1,0 +1,97 @@
+{
+  "title": "Simplifying Algebraic Expressions and Fractions",
+  "subject": "Mathematics",
+  "grade": 8,
+  "topic": "Algebraic Expressions",
+  "subtopic": "Simplifying expressions and algebraic fractions",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Simplifying Expressions",
+      "subheading": "Grade 8 Mathematics · Factorisation and equations, part 2",
+      "narration": "Welcome to part two of our series on factorisation and equations. In this lesson we simplify expressions, and algebraic fractions."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1: Expand and simplify",
+      "lines": [
+        "3(x + 2) - 2(x - 4)",
+        "= 3x + 6 - 2x + 8",
+        "= x + 14"
+      ],
+      "narration": "Simplify three times, x plus two, minus two times, x minus four. Expand: three x plus six. Then negative two times x is negative two x, and negative two times negative four is plus eight. Now collect like terms: three x minus two x is x, and six plus eight is fourteen. The answer is x plus fourteen."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: Divide by a single term",
+      "lines": [
+        "\\frac{12x^2 + 8x}{4x}",
+        "= \\frac{12x^2}{4x} + \\frac{8x}{4x}",
+        "= 3x + 2"
+      ],
+      "narration": "Simplify twelve x squared plus eight x, all over four x. Divide every term on top by four x. Twelve x squared divided by four x is three x. Eight x divided by four x is two. So the answer is three x plus two."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3: Three terms on top",
+      "lines": [
+        "\\frac{15a^3 - 10a^2 + 5a}{5a}",
+        "= 3a^2 - 2a + 1"
+      ],
+      "narration": "Simplify fifteen a cubed, minus ten a squared, plus five a, all over five a. Divide each term by five a. Fifteen a cubed divided by five a is three a squared. Negative ten a squared divided by five a is negative two a. And five a divided by five a is one. The answer is three a squared, minus two a, plus one."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 4: Factorise, then cancel",
+      "lines": [
+        "\\frac{6x + 9}{3}",
+        "= \\frac{3(2x + 3)}{3}",
+        "= 2x + 3"
+      ],
+      "narration": "Simplify six x plus nine, over three. Factorise the top: three times, two x plus three. Now the three on top and the three at the bottom are common factors, so they cancel. The answer is two x plus three."
+    },
+    {
+      "type": "bullets",
+      "heading": "A common mistake",
+      "bullets": [
+        "Only cancel factors, never single terms",
+        "$\\frac{x + 6}{6}$ is not $x$: you cannot cancel the 6s",
+        "$\\frac{x + 6}{6} = \\frac{x}{6} + 1$"
+      ],
+      "narration": "Here is a very common mistake. You may only cancel factors, never single terms of a sum. In x plus six, over six, the six on top is a term, not a factor of the whole top. So the answer is not x. If you split it, you get x over six, plus one."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 5: Multiply fractions",
+      "lines": [
+        "\\frac{2x}{3} \\times \\frac{9}{4x}",
+        "= \\frac{18x}{12x}",
+        "= \\frac{3}{2}"
+      ],
+      "narration": "Simplify two x over three, times nine over four x. Multiply the tops: two x times nine is eighteen x. Multiply the bottoms: three times four x is twelve x. Eighteen x over twelve x: the x's cancel, and eighteen over twelve simplifies to three over two."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "Divide every term on top by the bottom",
+        "Factorise first, then cancel common factors",
+        "Never cancel single terms of a sum"
+      ],
+      "narration": "To sum up: when you divide by a single term, divide every term on top. When you can, factorise first, then cancel common factors. And never cancel single terms of a sum."
+    }
+  ],
+  "activity": {
+    "title": "Simplifying",
+    "instructions": "Simplify. Show your working.",
+    "questions": [
+      {"text": "$4(x + 3) - 3(x + 1)$", "marks": 2, "answer": ["$= 4x + 12 - 3x - 3$", "$= x + 9$"]},
+      {"text": "$\\frac{10x^2 + 5x}{5x}$", "marks": 2, "answer": ["$= 2x + 1$"]},
+      {"text": "$\\frac{9a^3 - 6a^2}{3a^2}$", "marks": 2, "answer": ["$= 3a - 2$"]},
+      {"text": "$\\frac{8x - 12}{4}$", "marks": 2, "answer": ["$= \\frac{4(2x - 3)}{4}$", "$= 2x - 3$"]},
+      {"text": "$\\frac{3x}{5} \\times \\frac{10}{9x}$", "marks": 2, "answer": ["$= \\frac{30x}{45x}$", "$= \\frac{2}{3}$"]},
+      {"text": "Explain why $\\frac{x + 4}{4}$ does not simplify to $x$.", "marks": 2, "answer": ["Only common factors cancel. The 4 is a term of $x + 4$, not a factor of it.", "$\\frac{x + 4}{4} = \\frac{x}{4} + 1$"]}
+    ]
+  }
+}
