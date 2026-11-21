@@ -1,10 +1,8 @@
-import { createReadStream } from "fs";
-import { readFile, stat } from "fs/promises";
-import { Readable } from "stream";
 import { auth } from "@/lib/auth";
 import { loadLogo } from "@/lib/brandAssets";
+import { openFile } from "@/lib/fileStore";
 import { withCoverPage } from "@/lib/materialCover";
-import { materialAccessWhere, storedPath } from "@/lib/materials";
+import { materialAccessWhere } from "@/lib/materials";
 import { isImageType, materialTypeLabels } from "@/lib/materialTypes";
 import prisma from "@/lib/prisma";
 import { getSettings } from "@/lib/schoolSettings";
@@ -33,9 +31,8 @@ export async function GET(
   // Same answer for "doesn't exist" and "not yours" so ids can't be probed
   if (!material) return new Response("Not found.", { status: 404 });
 
-  const filePath = storedPath(material.storedName);
-  const info = await stat(filePath).catch(() => null);
-  if (!info) return new Response("The file is missing on the server.", { status: 410 });
+  const file = await openFile("materials", material.storedName);
+  if (!file) return new Response("The file is missing on the server.", { status: 410 });
 
   const inline = isImageType(material.mimeType) && new URL(request.url).searchParams.has("view");
   const ascii = material.fileName.replace(/[^\x20-\x7e]|["\\]/g, "_");
@@ -47,9 +44,13 @@ export async function GET(
   };
 
   // PDFs get the school's cover page in front (the stored file is unchanged)
-  if (material.mimeType === "application/pdf" && info.size <= MAX_COVER_BYTES) {
-    const [original, logo, settings] = await Promise.all([readFile(filePath), loadLogo(), getSettings()]);
-    const covered = await withCoverPage(new Uint8Array(original), {
+  if (material.mimeType === "application/pdf" && file.size <= MAX_COVER_BYTES) {
+    const [original, logo, settings] = await Promise.all([
+      new Response(file.stream).arrayBuffer().then((b) => new Uint8Array(b)),
+      loadLogo(),
+      getSettings(),
+    ]);
+    const covered = await withCoverPage(original, {
       school: settings.schoolName,
       kind: materialTypeLabels[material.type],
       title: material.title,
@@ -62,7 +63,7 @@ export async function GET(
     return new Response(body, { headers: { ...headers, "Content-Length": String(body.byteLength) } });
   }
 
-  return new Response(Readable.toWeb(createReadStream(filePath)) as ReadableStream, {
-    headers: { ...headers, "Content-Length": String(info.size) },
+  return new Response(file.stream, {
+    headers: { ...headers, "Content-Length": String(file.size) },
   });
 }

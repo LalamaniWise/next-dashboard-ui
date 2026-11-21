@@ -1,7 +1,7 @@
 import "server-only";
 import { readFile } from "fs/promises";
 import path from "path";
-import { brandingDir } from "./branding";
+import { readStoredFile } from "./fileStore";
 import prisma from "./prisma";
 
 // The logo and fonts used on generated pictures and PDFs (video covers, fee
@@ -27,8 +27,8 @@ export const loadLogo = async (): Promise<Logo | null> => {
     .catch(() => null);
   const uploaded = setting?.logoFile ? path.basename(setting.logoFile) : null;
   if (uploaded && typeOf(uploaded)) {
-    const bytes = await readFile(path.join(brandingDir(), uploaded)).catch(() => null);
-    if (bytes) return { bytes: new Uint8Array(bytes), type: typeOf(uploaded)! };
+    const bytes = await readStoredFile("branding", uploaded);
+    if (bytes) return { bytes, type: typeOf(uploaded)! };
   }
   const bytes = await readFile(DEFAULT_LOGO()).catch(() => null);
   return bytes ? { bytes: new Uint8Array(bytes), type: "png" } : null;

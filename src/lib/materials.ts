@@ -1,14 +1,8 @@
 import "server-only";
-import path from "path";
 import prisma from "./prisma";
 
-// Uploaded files are kept outside /public so every download goes through
-// the access check in /api/materials/[id]
-export const materialsDir = () =>
-  process.env.MATERIALS_DIR || path.join(process.cwd(), "storage", "materials");
-
-export const storedPath = (storedName: string) =>
-  path.join(materialsDir(), path.basename(storedName));
+// Uploaded files (fileStore.ts) are kept outside /public so every download
+// goes through the access check in /api/materials/[id]
 
 // Filter on subject and grade that fits both materials and video playlists
 export type LearnerScope = {

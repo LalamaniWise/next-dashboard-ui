@@ -1,9 +1,9 @@
 import { randomUUID } from "crypto";
-import { mkdir, unlink, writeFile } from "fs/promises";
 import path from "path";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
-import { galleryDir, galleryPath, GALLERY_TYPES, looksLikeImage, MAX_GALLERY_MB } from "@/lib/gallery";
+import { deleteFile, saveFile } from "@/lib/fileStore";
+import { GALLERY_TYPES, looksLikeImage, MAX_GALLERY_MB } from "@/lib/gallery";
 import { isGalleryCategory, MAX_CAPTION } from "@/lib/galleryCategories";
 import prisma from "@/lib/prisma";
 
@@ -42,8 +42,7 @@ export async function POST(request: Request) {
   if (!looksLikeImage(bytes, mimeType)) return fail("That file isn't a JPG, PNG or WebP photo.");
 
   const storedName = `${randomUUID()}${ext === ".jpeg" ? ".jpg" : ext}`;
-  await mkdir(galleryDir(), { recursive: true });
-  await writeFile(galleryPath(storedName), bytes);
+  await saveFile("gallery", storedName, bytes, mimeType);
 
   try {
     const photo = await prisma.galleryPhoto.create({
@@ -54,7 +53,7 @@ export async function POST(request: Request) {
     return Response.json({ id: photo.id }, { status: 201 });
   } catch (err) {
     console.log(err);
-    await unlink(galleryPath(storedName)).catch(() => {});
+    await deleteFile("gallery", storedName);
     return fail("Something went wrong saving the photo.", 500);
   }
 }

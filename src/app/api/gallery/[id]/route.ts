@@ -1,7 +1,6 @@
-import { readFile, unlink } from "fs/promises";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
-import { galleryPath } from "@/lib/gallery";
+import { deleteFile, readStoredFile } from "@/lib/fileStore";
 import prisma from "@/lib/prisma";
 
 const photoId = async (params: Promise<{ id: string }>) => {
@@ -15,7 +14,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ id:
   const photo = id ? await prisma.galleryPhoto.findUnique({ where: { id } }) : null;
   if (!photo) return new Response("Not found.", { status: 404 });
 
-  const data = await readFile(galleryPath(photo.storedName)).catch(() => null);
+  const data = await readStoredFile("gallery", photo.storedName);
   if (!data) return new Response("The photo is missing on the server.", { status: 410 });
 
   return new Response(new Uint8Array(data), {
@@ -39,7 +38,7 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
   if (!photo) return Response.json({ error: "That photo was already removed." }, { status: 404 });
 
   await prisma.galleryPhoto.delete({ where: { id: photo.id } });
-  await unlink(galleryPath(photo.storedName)).catch(() => {});
+  await deleteFile("gallery", photo.storedName);
   revalidatePath("/gallery");
   revalidatePath("/list/gallery");
   return Response.json({ ok: true });

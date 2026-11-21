@@ -3,6 +3,11 @@ const nextConfig = {
   images: {
     remotePatterns: [{ hostname: "images.pexels.com" }],
   },
+  // Read from disk when covers and PDFs are drawn. Listed so hosts that only
+  // ship the files each route uses (like Vercel) include them.
+  outputFileTracingIncludes: {
+    "/**": ["./assets/fonts/*.otf", "./public/logo.png"],
+  },
   // Basic hardening: no embedding in other sites' frames (clickjacking), no
   // content-type guessing, and no leaking full URLs to other sites
   async headers() {
