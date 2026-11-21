@@ -222,6 +222,21 @@ def test_cover_prefers_the_teachers_topic_and_subtopic():
     assert d["topic"] == BODY["topic"][:80]
 
 
+def test_the_teachers_cover_topic_reaches_the_pipeline(tmp_path):
+    # Through the real API and job store, not just cover_details
+    seen = {}
+
+    def run(job, progress):
+        seen.update(cover=pipeline.cover_details({"topic": "AI's topic"}, job))
+        return {"title": "t"}
+
+    settings = make_settings(tmp_path)
+    with TestClient(create_app(settings, run)) as client:
+        body = {**BODY, "coverTopic": "Differential calculus", "subtopic": "Stationary points"}
+        wait_for(client, client.post("/jobs", json=body, headers=AUTH).json()["jobId"])
+    assert (seen["cover"]["topic"], seen["cover"]["subtopic"]) == ("Differential calculus", "Stationary points")
+
+
 def test_a_refused_thumbnail_does_not_fail_the_video(tmp_path, monkeypatch):
     settings = make_settings(tmp_path, dry_run=False)
 
