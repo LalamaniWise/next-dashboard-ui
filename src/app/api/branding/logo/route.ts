@@ -1,16 +1,16 @@
 import { randomUUID } from "crypto";
-import { mkdir, readFile, unlink, writeFile } from "fs/promises";
 import path from "path";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
-import { brandingDir, LOGO_TYPES, MAX_LOGO_BYTES } from "@/lib/branding";
+import { LOGO_TYPES, MAX_LOGO_BYTES } from "@/lib/branding";
+import { deleteFile, readStoredFile, saveFile } from "@/lib/fileStore";
 import prisma from "@/lib/prisma";
 
 // The school logo, shown on the public website and sign-in pages
 export async function GET() {
   const setting = await prisma.setting.findUnique({ where: { id: 1 }, select: { logoFile: true } });
   const file = setting?.logoFile && path.basename(setting.logoFile);
-  const data = file ? await readFile(path.join(brandingDir(), file)).catch(() => null) : null;
+  const data = file ? await readStoredFile("branding", file) : null;
   // Relative, so it works whatever address the site is opened on
   if (!file || !data) return new Response(null, { status: 302, headers: { Location: "/logo.png" } });
 
@@ -38,8 +38,7 @@ export async function POST(request: Request) {
   if (file.size > MAX_LOGO_BYTES) return Response.json({ error: "The logo can be at most 2 MB." }, { status: 413 });
 
   const storedName = `logo-${randomUUID()}${ext}`;
-  await mkdir(brandingDir(), { recursive: true });
-  await writeFile(path.join(brandingDir(), storedName), Buffer.from(await file.arrayBuffer()));
+  await saveFile("branding", storedName, new Uint8Array(await file.arrayBuffer()), LOGO_TYPES[ext]);
 
   const previous = await prisma.setting.findUnique({ where: { id: 1 }, select: { logoFile: true } });
   await prisma.setting.upsert({
@@ -47,9 +46,7 @@ export async function POST(request: Request) {
     update: { logoFile: storedName },
     create: { id: 1, logoFile: storedName },
   });
-  if (previous?.logoFile) {
-    await unlink(path.join(brandingDir(), path.basename(previous.logoFile))).catch(() => {});
-  }
+  if (previous?.logoFile) await deleteFile("branding", previous.logoFile);
 
   revalidatePath("/", "layout");
   return Response.json({ ok: true });
@@ -62,7 +59,7 @@ export async function DELETE() {
   const previous = await prisma.setting.findUnique({ where: { id: 1 }, select: { logoFile: true } });
   if (previous?.logoFile) {
     await prisma.setting.update({ where: { id: 1 }, data: { logoFile: null } });
-    await unlink(path.join(brandingDir(), path.basename(previous.logoFile))).catch(() => {});
+    await deleteFile("branding", previous.logoFile);
   }
   revalidatePath("/", "layout");
   return Response.json({ ok: true });

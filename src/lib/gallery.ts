@@ -1,12 +1,7 @@
 import "server-only";
-import path from "path";
 
-// Photos for the public website's gallery. Kept outside /public, like the
-// study materials, so each copy of the system has its own.
-export const galleryDir = () =>
-  process.env.GALLERY_DIR || path.join(process.cwd(), "storage", "gallery");
-
-export const galleryPath = (storedName: string) => path.join(galleryDir(), path.basename(storedName));
+// Photos for the public website's gallery. Kept with the other uploads
+// (fileStore.ts), outside /public, so each copy of the system has its own.
 
 export const MAX_GALLERY_MB = 8;
 

@@ -1,9 +1,9 @@
 "use server";
 
-import { unlink } from "fs/promises";
 import { revalidatePath } from "next/cache";
 import { auth } from "./auth";
-import { canDeleteMaterial, storedPath } from "./materials";
+import { deleteFile } from "./fileStore";
+import { canDeleteMaterial } from "./materials";
 import prisma from "./prisma";
 
 export const deleteMaterial = async (
@@ -22,7 +22,7 @@ export const deleteMaterial = async (
 
   await prisma.material.delete({ where: { id } });
   // A file already missing on disk doesn't matter once the record is gone
-  await unlink(storedPath(material.storedName)).catch(() => {});
+  await deleteFile("materials", material.storedName);
 
   revalidatePath("/list/materials");
   return { success: true, error: false };

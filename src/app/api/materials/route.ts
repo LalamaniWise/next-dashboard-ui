@@ -1,10 +1,10 @@
 import { randomUUID } from "crypto";
-import { mkdir, unlink, writeFile } from "fs/promises";
 import path from "path";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { materialSchema } from "@/lib/formValidationSchemas";
-import { canUploadFor, materialsDir, storedPath } from "@/lib/materials";
+import { deleteFile, saveFile } from "@/lib/fileStore";
+import { canUploadFor } from "@/lib/materials";
 import { ALLOWED_FILES, IMAGE_FILES, MAX_UPLOAD_MB } from "@/lib/materialTypes";
 import prisma from "@/lib/prisma";
 
@@ -56,8 +56,7 @@ export async function POST(request: Request) {
   }
 
   const storedName = `${randomUUID()}${ext}`;
-  await mkdir(materialsDir(), { recursive: true });
-  await writeFile(storedPath(storedName), Buffer.from(await file.arrayBuffer()));
+  await saveFile("materials", storedName, new Uint8Array(await file.arrayBuffer()), ALLOWED_FILES[ext]);
 
   try {
     await prisma.material.create({
@@ -77,7 +76,7 @@ export async function POST(request: Request) {
     });
   } catch (err) {
     console.log(err);
-    await unlink(storedPath(storedName)).catch(() => {});
+    await deleteFile("materials", storedName);
     return fail("The material couldn't be saved. Check the subject and grade.", 500);
   }
 
