@@ -1,0 +1,105 @@
+{
+  "title": "Solving Equations",
+  "subject": "Mathematics",
+  "grade": 9,
+  "topic": "Algebraic Equations",
+  "subtopic": "Brackets, fractions and factorising",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Solving Equations",
+      "subheading": "Grade 9 Mathematics · Part 3: Algebraic equations",
+      "narration": "Welcome to part three of our Grade 9 algebra series. In this lesson we solve equations with brackets, with fractions, and by factorising."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1: Brackets",
+      "lines": [
+        "4(x - 2) - 3(x + 1) = 5",
+        "4x - 8 - 3x - 3 = 5",
+        "x - 11 = 5",
+        "x = 16"
+      ],
+      "narration": "Solve four times, x minus two, minus three times, x plus one, equals five. Expand: four x minus eight, minus three x, minus three. Careful: negative three times positive one is negative three. Simplify the left side: x minus eleven equals five. Add eleven to both sides, and x equals sixteen."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: Fractions",
+      "lines": [
+        "\\frac{x}{3} + \\frac{x}{2} = 10",
+        "\\text{Multiply every term by the LCD, } 6",
+        "2x + 3x = 60",
+        "5x = 60",
+        "x = 12"
+      ],
+      "narration": "Solve x over three, plus x over two, equals ten. The lowest common denominator is six, so multiply every term by six, including the ten. Six times x over three is two x. Six times x over two is three x. Six times ten is sixty. So five x equals sixty, and x equals twelve."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3: Fraction on each side",
+      "lines": [
+        "\\frac{x + 1}{4} = \\frac{x - 2}{3}",
+        "3(x + 1) = 4(x - 2)",
+        "3x + 3 = 4x - 8",
+        "3x - 4x = -8 - 3",
+        "-x = -11",
+        "x = 11"
+      ],
+      "narration": "Solve x plus one over four, equals x minus two over three. Multiply both sides by twelve, or cross multiply, to get three times x plus one, equals four times x minus two. Expand: three x plus three equals four x minus eight. Move the terms: three x minus four x equals negative eight minus three. So negative x equals negative eleven, and x equals eleven."
+    },
+    {
+      "type": "bullets",
+      "heading": "When a product equals zero",
+      "bullets": [
+        "If $a \\times b = 0$, then $a = 0$ or $b = 0$",
+        "Get zero on one side, factorise, then set each factor equal to zero",
+        "These equations can have two answers"
+      ],
+      "narration": "Here is a powerful idea. If two numbers multiply to give zero, then at least one of them must be zero. So to solve an equation with x squared, get zero on one side, factorise, and set each factor equal to zero. These equations can have two answers."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 4",
+      "lines": [
+        "x^2 - 5x = 0",
+        "x(x - 5) = 0",
+        "x = 0 \\text{ or } x - 5 = 0",
+        "x = 0 \\text{ or } x = 5"
+      ],
+      "narration": "Solve x squared minus five x equals zero. Take out the common factor x: x times, x minus five, equals zero. So x equals zero, or x minus five equals zero. The answers are x equals zero, or x equals five. Do not divide by x, or you will lose the answer zero."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 5",
+      "lines": [
+        "x^2 + x - 12 = 0",
+        "(x + 4)(x - 3) = 0",
+        "x = -4 \\text{ or } x = 3"
+      ],
+      "narration": "Solve x squared plus x minus twelve equals zero. We need two numbers that multiply to negative twelve and add to one: four and negative three. So x plus four, times x minus three, equals zero. Therefore x equals negative four, or x equals three."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "With fractions, multiply every term by the LCD",
+        "A minus in front of a bracket changes every sign inside",
+        "For $x^2$ equations: zero on one side, then factorise"
+      ],
+      "narration": "Three tips. With fractions, multiply every single term by the lowest common denominator. A minus sign in front of a bracket changes every sign inside it. And for equations with x squared, get zero on one side, then factorise."
+    }
+  ],
+  "activity": {
+    "title": "Solving equations",
+    "instructions": "Solve for $x$. Show all your steps.",
+    "questions": [
+      {"text": "$5(x + 1) = 2x + 20$", "marks": 3, "answer": ["$5x + 5 = 2x + 20$", "$3x = 15$", "$x = 5$"]},
+      {"text": "$3(2x - 1) - 2(x + 4) = 9$", "marks": 3, "answer": ["$6x - 3 - 2x - 8 = 9$", "$4x - 11 = 9$", "$4x = 20$", "$x = 5$"]},
+      {"text": "$\\frac{x}{5} - 2 = 1$", "marks": 2, "answer": ["$\\frac{x}{5} = 3$", "$x = 15$"]},
+      {"text": "$\\frac{2x - 1}{3} = \\frac{x + 2}{2}$", "marks": 3, "answer": ["$2(2x - 1) = 3(x + 2)$", "$4x - 2 = 3x + 6$", "$x = 8$"]},
+      {"text": "$x^2 - 16 = 0$", "marks": 2, "answer": ["$(x - 4)(x + 4) = 0$", "$x = 4$ or $x = -4$"]},
+      {"text": "$x^2 - 7x + 10 = 0$", "marks": 3, "answer": ["$(x - 2)(x - 5) = 0$", "$x = 2$ or $x = 5$"]}
+    ]
+  }
+}

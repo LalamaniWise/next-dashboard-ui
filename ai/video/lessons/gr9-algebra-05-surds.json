@@ -1,0 +1,100 @@
+{
+  "title": "Surds: Simplifying, Adding and Multiplying",
+  "subject": "Mathematics",
+  "grade": 9,
+  "topic": "Surds",
+  "subtopic": "Simplifying, adding and multiplying surds",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Surds",
+      "subheading": "Grade 9 Mathematics · Part 5: Simplifying surds",
+      "narration": "Welcome to part five of our Grade 9 algebra series. In this lesson we simplify surds, and we add and multiply them."
+    },
+    {
+      "type": "bullets",
+      "heading": "Recap: what is a surd?",
+      "bullets": [
+        "A surd is a root that is not a whole number or fraction",
+        "$\\sqrt{3}$ and $\\sqrt{10}$ are surds",
+        "$\\sqrt{16} = 4$ is not a surd"
+      ],
+      "narration": "Remember, a surd is a root that does not work out to a whole number or a fraction. The square root of three and the square root of ten are surds. The square root of sixteen is four, so it is not a surd."
+    },
+    {
+      "type": "bullets",
+      "heading": "The rules",
+      "bullets": [
+        "$\\sqrt{a} \\times \\sqrt{b} = \\sqrt{ab}$",
+        "$\\frac{\\sqrt{a}}{\\sqrt{b}} = \\sqrt{\\frac{a}{b}}$",
+        "$\\sqrt{a} \\times \\sqrt{a} = a$"
+      ],
+      "narration": "Three rules. The square root of a, times the square root of b, is the square root of a b. The square root of a, over the square root of b, is the square root of a over b. And the square root of a, times itself, is just a."
+    },
+    {
+      "type": "steps",
+      "heading": "Simplify using a perfect square",
+      "lines": [
+        "\\sqrt{12} = \\sqrt{4 \\times 3}",
+        "= \\sqrt{4} \\times \\sqrt{3}",
+        "= 2\\sqrt{3}"
+      ],
+      "narration": "To simplify the square root of twelve, write twelve as a perfect square times another number: four times three. Split the root: the square root of four, times the square root of three. The square root of four is two, so the answer is two root three."
+    },
+    {
+      "type": "steps",
+      "heading": "Use the biggest perfect square",
+      "lines": [
+        "\\sqrt{72} = \\sqrt{36 \\times 2}",
+        "= \\sqrt{36} \\times \\sqrt{2}",
+        "= 6\\sqrt{2}"
+      ],
+      "narration": "Simplify the square root of seventy two. You could use four times eighteen, but it is faster to use the biggest perfect square factor, thirty six. Seventy two is thirty six times two. The square root of thirty six is six, so the answer is six root two."
+    },
+    {
+      "type": "steps",
+      "heading": "Adding like surds",
+      "lines": [
+        "3\\sqrt{5} + 4\\sqrt{5} = 7\\sqrt{5}",
+        "\\sqrt{18} + \\sqrt{8}",
+        "= 3\\sqrt{2} + 2\\sqrt{2}",
+        "= 5\\sqrt{2}"
+      ],
+      "narration": "Like surds have the same number under the root, and we add them like like terms. Three root five plus four root five is seven root five. Now the square root of eighteen plus the square root of eight. They are not like surds yet, so simplify each one first. Root eighteen is root nine times two, which is three root two. Root eight is root four times two, which is two root two. Now add: five root two."
+    },
+    {
+      "type": "steps",
+      "heading": "Multiplying surds",
+      "lines": [
+        "\\sqrt{3} \\times \\sqrt{12} = \\sqrt{36} = 6",
+        "2\\sqrt{5} \\times 3\\sqrt{2} = 6\\sqrt{10}",
+        "(\\sqrt{7})^2 = 7"
+      ],
+      "narration": "To multiply, multiply under the root. Root three times root twelve is root thirty six, which is six. Two root five times three root two: multiply the numbers outside, two times three is six, and multiply inside, five times two is ten. So six root ten. And root seven, squared, is just seven."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "$\\sqrt{9 + 16} \\neq \\sqrt{9} + \\sqrt{16}$",
+        "Use the biggest perfect square factor",
+        "Only add surds with the same number under the root"
+      ],
+      "narration": "Watch out: the square root of nine plus sixteen is the square root of twenty five, which is five, but root nine plus root sixteen is seven. So you cannot split a root over addition. Use the biggest perfect square factor when simplifying. And only add surds that have the same number under the root."
+    }
+  ],
+  "activity": {
+    "title": "Surds",
+    "instructions": "Simplify without a calculator.",
+    "questions": [
+      {"text": "$\\sqrt{20}$", "marks": 2, "answer": ["$= \\sqrt{4 \\times 5}$", "$= 2\\sqrt{5}$"]},
+      {"text": "$\\sqrt{50}$", "marks": 2, "answer": ["$= \\sqrt{25 \\times 2}$", "$= 5\\sqrt{2}$"]},
+      {"text": "$\\sqrt{48}$", "marks": 2, "answer": ["$= \\sqrt{16 \\times 3}$", "$= 4\\sqrt{3}$"]},
+      {"text": "$2\\sqrt{3} + 5\\sqrt{3}$", "marks": 1, "answer": ["$= 7\\sqrt{3}$"]},
+      {"text": "$\\sqrt{27} + \\sqrt{12}$", "marks": 3, "answer": ["$= 3\\sqrt{3} + 2\\sqrt{3}$", "$= 5\\sqrt{3}$"]},
+      {"text": "$\\sqrt{2} \\times \\sqrt{18}$", "marks": 2, "answer": ["$= \\sqrt{36}$", "$= 6$"]},
+      {"text": "$3\\sqrt{2} \\times 4\\sqrt{5}$", "marks": 2, "answer": ["$= 12\\sqrt{10}$"]}
+    ]
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "title": "Algebraic Expressions: Terms and Like Terms",
+  "subject": "Mathematics",
+  "grade": 8,
+  "topic": "Algebraic Expressions",
+  "subtopic": "Terms, like terms and simplifying",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Algebraic Expressions",
+      "subheading": "Grade 8 Mathematics · Part 1: Terms and like terms",
+      "narration": "Welcome to part one of our algebra series. In this lesson we learn the language of algebra, and how to simplify expressions by adding and subtracting like terms."
+    },
+    {
+      "type": "bullets",
+      "heading": "The language of algebra",
+      "bullets": [
+        "A variable is a letter that stands for a number, like $x$",
+        "A term is numbers and variables multiplied together: $5x$, $-3y^2$, $7$",
+        "The number in front of a variable is its coefficient",
+        "A term with no variable is called a constant"
+      ],
+      "narration": "A variable is a letter that stands for a number, like x. A term is numbers and variables multiplied together, for example five x, negative three y squared, or seven. The number in front of a variable is called its coefficient. And a term with no variable is called a constant."
+    },
+    {
+      "type": "steps",
+      "heading": "Naming the parts",
+      "lines": [
+        "4x^2 - 3x + 7",
+        "\\text{Terms: } 4x^2,\\ -3x,\\ 7",
+        "\\text{Coefficient of } x: \\ -3",
+        "\\text{Constant: } 7"
+      ],
+      "narration": "Look at four x squared, minus three x, plus seven. Terms are separated by plus and minus signs, so there are three terms: four x squared, negative three x, and seven. The sign belongs to the term after it, so the coefficient of x is negative three. And the constant is seven."
+    },
+    {
+      "type": "bullets",
+      "heading": "Like terms",
+      "bullets": [
+        "Like terms have exactly the same variables with the same exponents",
+        "$3x$ and $-5x$ are like terms",
+        "$2x^2$ and $2x$ are not like terms",
+        "$4ab$ and $-ba$ are like terms"
+      ],
+      "narration": "Like terms have exactly the same variables, with the same exponents. Three x and negative five x are like terms. Two x squared and two x are not like terms, because the exponents are different. And four a b and negative b a are like terms, because b a is the same as a b."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1: Simplify",
+      "lines": [
+        "3x + 5y - x + 2y",
+        "= 3x - x + 5y + 2y",
+        "= 2x + 7y"
+      ],
+      "narration": "Simplify three x, plus five y, minus x, plus two y. First group the like terms, keeping each sign with its term: three x minus x, plus five y plus two y. Three x minus x is two x, and five y plus two y is seven y. So the answer is two x plus seven y."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: Simplify",
+      "lines": [
+        "2a^2 - 4a + 5a^2 + 9a - 3",
+        "= 2a^2 + 5a^2 - 4a + 9a - 3",
+        "= 7a^2 + 5a - 3"
+      ],
+      "narration": "Now simplify two a squared, minus four a, plus five a squared, plus nine a, minus three. Group the a squared terms, then the a terms, then the constant. Two a squared plus five a squared is seven a squared. Negative four a plus nine a is five a. The constant stays negative three. The answer is seven a squared, plus five a, minus three."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "Keep the sign in front of each term with that term",
+        "Only add or subtract like terms",
+        "Write the answer from the highest power to the lowest"
+      ],
+      "narration": "Three tips. Keep the sign in front of each term with that term when you move it. Only add or subtract like terms. And write your answer from the highest power down to the lowest."
+    }
+  ],
+  "activity": {
+    "title": "Terms and like terms",
+    "instructions": "Answer all the questions and show your working.",
+    "questions": [
+      {"text": "How many terms are in $3x^2 - 5x + 8$? Give the coefficient of $x$.", "marks": 2, "answer": ["3 terms", "Coefficient of $x$: $-5$"]},
+      {"text": "Simplify $4x + 3 - 2x + 5$.", "marks": 2, "answer": ["$= 4x - 2x + 3 + 5$", "$= 2x + 8$"]},
+      {"text": "Simplify $6a + 2b - a - 7b$.", "marks": 2, "answer": ["$= 6a - a + 2b - 7b$", "$= 5a - 5b$"]},
+      {"text": "Simplify $3m^2 + 4m - m^2 - 6m$.", "marks": 2, "answer": ["$= 3m^2 - m^2 + 4m - 6m$", "$= 2m^2 - 2m$"]},
+      {"text": "Simplify $5xy - 2x + 3yx + 4x$.", "marks": 2, "answer": ["$= 5xy + 3xy - 2x + 4x$", "$= 8xy + 2x$"]}
+    ]
+  }
+}

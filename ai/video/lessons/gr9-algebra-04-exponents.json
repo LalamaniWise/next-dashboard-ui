@@ -1,0 +1,102 @@
+{
+  "title": "Exponents: Negative Exponents and Scientific Notation",
+  "subject": "Mathematics",
+  "grade": 9,
+  "topic": "Exponents",
+  "subtopic": "Negative exponents, prime bases and scientific notation",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Exponents",
+      "subheading": "Grade 9 Mathematics · Part 4: Negative exponents and scientific notation",
+      "narration": "Welcome to part four of our Grade 9 algebra series. In this lesson we work with negative exponents, simplify using prime bases, and write numbers in scientific notation."
+    },
+    {
+      "type": "bullets",
+      "heading": "Quick recap of the laws",
+      "bullets": [
+        "$a^m \\times a^n = a^{m+n}$ and $a^m \\div a^n = a^{m-n}$",
+        "$(a^m)^n = a^{mn}$ and $(ab)^n = a^n b^n$",
+        "$a^0 = 1$"
+      ],
+      "narration": "A quick recap. When multiplying powers with the same base, add the exponents. When dividing, subtract them. A power of a power: multiply the exponents. A product to a power: each factor gets the power. And anything to the power zero is one."
+    },
+    {
+      "type": "bullets",
+      "heading": "Negative exponents",
+      "bullets": [
+        "$a^{-n} = \\frac{1}{a^n}$",
+        "$2^{-3} = \\frac{1}{2^3} = \\frac{1}{8}$",
+        "$\\frac{1}{x^{-2}} = x^2$",
+        "A negative exponent does not make the answer negative"
+      ],
+      "narration": "A negative exponent means one over the positive power. So a to the negative n is one over a to the n. Two to the negative three is one over two cubed, which is one eighth. And one over x to the negative two is x squared. Notice that a negative exponent does not make the answer negative."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1",
+      "lines": [
+        "\\frac{x^3}{x^7}",
+        "= x^{3-7}",
+        "= x^{-4}",
+        "= \\frac{1}{x^4}"
+      ],
+      "narration": "Simplify x cubed over x to the seven. Subtract the exponents: three minus seven is negative four, so we get x to the negative four. Write the answer with a positive exponent: one over x to the four."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2",
+      "lines": [
+        "(2a^{-3})^2 \\times 3a^8",
+        "= 4a^{-6} \\times 3a^8",
+        "= 12a^2"
+      ],
+      "narration": "Simplify two a to the negative three, all squared, times three a to the eight. Squaring the bracket gives four a to the negative six. Now multiply: four times three is twelve, and negative six plus eight is two. The answer is twelve a squared."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3: Use prime bases",
+      "lines": [
+        "\\frac{9^2 \\times 3^3}{27^2}",
+        "= \\frac{(3^2)^2 \\times 3^3}{(3^3)^2}",
+        "= \\frac{3^4 \\times 3^3}{3^6}",
+        "= 3^{4+3-6} = 3^1 = 3"
+      ],
+      "narration": "Simplify nine squared times three cubed, over twenty seven squared. The bases are different, so write each one as a power of the prime three. Nine is three squared, and twenty seven is three cubed. Now we have three to the four, times three cubed, over three to the six. Four plus three minus six is one. The answer is three."
+    },
+    {
+      "type": "bullets",
+      "heading": "Scientific notation",
+      "bullets": [
+        "A number written as $a \\times 10^n$, with $1 \\leq a < 10$",
+        "Large numbers have a positive power of 10",
+        "Small numbers have a negative power of 10"
+      ],
+      "narration": "Scientific notation writes a number as a number between one and ten, times a power of ten. Large numbers have a positive power of ten. Small numbers, less than one, have a negative power of ten."
+    },
+    {
+      "type": "steps",
+      "heading": "Scientific notation examples",
+      "lines": [
+        "4\\,500\\,000 = 4{,}5 \\times 10^6",
+        "0{,}00072 = 7{,}2 \\times 10^{-4}",
+        "(3 \\times 10^5)(2 \\times 10^3) = 6 \\times 10^8"
+      ],
+      "narration": "Four million five hundred thousand: move the comma six places to the left to get four comma five, so it is four comma five times ten to the six. Zero comma zero zero zero seven two: move the comma four places to the right to get seven comma two, so it is seven comma two times ten to the negative four. To multiply, multiply the numbers, three times two is six, and add the powers of ten: six times ten to the eight."
+    }
+  ],
+  "activity": {
+    "title": "Exponents",
+    "instructions": "Simplify. Leave answers with positive exponents.",
+    "questions": [
+      {"text": "$3^{-2}$", "marks": 2, "answer": ["$= \\frac{1}{3^2}$", "$= \\frac{1}{9}$"]},
+      {"text": "$\\frac{a^4}{a^9}$", "marks": 2, "answer": ["$= a^{-5}$", "$= \\frac{1}{a^5}$"]},
+      {"text": "$(3x^{-2})^2 \\times x^5$", "marks": 3, "answer": ["$= 9x^{-4} \\times x^5$", "$= 9x$"]},
+      {"text": "$\\frac{8^2 \\times 2^3}{4^4}$", "marks": 3, "answer": ["$= \\frac{2^6 \\times 2^3}{2^8}$", "$= 2^1 = 2$"]},
+      {"text": "Write $36\\,000$ in scientific notation.", "marks": 1, "answer": ["$3{,}6 \\times 10^4$"]},
+      {"text": "Write $0{,}0051$ in scientific notation.", "marks": 1, "answer": ["$5{,}1 \\times 10^{-3}$"]},
+      {"text": "Calculate $(4 \\times 10^3)(2 \\times 10^{-5})$ in scientific notation.", "marks": 2, "answer": ["$= 8 \\times 10^{3 + (-5)}$", "$= 8 \\times 10^{-2}$"]}
+    ]
+  }
+}

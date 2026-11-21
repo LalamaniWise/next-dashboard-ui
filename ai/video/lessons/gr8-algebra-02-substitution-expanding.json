@@ -1,0 +1,99 @@
+{
+  "title": "Substitution and the Distributive Law",
+  "subject": "Mathematics",
+  "grade": 8,
+  "topic": "Algebraic Expressions",
+  "subtopic": "Substitution and expanding brackets",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Substitution and Expanding",
+      "subheading": "Grade 8 Mathematics · Part 2: Algebraic expressions",
+      "narration": "Welcome to part two of our algebra series. Today we substitute numbers into expressions, and we use the distributive law to expand brackets."
+    },
+    {
+      "type": "bullets",
+      "heading": "Substitution",
+      "bullets": [
+        "Replace each variable with its value",
+        "Put the value in brackets, especially a negative number",
+        "Then follow the order of operations"
+      ],
+      "narration": "To substitute, replace each variable with its value. Always put the value in brackets, especially when it is a negative number. Then work it out using the order of operations: brackets, exponents, then multiplication and division, then addition and subtraction."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1: Substitute x = 3",
+      "lines": [
+        "2x^2 - 5x + 1",
+        "= 2(3)^2 - 5(3) + 1",
+        "= 2(9) - 15 + 1",
+        "= 18 - 15 + 1 = 4"
+      ],
+      "narration": "Find the value of two x squared, minus five x, plus one, when x is three. Replace x with three in brackets. Square first: three squared is nine, so we get two times nine, minus fifteen, plus one. That is eighteen minus fifteen plus one, which equals four."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: Substitute a = -2 and b = 4",
+      "lines": [
+        "3a - ab",
+        "= 3(-2) - (-2)(4)",
+        "= -6 - (-8)",
+        "= -6 + 8 = 2"
+      ],
+      "narration": "Now find three a minus a b, when a is negative two and b is four. Substitute: three times negative two, minus negative two times four. Three times negative two is negative six. Negative two times four is negative eight. Minus negative eight becomes plus eight. So negative six plus eight equals two."
+    },
+    {
+      "type": "bullets",
+      "heading": "The distributive law",
+      "bullets": [
+        "$a(b + c) = ab + ac$",
+        "Multiply the term outside by every term inside",
+        "Watch the signs: $-2(x - 3) = -2x + 6$"
+      ],
+      "narration": "The distributive law says a times, b plus c, equals a b plus a c. Multiply the term outside the bracket by every term inside. Watch the signs: negative two times, x minus three, equals negative two x, plus six, because negative times negative is positive."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3: Expand",
+      "lines": [
+        "3(2x - 5)",
+        "= 3 \\times 2x - 3 \\times 5",
+        "= 6x - 15"
+      ],
+      "narration": "Expand three times, two x minus five. Three times two x is six x. Three times negative five is negative fifteen. So the answer is six x minus fifteen."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 4: Expand and simplify",
+      "lines": [
+        "2x(x + 4) - 3(x - 1)",
+        "= 2x^2 + 8x - 3x + 3",
+        "= 2x^2 + 5x + 3"
+      ],
+      "narration": "Expand and simplify two x times, x plus four, minus three times, x minus one. Two x times x is two x squared, and two x times four is eight x. Negative three times x is negative three x, and negative three times negative one is plus three. Now add the like terms: eight x minus three x is five x. The answer is two x squared, plus five x, plus three."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "Always use brackets when you substitute",
+        "The sign in front of the bracket is multiplied in too",
+        "Simplify like terms after expanding"
+      ],
+      "narration": "Remember: always use brackets when you substitute. The sign in front of a bracket is multiplied in too. And after expanding, always simplify the like terms."
+    }
+  ],
+  "activity": {
+    "title": "Substitution and expanding",
+    "instructions": "Answer all the questions and show your working.",
+    "questions": [
+      {"text": "If $x = 2$, find the value of $3x + 4$.", "marks": 2, "answer": ["$= 3(2) + 4$", "$= 10$"]},
+      {"text": "If $x = -3$, find the value of $x^2 - 2x$.", "marks": 3, "answer": ["$= (-3)^2 - 2(-3)$", "$= 9 + 6$", "$= 15$"]},
+      {"text": "Expand $4(x + 5)$.", "marks": 2, "answer": ["$= 4x + 20$"]},
+      {"text": "Expand $-3(2a - 1)$.", "marks": 2, "answer": ["$= -6a + 3$"]},
+      {"text": "Expand and simplify $x(x - 2) + 5(x + 1)$.", "marks": 3, "answer": ["$= x^2 - 2x + 5x + 5$", "$= x^2 + 3x + 5$"]}
+    ]
+  }
+}
