@@ -1,0 +1,97 @@
+{
+  "title": "Solving Equations by Factorising",
+  "subject": "Mathematics",
+  "grade": 8,
+  "topic": "Algebraic Equations",
+  "subtopic": "Using a common factor to solve equations",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Equations by Factorising",
+      "subheading": "Grade 8 Mathematics · Factorisation and equations, part 4",
+      "narration": "Welcome to part four of our series on factorisation and equations. In this lesson we use factorising to solve equations that have x squared in them."
+    },
+    {
+      "type": "bullets",
+      "heading": "When a product is zero",
+      "bullets": [
+        "$3 \\times 0 = 0$ and $0 \\times 7 = 0$",
+        "If two numbers multiply to give zero, one of them must be zero",
+        "So if $a \\times b = 0$, then $a = 0$ or $b = 0$"
+      ],
+      "narration": "Three times zero is zero, and zero times seven is zero. In fact, the only way two numbers can multiply to give zero is if one of them is zero. So if a times b equals zero, then a equals zero, or b equals zero."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1",
+      "lines": [
+        "x(x - 4) = 0",
+        "x = 0 \\text{ or } x - 4 = 0",
+        "x = 0 \\text{ or } x = 4"
+      ],
+      "narration": "Solve x times, x minus four, equals zero. Two factors multiply to give zero, so one of them is zero. Either x equals zero, or x minus four equals zero. So x equals zero, or x equals four. There are two answers."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: Factorise first",
+      "lines": [
+        "x^2 + 6x = 0",
+        "x(x + 6) = 0",
+        "x = 0 \\text{ or } x = -6"
+      ],
+      "narration": "Solve x squared plus six x equals zero. First factorise by taking out the common factor x: x times, x plus six, equals zero. So x equals zero, or x plus six equals zero, which gives x equals negative six."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3",
+      "lines": [
+        "2x^2 - 10x = 0",
+        "2x(x - 5) = 0",
+        "x = 0 \\text{ or } x = 5"
+      ],
+      "narration": "Solve two x squared minus ten x equals zero. The highest common factor is two x: two x times, x minus five, equals zero. If two x is zero, then x is zero. Or x minus five is zero, so x equals five."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 4: Get zero on one side",
+      "lines": [
+        "x^2 = 3x",
+        "x^2 - 3x = 0",
+        "x(x - 3) = 0",
+        "x = 0 \\text{ or } x = 3"
+      ],
+      "narration": "Solve x squared equals three x. The rule only works when one side is zero, so first subtract three x from both sides: x squared minus three x equals zero. Factorise: x times, x minus three, equals zero. So x equals zero, or x equals three."
+    },
+    {
+      "type": "bullets",
+      "heading": "Do not divide by x",
+      "bullets": [
+        "Dividing $x^2 = 3x$ by $x$ gives only $x = 3$",
+        "You lose the answer $x = 0$",
+        "Always factorise instead"
+      ],
+      "narration": "A warning. It is tempting to divide both sides of x squared equals three x by x. But then you only get x equals three, and you lose the answer x equals zero. So never divide by x. Always factorise instead."
+    },
+    {
+      "type": "steps",
+      "heading": "Check both answers",
+      "lines": [
+        "x = 3: \\ 3^2 = 9 \\text{ and } 3(3) = 9",
+        "x = 0: \\ 0^2 = 0 \\text{ and } 3(0) = 0"
+      ],
+      "narration": "Let us check both answers in x squared equals three x. When x is three, three squared is nine, and three times three is nine. When x is zero, both sides are zero. Both answers are correct."
+    }
+  ],
+  "activity": {
+    "title": "Equations by factorising",
+    "instructions": "Solve for $x$. Give both answers.",
+    "questions": [
+      {"text": "$x(x - 7) = 0$", "marks": 2, "answer": ["$x = 0$ or $x = 7$"]},
+      {"text": "$(x + 2)(x - 5) = 0$", "marks": 2, "answer": ["$x = -2$ or $x = 5$"]},
+      {"text": "$x^2 - 8x = 0$", "marks": 3, "answer": ["$x(x - 8) = 0$", "$x = 0$ or $x = 8$"]},
+      {"text": "$3x^2 + 12x = 0$", "marks": 3, "answer": ["$3x(x + 4) = 0$", "$x = 0$ or $x = -4$"]},
+      {"text": "$x^2 = 5x$", "marks": 3, "answer": ["$x^2 - 5x = 0$", "$x(x - 5) = 0$", "$x = 0$ or $x = 5$"]}
+    ]
+  }
+}

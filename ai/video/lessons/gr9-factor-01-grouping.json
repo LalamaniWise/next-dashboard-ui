@@ -1,0 +1,99 @@
+{
+  "title": "Factorising: Common Brackets, Grouping and Factorising Fully",
+  "subject": "Mathematics",
+  "grade": 9,
+  "topic": "Factorisation",
+  "subtopic": "Common brackets, grouping and factorising fully",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Factorising Further",
+      "subheading": "Grade 9 Mathematics · Factorisation and equations, part 1",
+      "narration": "Welcome to part one of our Grade 9 series on factorisation and equations. In this lesson we factorise with a common bracket, by grouping, and we learn to factorise fully."
+    },
+    {
+      "type": "steps",
+      "heading": "A common bracket",
+      "lines": [
+        "x(a + b) + 3(a + b)",
+        "= (a + b)(x + 3)"
+      ],
+      "narration": "Factorise x times, a plus b, plus three times, a plus b. Both terms contain the bracket a plus b, so the whole bracket is a common factor. Take it out, and what is left is x plus three. The answer is a plus b, times x plus three."
+    },
+    {
+      "type": "steps",
+      "heading": "Switching a bracket around",
+      "lines": [
+        "2(x - y) - a(y - x)",
+        "= 2(x - y) + a(x - y)",
+        "= (x - y)(2 + a)"
+      ],
+      "narration": "Factorise two times, x minus y, minus a times, y minus x. The brackets look different, but y minus x is the negative of x minus y. So minus a times, y minus x, becomes plus a times, x minus y. Now the bracket x minus y is common, and the answer is x minus y, times two plus a."
+    },
+    {
+      "type": "steps",
+      "heading": "Grouping in pairs",
+      "lines": [
+        "ax + ay + 3x + 3y",
+        "= a(x + y) + 3(x + y)",
+        "= (x + y)(a + 3)"
+      ],
+      "narration": "Factorise a x, plus a y, plus three x, plus three y. There is no factor common to all four terms, so group them in pairs. From the first pair take out a, to get a times, x plus y. From the second pair take out three, to get three times, x plus y. Now x plus y is a common bracket. The answer is x plus y, times a plus three."
+    },
+    {
+      "type": "steps",
+      "heading": "Grouping with a negative",
+      "lines": [
+        "pq - 2p - 5q + 10",
+        "= p(q - 2) - 5(q - 2)",
+        "= (q - 2)(p - 5)"
+      ],
+      "narration": "Factorise p q, minus two p, minus five q, plus ten. From the first pair, take out p: p times, q minus two. From the second pair, take out negative five, so that the bracket matches: negative five times, q minus two. Check: negative five times negative two is plus ten. The answer is q minus two, times p minus five."
+    },
+    {
+      "type": "steps",
+      "heading": "Factorise fully",
+      "lines": [
+        "3x^2 - 6x - 24",
+        "= 3(x^2 - 2x - 8)",
+        "= 3(x - 4)(x + 2)"
+      ],
+      "narration": "Factorise fully, three x squared, minus six x, minus twenty four. First take out the common factor three: three times, x squared minus two x minus eight. The trinomial can be factorised too. We need two numbers with a product of negative eight and a sum of negative two: negative four and two. So the answer is three, times x minus four, times x plus two."
+    },
+    {
+      "type": "steps",
+      "heading": "Keep going until you cannot",
+      "lines": [
+        "x^4 - 16",
+        "= (x^2 - 4)(x^2 + 4)",
+        "= (x - 2)(x + 2)(x^2 + 4)"
+      ],
+      "narration": "Factorise x to the four, minus sixteen. This is a difference of two squares: x squared minus four, times x squared plus four. But x squared minus four is also a difference of two squares, so it becomes x minus two, times x plus two. A sum of squares, like x squared plus four, does not factorise. So the full answer is x minus two, times x plus two, times x squared plus four."
+    },
+    {
+      "type": "bullets",
+      "heading": "A checklist",
+      "bullets": [
+        "Always take out a common factor first",
+        "Two terms: look for a difference of two squares",
+        "Three terms: look for a trinomial",
+        "Four terms: group in pairs",
+        "Check every bracket to see if it factorises further"
+      ],
+      "narration": "Here is a checklist. Always take out a common factor first. Then count the terms. Two terms: look for a difference of two squares. Three terms: factorise the trinomial. Four terms: group them in pairs. Finally, check every bracket to see if it can be factorised further."
+    }
+  ],
+  "activity": {
+    "title": "Factorising further",
+    "instructions": "Factorise fully.",
+    "questions": [
+      {"text": "$m(x - 2) + 5(x - 2)$", "marks": 2, "answer": ["$= (x - 2)(m + 5)$"]},
+      {"text": "$3(a - b) - x(b - a)$", "marks": 3, "answer": ["$= 3(a - b) + x(a - b)$", "$= (a - b)(3 + x)$"]},
+      {"text": "$xy + 4x + 2y + 8$", "marks": 3, "answer": ["$= x(y + 4) + 2(y + 4)$", "$= (y + 4)(x + 2)$"]},
+      {"text": "$ab - 3a - 2b + 6$", "marks": 3, "answer": ["$= a(b - 3) - 2(b - 3)$", "$= (b - 3)(a - 2)$"]},
+      {"text": "$2x^2 + 10x + 12$", "marks": 3, "answer": ["$= 2(x^2 + 5x + 6)$", "$= 2(x + 2)(x + 3)$"]},
+      {"text": "$5y^2 - 45$", "marks": 2, "answer": ["$= 5(y^2 - 9)$", "$= 5(y - 3)(y + 3)$"]}
+    ]
+  }
+}

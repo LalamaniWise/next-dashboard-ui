@@ -1,0 +1,112 @@
+{
+  "title": "Solving Equations by Factorising",
+  "subject": "Mathematics",
+  "grade": 9,
+  "topic": "Algebraic Equations",
+  "subtopic": "Common factor, difference of squares and trinomials",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Equations by Factorising",
+      "subheading": "Grade 9 Mathematics · Factorisation and equations, part 3",
+      "narration": "Welcome to part three of our Grade 9 series on factorisation and equations. In this lesson we solve equations by factorising, using every type of factorising we know."
+    },
+    {
+      "type": "bullets",
+      "heading": "The method",
+      "bullets": [
+        "If $a \\times b = 0$, then $a = 0$ or $b = 0$",
+        "Step 1: get zero on one side",
+        "Step 2: factorise",
+        "Step 3: set each factor equal to zero"
+      ],
+      "narration": "If two factors multiply to give zero, then one of them must be zero. So here is the method. Step one: get zero on one side of the equation. Step two: factorise. Step three: set each factor equal to zero, and solve."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1: Common factor",
+      "lines": [
+        "x^2 = 7x",
+        "x^2 - 7x = 0",
+        "x(x - 7) = 0",
+        "x = 0 \\text{ or } x = 7"
+      ],
+      "narration": "Solve x squared equals seven x. Get zero on one side: x squared minus seven x equals zero. Take out the common factor x: x times, x minus seven, equals zero. So x equals zero, or x equals seven."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: Difference of squares",
+      "lines": [
+        "x^2 - 25 = 0",
+        "(x - 5)(x + 5) = 0",
+        "x = 5 \\text{ or } x = -5"
+      ],
+      "narration": "Solve x squared minus twenty five equals zero. This is a difference of two squares: x minus five, times x plus five, equals zero. So x equals five, or x equals negative five."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3: Trinomial",
+      "lines": [
+        "x^2 - x = 6",
+        "x^2 - x - 6 = 0",
+        "(x - 3)(x + 2) = 0",
+        "x = 3 \\text{ or } x = -2"
+      ],
+      "narration": "Solve x squared minus x equals six. Subtract six to get zero on one side: x squared minus x minus six equals zero. We need two numbers with product negative six and sum negative one: negative three and two. So x minus three, times x plus two, equals zero, and x equals three or x equals negative two."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 4: Common factor first",
+      "lines": [
+        "2x^2 - 8x - 10 = 0",
+        "2(x^2 - 4x - 5) = 0",
+        "2(x - 5)(x + 1) = 0",
+        "x = 5 \\text{ or } x = -1"
+      ],
+      "narration": "Solve two x squared, minus eight x, minus ten, equals zero. Take out the common factor two first. Then factorise the trinomial: negative five and one multiply to negative five and add to negative four. So two, times x minus five, times x plus one, equals zero. Two can never be zero, so x equals five, or x equals negative one."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 5: Expand first",
+      "lines": [
+        "x(x + 3) = 10",
+        "x^2 + 3x - 10 = 0",
+        "(x + 5)(x - 2) = 0",
+        "x = -5 \\text{ or } x = 2"
+      ],
+      "narration": "Solve x times, x plus three, equals ten. Be careful: the right side is ten, not zero, so we cannot use the rule yet. Expand and subtract ten: x squared, plus three x, minus ten, equals zero. Five and negative two multiply to negative ten and add to three. So x equals negative five, or x equals two."
+    },
+    {
+      "type": "steps",
+      "heading": "Check your answers",
+      "lines": [
+        "x = 2: \\ 2(2 + 3) = 2 \\times 5 = 10",
+        "x = -5: \\ -5(-5 + 3) = -5 \\times (-2) = 10"
+      ],
+      "narration": "Let us check both answers in x times, x plus three, equals ten. When x is two: two times five is ten. When x is negative five: negative five times negative two is also ten. Both answers are correct."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "The rule only works when one side is zero",
+        "Never divide both sides by $x$: you lose $x = 0$",
+        "Take out a common factor first to make it easier"
+      ],
+      "narration": "Three tips. The rule only works when one side is zero, so always rearrange first. Never divide both sides by x, because you lose the answer x equals zero. And take out a common factor first, to make the trinomial easier."
+    }
+  ],
+  "activity": {
+    "title": "Equations by factorising",
+    "instructions": "Solve for $x$. Give both answers.",
+    "questions": [
+      {"text": "$x^2 - 9x = 0$", "marks": 2, "answer": ["$x(x - 9) = 0$", "$x = 0$ or $x = 9$"]},
+      {"text": "$x^2 - 49 = 0$", "marks": 2, "answer": ["$(x - 7)(x + 7) = 0$", "$x = 7$ or $x = -7$"]},
+      {"text": "$x^2 + 7x + 12 = 0$", "marks": 3, "answer": ["$(x + 3)(x + 4) = 0$", "$x = -3$ or $x = -4$"]},
+      {"text": "$x^2 = 2x + 15$", "marks": 3, "answer": ["$x^2 - 2x - 15 = 0$", "$(x - 5)(x + 3) = 0$", "$x = 5$ or $x = -3$"]},
+      {"text": "$3x^2 - 12 = 0$", "marks": 3, "answer": ["$3(x^2 - 4) = 0$", "$3(x - 2)(x + 2) = 0$", "$x = 2$ or $x = -2$"]},
+      {"text": "$x(x - 1) = 12$", "marks": 3, "answer": ["$x^2 - x - 12 = 0$", "$(x - 4)(x + 3) = 0$", "$x = 4$ or $x = -3$"]}
+    ]
+  }
+}

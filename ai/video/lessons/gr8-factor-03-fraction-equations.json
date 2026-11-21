@@ -1,0 +1,100 @@
+{
+  "title": "Solving Equations with Fractions",
+  "subject": "Mathematics",
+  "grade": 8,
+  "topic": "Algebraic Equations",
+  "subtopic": "Solving equations that contain fractions",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Equations with Fractions",
+      "subheading": "Grade 8 Mathematics · Factorisation and equations, part 3",
+      "narration": "Welcome to part three of our series on factorisation and equations. In this lesson we solve equations that contain fractions."
+    },
+    {
+      "type": "bullets",
+      "heading": "The big idea",
+      "bullets": [
+        "Fractions make an equation look hard",
+        "Multiply every term by the LCD to clear the fractions",
+        "Then solve as usual"
+      ],
+      "narration": "Fractions can make an equation look hard, but there is a simple trick. Multiply every term by the lowest common denominator, the L C D. The fractions disappear, and you solve the equation as usual."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1",
+      "lines": [
+        "\\frac{x}{3} = 4",
+        "x = 4 \\times 3",
+        "x = 12"
+      ],
+      "narration": "Solve x over three equals four. x is divided by three, so multiply both sides by three. x equals four times three, which is twelve."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2",
+      "lines": [
+        "\\frac{x + 2}{5} = 3",
+        "x + 2 = 15",
+        "x = 13"
+      ],
+      "narration": "Solve x plus two, over five, equals three. Multiply both sides by five: x plus two equals fifteen. Subtract two: x equals thirteen."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3",
+      "lines": [
+        "\\frac{2x}{3} - 1 = 5",
+        "\\frac{2x}{3} = 6",
+        "2x = 18",
+        "x = 9"
+      ],
+      "narration": "Solve two x over three, minus one, equals five. First add one to both sides: two x over three equals six. Multiply both sides by three: two x equals eighteen. Divide by two: x equals nine."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 4: Two fractions",
+      "lines": [
+        "\\frac{x}{2} + \\frac{x}{3} = 5",
+        "\\text{LCD} = 6",
+        "3x + 2x = 30",
+        "5x = 30",
+        "x = 6"
+      ],
+      "narration": "Solve x over two, plus x over three, equals five. The LCD of two and three is six. Multiply every term by six, including the five on the right. Six times x over two is three x. Six times x over three is two x. Six times five is thirty. So five x equals thirty, and x equals six."
+    },
+    {
+      "type": "steps",
+      "heading": "Check your answer",
+      "lines": [
+        "\\text{LHS} = \\frac{6}{2} + \\frac{6}{3}",
+        "= 3 + 2 = 5",
+        "= \\text{RHS}"
+      ],
+      "narration": "Let us check. Substitute x equals six into the left hand side: six over two, plus six over three, is three plus two, which is five. That equals the right hand side, so x equals six is correct."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "Multiply every term by the LCD, even terms without fractions",
+        "Put a top with two terms in brackets",
+        "Check by substituting into the original equation"
+      ],
+      "narration": "Three tips. Multiply every term by the LCD, even the terms without fractions. When the top of a fraction has two terms, put it in brackets before you multiply. And check by substituting your answer into the original equation."
+    }
+  ],
+  "activity": {
+    "title": "Equations with fractions",
+    "instructions": "Solve for $x$. Show all your steps.",
+    "questions": [
+      {"text": "$\\frac{x}{5} = 2$", "marks": 1, "answer": ["$x = 10$"]},
+      {"text": "$\\frac{x - 3}{4} = 2$", "marks": 2, "answer": ["$x - 3 = 8$", "$x = 11$"]},
+      {"text": "$\\frac{3x}{2} + 1 = 7$", "marks": 3, "answer": ["$\\frac{3x}{2} = 6$", "$3x = 12$", "$x = 4$"]},
+      {"text": "$\\frac{x}{4} + \\frac{x}{2} = 9$", "marks": 3, "answer": ["$x + 2x = 36$", "$3x = 36$", "$x = 12$"]},
+      {"text": "$\\frac{x}{3} - \\frac{x}{6} = 2$", "marks": 3, "answer": ["$2x - x = 12$", "$x = 12$"]}
+    ]
+  }
+}
