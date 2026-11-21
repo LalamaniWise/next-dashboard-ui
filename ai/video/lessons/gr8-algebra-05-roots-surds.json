@@ -1,0 +1,101 @@
+{
+  "title": "Squares, Cubes, Roots and Surds",
+  "subject": "Mathematics",
+  "grade": 8,
+  "topic": "Exponents and Surds",
+  "subtopic": "Square roots, cube roots and what a surd is",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Squares, Cubes and Roots",
+      "subheading": "Grade 8 Mathematics · Part 5: Introduction to surds",
+      "narration": "Welcome to part five of our algebra series. In this lesson we work with square roots and cube roots, and we meet surds for the first time."
+    },
+    {
+      "type": "bullets",
+      "heading": "Squares and square roots",
+      "bullets": [
+        "$5^2 = 25$, so $\\sqrt{25} = 5$",
+        "Perfect squares: $1, 4, 9, 16, 25, 36, 49, 64, 81, 100$",
+        "The square root sign gives the positive root"
+      ],
+      "narration": "Five squared is twenty five, so the square root of twenty five is five. Finding a square root undoes squaring. Learn the perfect squares: one, four, nine, sixteen, twenty five, thirty six, forty nine, sixty four, eighty one and one hundred. The square root sign always gives the positive root."
+    },
+    {
+      "type": "bullets",
+      "heading": "Cubes and cube roots",
+      "bullets": [
+        "$2^3 = 8$, so $\\sqrt[3]{8} = 2$",
+        "Perfect cubes: $1, 8, 27, 64, 125$",
+        "$\\sqrt[3]{-27} = -3$ because $(-3)^3 = -27$"
+      ],
+      "narration": "Two cubed is eight, so the cube root of eight is two. The perfect cubes are one, eight, twenty seven, sixty four and one hundred and twenty five. A cube root can be negative: the cube root of negative twenty seven is negative three, because negative three cubed is negative twenty seven."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1",
+      "lines": [
+        "\\sqrt{36} + \\sqrt[3]{64}",
+        "= 6 + 4",
+        "= 10"
+      ],
+      "narration": "Calculate the square root of thirty six, plus the cube root of sixty four. The square root of thirty six is six, because six squared is thirty six. The cube root of sixty four is four, because four cubed is sixty four. Six plus four is ten."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: Fractions and variables",
+      "lines": [
+        "\\sqrt{\\frac{9}{16}} = \\frac{3}{4}",
+        "\\sqrt{x^6} = x^3",
+        "\\sqrt[3]{27y^3} = 3y"
+      ],
+      "narration": "For a fraction, take the root of the top and the bottom: the square root of nine over sixteen is three quarters. The square root of x to the six is x cubed, because x cubed squared is x to the six. And the cube root of twenty seven y cubed is three y."
+    },
+    {
+      "type": "bullets",
+      "heading": "What is a surd?",
+      "bullets": [
+        "A surd is a root that is not a whole number or fraction",
+        "$\\sqrt{2}$, $\\sqrt{7}$ and $\\sqrt[3]{5}$ are surds",
+        "$\\sqrt{2}$ is about $1{,}414$ and its decimals never end or repeat",
+        "$\\sqrt{9} = 3$, so $\\sqrt{9}$ is not a surd"
+      ],
+      "narration": "A surd is a root that does not work out to a whole number or a fraction. The square root of two, the square root of seven, and the cube root of five are all surds. The square root of two is about one comma four one four, and its decimals never end and never repeat. But the square root of nine is three, so it is not a surd."
+    },
+    {
+      "type": "steps",
+      "heading": "Between which whole numbers?",
+      "lines": [
+        "\\sqrt{30}",
+        "25 < 30 < 36",
+        "\\sqrt{25} < \\sqrt{30} < \\sqrt{36}",
+        "5 < \\sqrt{30} < 6"
+      ],
+      "narration": "Between which two whole numbers does the square root of thirty lie? Find the perfect squares on either side of thirty: twenty five and thirty six. Take the square root of each. So the square root of thirty lies between five and six."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "Learn your perfect squares and perfect cubes",
+        "A cube root of a negative number is negative",
+        "Use perfect squares to estimate a surd"
+      ],
+      "narration": "Learn your perfect squares and perfect cubes off by heart. Remember that the cube root of a negative number is negative. And use the perfect squares on either side to estimate a surd. In Grade 9 we will learn to simplify surds."
+    }
+  ],
+  "activity": {
+    "title": "Roots and surds",
+    "instructions": "Answer all the questions without a calculator.",
+    "questions": [
+      {"text": "Calculate $\\sqrt{81}$.", "marks": 1, "answer": ["$= 9$"]},
+      {"text": "Calculate $\\sqrt[3]{125}$.", "marks": 1, "answer": ["$= 5$"]},
+      {"text": "Calculate $\\sqrt{49} - \\sqrt[3]{8}$.", "marks": 2, "answer": ["$= 7 - 2$", "$= 5$"]},
+      {"text": "Calculate $\\sqrt{\\frac{25}{4}}$.", "marks": 1, "answer": ["$= \\frac{5}{2}$"]},
+      {"text": "Simplify $\\sqrt{16x^4}$.", "marks": 2, "answer": ["$= 4x^2$"]},
+      {"text": "Which of these are surds: $\\sqrt{16}$, $\\sqrt{5}$, $\\sqrt{50}$, $\\sqrt[3]{27}$?", "marks": 2, "answer": ["$\\sqrt{5}$ and $\\sqrt{50}$"]},
+      {"text": "Between which two whole numbers does $\\sqrt{60}$ lie?", "marks": 2, "answer": ["$49 < 60 < 64$", "$7 < \\sqrt{60} < 8$"]}
+    ]
+  }
+}

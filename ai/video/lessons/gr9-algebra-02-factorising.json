@@ -1,0 +1,101 @@
+{
+  "title": "Factorising Algebraic Expressions",
+  "subject": "Mathematics",
+  "grade": 9,
+  "topic": "Algebraic Expressions",
+  "subtopic": "Common factors, difference of squares and trinomials",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Factorising",
+      "subheading": "Grade 9 Mathematics · Part 2: Algebraic expressions",
+      "narration": "Welcome to part two of our Grade 9 algebra series. In this lesson we factorise expressions using a common factor, the difference of two squares, and trinomials."
+    },
+    {
+      "type": "bullets",
+      "heading": "What is factorising?",
+      "bullets": [
+        "Factorising is the opposite of expanding",
+        "We write an expression as a product of factors",
+        "Always look for a common factor first"
+      ],
+      "narration": "Factorising is the opposite of expanding. Instead of multiplying out brackets, we put them back, writing the expression as a product of factors. The golden rule: always look for a common factor first."
+    },
+    {
+      "type": "steps",
+      "heading": "Common factor",
+      "lines": [
+        "6x^2 + 9x",
+        "\\text{Highest common factor: } 3x",
+        "= 3x(2x + 3)"
+      ],
+      "narration": "Factorise six x squared plus nine x. The highest common factor of six and nine is three, and both terms have an x, so the common factor is three x. Six x squared divided by three x is two x. Nine x divided by three x is three. So the answer is three x times, two x plus three."
+    },
+    {
+      "type": "steps",
+      "heading": "Difference of two squares",
+      "lines": [
+        "a^2 - b^2 = (a - b)(a + b)",
+        "x^2 - 49 = (x - 7)(x + 7)",
+        "4y^2 - 25 = (2y - 5)(2y + 5)"
+      ],
+      "narration": "A difference of two squares, a squared minus b squared, factorises to a minus b, times a plus b. So x squared minus forty nine is x minus seven, times x plus seven. And four y squared minus twenty five: four y squared is two y all squared, and twenty five is five squared. So it is two y minus five, times two y plus five."
+    },
+    {
+      "type": "steps",
+      "heading": "Trinomials",
+      "lines": [
+        "x^2 + 7x + 12",
+        "\\text{Product } 12, \\text{ sum } 7",
+        "3 \\times 4 = 12 \\text{ and } 3 + 4 = 7",
+        "= (x + 3)(x + 4)"
+      ],
+      "narration": "Factorise x squared, plus seven x, plus twelve. Find two numbers that multiply to give twelve, and add to give seven. Three and four work: three times four is twelve, and three plus four is seven. So the answer is x plus three, times x plus four."
+    },
+    {
+      "type": "steps",
+      "heading": "Trinomial with negatives",
+      "lines": [
+        "x^2 - 2x - 15",
+        "\\text{Product } -15, \\text{ sum } -2",
+        "-5 \\times 3 = -15 \\text{ and } -5 + 3 = -2",
+        "= (x - 5)(x + 3)"
+      ],
+      "narration": "Factorise x squared, minus two x, minus fifteen. We need two numbers with a product of negative fifteen and a sum of negative two. Negative five and three work: negative five times three is negative fifteen, and negative five plus three is negative two. So the answer is x minus five, times x plus three."
+    },
+    {
+      "type": "steps",
+      "heading": "Common factor first",
+      "lines": [
+        "2x^2 - 18",
+        "= 2(x^2 - 9)",
+        "= 2(x - 3)(x + 3)"
+      ],
+      "narration": "Factorise two x squared minus eighteen. Eighteen is not a perfect square, but take out the common factor two first. That leaves x squared minus nine, which is a difference of two squares. So the answer is two, times x minus three, times x plus three."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "Common factor first, then look for other types",
+        "Two terms with a minus between squares: difference of two squares",
+        "Check your answer by expanding it"
+      ],
+      "narration": "To sum up: always take out a common factor first. If there are two perfect squares with a minus between them, use the difference of two squares. For a trinomial, find two numbers for the product and the sum. And check your answer by expanding it."
+    }
+  ],
+  "activity": {
+    "title": "Factorising",
+    "instructions": "Factorise fully.",
+    "questions": [
+      {"text": "$5a + 15$", "marks": 1, "answer": ["$= 5(a + 3)$"]},
+      {"text": "$4x^2 - 8x$", "marks": 2, "answer": ["$= 4x(x - 2)$"]},
+      {"text": "$m^2 - 81$", "marks": 2, "answer": ["$= (m - 9)(m + 9)$"]},
+      {"text": "$9x^2 - 1$", "marks": 2, "answer": ["$= (3x - 1)(3x + 1)$"]},
+      {"text": "$x^2 + 8x + 15$", "marks": 2, "answer": ["$= (x + 3)(x + 5)$"]},
+      {"text": "$y^2 - 3y - 10$", "marks": 2, "answer": ["$= (y - 5)(y + 2)$"]},
+      {"text": "$3x^2 - 12$", "marks": 3, "answer": ["$= 3(x^2 - 4)$", "$= 3(x - 2)(x + 2)$"]}
+    ]
+  }
+}

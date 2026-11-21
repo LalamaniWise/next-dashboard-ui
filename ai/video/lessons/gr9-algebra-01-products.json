@@ -1,0 +1,100 @@
+{
+  "title": "Multiplying Binomials",
+  "subject": "Mathematics",
+  "grade": 9,
+  "topic": "Algebraic Expressions",
+  "subtopic": "Products of binomials and squaring a binomial",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Multiplying Binomials",
+      "subheading": "Grade 9 Mathematics · Part 1: Algebraic expressions",
+      "narration": "Welcome to part one of our Grade 9 algebra series. In this lesson we multiply binomials, square a binomial, and meet the difference of two squares."
+    },
+    {
+      "type": "bullets",
+      "heading": "What is a binomial?",
+      "bullets": [
+        "A binomial has two terms, like $x + 3$ or $2a - 5$",
+        "To multiply two binomials, multiply every term in the first by every term in the second",
+        "Then simplify the like terms"
+      ],
+      "narration": "A binomial is an expression with two terms, like x plus three, or two a minus five. To multiply two binomials, multiply every term in the first bracket by every term in the second bracket. Then simplify the like terms."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1",
+      "lines": [
+        "(x + 3)(x + 5)",
+        "= x^2 + 5x + 3x + 15",
+        "= x^2 + 8x + 15"
+      ],
+      "narration": "Multiply x plus three, by x plus five. x times x is x squared. x times five is five x. Three times x is three x. Three times five is fifteen. Add the middle terms: five x plus three x is eight x. The answer is x squared, plus eight x, plus fifteen."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2",
+      "lines": [
+        "(2x - 1)(x + 4)",
+        "= 2x^2 + 8x - x - 4",
+        "= 2x^2 + 7x - 4"
+      ],
+      "narration": "Multiply two x minus one, by x plus four. Two x times x is two x squared. Two x times four is eight x. Negative one times x is negative x. Negative one times four is negative four. Eight x minus x is seven x. So we get two x squared, plus seven x, minus four."
+    },
+    {
+      "type": "steps",
+      "heading": "Squaring a binomial",
+      "lines": [
+        "(x + 4)^2 = (x + 4)(x + 4)",
+        "= x^2 + 4x + 4x + 16",
+        "= x^2 + 8x + 16"
+      ],
+      "narration": "x plus four, squared, means x plus four times x plus four. Multiply out: x squared, plus four x, plus four x, plus sixteen. So the answer is x squared, plus eight x, plus sixteen."
+    },
+    {
+      "type": "bullets",
+      "heading": "A common mistake",
+      "bullets": [
+        "$(x + 4)^2 \\neq x^2 + 16$",
+        "Do not forget the middle term: $2 \\times x \\times 4 = 8x$",
+        "$(a + b)^2 = a^2 + 2ab + b^2$",
+        "$(a - b)^2 = a^2 - 2ab + b^2$"
+      ],
+      "narration": "A very common mistake is to write x plus four squared as x squared plus sixteen. That is wrong, because it leaves out the middle term, which is two times x times four, eight x. In general, a plus b squared is a squared, plus two a b, plus b squared. And a minus b squared is a squared, minus two a b, plus b squared."
+    },
+    {
+      "type": "steps",
+      "heading": "The difference of two squares",
+      "lines": [
+        "(x - 6)(x + 6)",
+        "= x^2 + 6x - 6x - 36",
+        "= x^2 - 36"
+      ],
+      "narration": "Now multiply x minus six, by x plus six. We get x squared, plus six x, minus six x, minus thirty six. The middle terms cancel out, leaving x squared minus thirty six. This is called the difference of two squares."
+    },
+    {
+      "type": "steps",
+      "heading": "Example: Expand and simplify",
+      "lines": [
+        "(a - 3)^2 - (a + 2)(a - 2)",
+        "= a^2 - 6a + 9 - (a^2 - 4)",
+        "= a^2 - 6a + 9 - a^2 + 4",
+        "= -6a + 13"
+      ],
+      "narration": "Expand and simplify a minus three squared, minus a plus two times a minus two. The first part is a squared, minus six a, plus nine. The second part is a squared minus four. Keep it in brackets, because the minus sign in front changes both signs. So we get a squared, minus six a, plus nine, minus a squared, plus four. The a squared terms cancel, and the answer is negative six a, plus thirteen."
+    }
+  ],
+  "activity": {
+    "title": "Products of binomials",
+    "instructions": "Expand and simplify.",
+    "questions": [
+      {"text": "$(x + 2)(x + 7)$", "marks": 2, "answer": ["$= x^2 + 7x + 2x + 14$", "$= x^2 + 9x + 14$"]},
+      {"text": "$(y - 4)(y + 3)$", "marks": 2, "answer": ["$= y^2 + 3y - 4y - 12$", "$= y^2 - y - 12$"]},
+      {"text": "$(3a + 2)(a - 1)$", "marks": 3, "answer": ["$= 3a^2 - 3a + 2a - 2$", "$= 3a^2 - a - 2$"]},
+      {"text": "$(x - 5)^2$", "marks": 2, "answer": ["$= x^2 - 5x - 5x + 25$", "$= x^2 - 10x + 25$"]},
+      {"text": "$(2m + 3)(2m - 3)$", "marks": 2, "answer": ["$= 4m^2 - 6m + 6m - 9$", "$= 4m^2 - 9$"]},
+      {"text": "$(x + 1)^2 - x(x - 3)$", "marks": 3, "answer": ["$= x^2 + 2x + 1 - x^2 + 3x$", "$= 5x + 1$"]}
+    ]
+  }
+}
