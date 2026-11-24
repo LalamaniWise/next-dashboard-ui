@@ -58,6 +58,7 @@ __pycache__/
 /ai/video/media/
 /ai/video/*.mp4
 /ai/video/algebra-series/
+/ai/video/multiples-series/
 /ai/voice/recordings/
 /ai/voice/dataset_*/
 *.onnx

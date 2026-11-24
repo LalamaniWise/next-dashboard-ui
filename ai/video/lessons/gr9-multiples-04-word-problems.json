@@ -1,0 +1,94 @@
+{
+  "title": "HCF and LCM Word Problems",
+  "subject": "Mathematics",
+  "grade": 9,
+  "topic": "Factors and Multiples",
+  "subtopic": "Choosing the HCF or the LCM in real problems",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "HCF and LCM Word Problems",
+      "subheading": "Grade 9 Mathematics · HCF, LCM and LCD, part 4",
+      "narration": "Welcome to part four of our Grade 9 series on the H C F, the L C M and the L C D. In this lesson we solve harder word problems using the H C F and the L C M."
+    },
+    {
+      "type": "bullets",
+      "heading": "HCF or LCM?",
+      "bullets": [
+        "HCF: share or cut into equal parts, as large as possible",
+        "LCM: repeating events, when do they happen together?",
+        "LCM: the smallest number that several numbers divide into",
+        "Read the question twice and underline the key words"
+      ],
+      "narration": "First decide which one you need. Use the H C F to share or cut things into equal parts, as large as possible, with nothing left over. Use the L C M for events that repeat, when you want to know when they happen together. Also use the L C M for the smallest number that several numbers divide into. Read the question twice, and underline the key words."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1: Bells",
+      "lines": [
+        "\\text{Every 15, 20 and 25 minutes, together at 08:00}",
+        "\\text{LCM} = 2^2 \\times 3 \\times 5^2 = 300 \\text{ min}",
+        "300 \\text{ min} = 5 \\text{ hours}",
+        "\\text{Together again at 13:00}"
+      ],
+      "narration": "Three bells ring every fifteen, twenty, and twenty five minutes. They ring together at eight o'clock. When do they next ring together? The bells repeat, so we need the L C M. Fifteen is three times five. Twenty is two squared times five. Twenty five is five squared. The L C M is two squared, times three, times five squared, which is three hundred minutes. That is five hours, so they ring together again at thirteen hundred, one o'clock in the afternoon."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: Fence posts",
+      "lines": [
+        "\\text{Plot } 84 \\text{ m by } 120 \\text{ m, posts equally spaced}",
+        "\\text{HCF of 84 and 120} = 12 \\text{ m}",
+        "\\text{Perimeter} = 2(84 + 120) = 408 \\text{ m}",
+        "\\text{Posts} = 408 \\div 12 = 34"
+      ],
+      "narration": "A plot is eighty four metres by one hundred and twenty metres. Fence posts go around it, equally spaced, as far apart as possible, with a post at every corner. The spacing must divide both sides exactly, and be as large as possible, so we need the H C F. Eighty four is two squared times three times seven. One hundred and twenty is two cubed times three times five. The H C F is twelve metres. The perimeter is two times, eighty four plus one hundred and twenty, which is four hundred and eight metres. Four hundred and eight divided by twelve is thirty four posts."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3: A remainder",
+      "lines": [
+        "\\text{Remainder 2 when divided by 4, 6 or 9}",
+        "\\text{LCM of 4, 6 and 9} = 36",
+        "36 + 2 = 38",
+        "\\text{Check: } 38 = 9 \\times 4 + 2"
+      ],
+      "narration": "Find the smallest number greater than two that leaves a remainder of two when divided by four, by six, or by nine. A number that four, six and nine divide into exactly is a common multiple. The smallest is the L C M, thirty six. We need a remainder of two, so add two: thirty eight. Check: thirty eight is nine times four, plus two. It also works for four and six."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 4: Gears",
+      "lines": [
+        "\\text{Gears with 24 and 36 teeth}",
+        "\\text{LCM of 24 and 36} = 72 \\text{ teeth}",
+        "\\text{Small gear: } 72 \\div 24 = 3 \\text{ turns}",
+        "\\text{Big gear: } 72 \\div 36 = 2 \\text{ turns}"
+      ],
+      "narration": "Two gears have twenty four teeth and thirty six teeth. Two marked teeth touch. How many turns does each gear make before those two teeth touch again? The same number of teeth must pass on each gear, so we need a common multiple, and the smallest one: the L C M. The L C M of twenty four and thirty six is seventy two teeth. The small gear turns seventy two divided by twenty four, which is three times. The big gear turns two times."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "Splitting up, largest size: HCF",
+        "Repeating, meeting again, smallest number: LCM",
+        "Convert minutes to hours, and give times properly",
+        "Check your answer against the story"
+      ],
+      "narration": "Four tips. When you split things up, and want the largest size, use the H C F. When things repeat and meet again, or you want the smallest number, use the L C M. Convert minutes to hours when the question asks for a time of day. And always check your answer against the story."
+    }
+  ],
+  "activity": {
+    "title": "HCF and LCM word problems",
+    "instructions": "Decide whether you need the HCF or the LCM, then solve. Show your working.",
+    "questions": [
+      {"text": "Two runners take $6$ minutes and $8$ minutes for a lap. They start together. After how many minutes are they at the start together again?", "marks": 2, "answer": ["LCM of $6$ and $8 = 24$", "After $24$ minutes"]},
+      {"text": "A floor is $360$ cm by $480$ cm. Find the largest square tile that covers it exactly, and how many tiles are needed.", "marks": 3, "answer": ["HCF of $360$ and $480 = 120$, so $120$ cm tiles", "$360 \\div 120 = 3$ and $480 \\div 120 = 4$", "$3 \\times 4 = 12$ tiles"]},
+      {"text": "Find the smallest number greater than $1$ that leaves a remainder of $1$ when divided by $2$, $3$, $4$ or $5$.", "marks": 2, "answer": ["LCM of $2$, $3$, $4$ and $5 = 60$", "$60 + 1 = 61$"]},
+      {"text": "$96$ red beads and $120$ blue beads are made into identical necklaces, using all the beads. What is the greatest number of necklaces, and what is on each?", "marks": 3, "answer": ["HCF of $96$ and $120 = 24$", "$24$ necklaces", "Each: $4$ red and $5$ blue beads"]},
+      {"text": "Three lights flash every $12$, $18$ and $30$ seconds. They flash together at midnight. When do they next flash together?", "marks": 3, "answer": ["$12 = 2^2 \\times 3$, $18 = 2 \\times 3^2$, $30 = 2 \\times 3 \\times 5$", "LCM $= 2^2 \\times 3^2 \\times 5 = 180$ s $= 3$ min", "At 00:03"]},
+      {"text": "Two numbers multiply to $1728$ and their HCF is $12$. Find their LCM.", "marks": 2, "answer": ["HCF $\\times$ LCM $= 1728$", "LCM $= 1728 \\div 12 = 144$"]}
+    ]
+  }
+}

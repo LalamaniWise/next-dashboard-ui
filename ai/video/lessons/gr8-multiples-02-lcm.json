@@ -1,0 +1,104 @@
+{
+  "title": "Multiples and the LCM",
+  "subject": "Mathematics",
+  "grade": 8,
+  "topic": "Factors and Multiples",
+  "subtopic": "The lowest common multiple, and why there is no highest common multiple",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Multiples and the LCM",
+      "subheading": "Grade 8 Mathematics · HCF, LCM and LCD, part 2",
+      "narration": "Welcome to part two of our series on the H C F, the L C M and the L C D. In this lesson we learn about multiples and the lowest common multiple."
+    },
+    {
+      "type": "bullets",
+      "heading": "Key words",
+      "bullets": [
+        "Multiples of $4$: $4, 8, 12, 16, 20, \\ldots$",
+        "A common multiple is a multiple of all the numbers",
+        "LCM: the lowest common multiple",
+        "There is no highest common multiple"
+      ],
+      "narration": "Some key words. The multiples of four are four, eight, twelve, sixteen, twenty, and so on: four times one, four times two, four times three. A common multiple is a multiple of all the numbers. The L C M is the lowest common multiple, the smallest one. And there is no highest common multiple. We will see why in a moment."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1: Listing multiples",
+      "lines": [
+        "4: \\ 4, 8, 12, 16, 20, 24, \\ldots",
+        "6: \\ 6, 12, 18, 24, 30, \\ldots",
+        "\\text{Common multiples: } 12, 24, \\ldots",
+        "\\text{LCM} = 12"
+      ],
+      "narration": "Find the L C M of four and six. Multiples of four: four, eight, twelve, sixteen, twenty, twenty four. Multiples of six: six, twelve, eighteen, twenty four, thirty. The common multiples are twelve, twenty four, and more. The lowest is twelve, so the L C M is twelve."
+    },
+    {
+      "type": "steps",
+      "heading": "Why is there no HCM?",
+      "lines": [
+        "\\text{Common multiples of 4 and 6:}",
+        "12, \\ 24, \\ 36, \\ 48, \\ 60, \\ \\ldots",
+        "\\text{They never end}",
+        "\\text{So there is no highest common multiple}"
+      ],
+      "narration": "Why is there no H C M, no highest common multiple? Look at the common multiples of four and six: twelve, twenty four, thirty six, forty eight, sixty, and so on. Each time we add twelve, we get another one. They never end. However big a common multiple is, there is always a bigger one. So there is a lowest common multiple, but no highest."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: LCM with prime factors",
+      "lines": [
+        "12 = 2 \\times 2 \\times 3",
+        "18 = 2 \\times 3 \\times 3",
+        "\\text{LCM} = 2 \\times 2 \\times 3 \\times 3",
+        "= 36"
+      ],
+      "narration": "For bigger numbers, use prime factors. Find the L C M of twelve and eighteen. Twelve is two times two times three. Eighteen is two times three times three. The L C M must contain every prime factor, as many times as it appears most in any one number. Two appears twice in twelve. Three appears twice in eighteen. So the L C M is two times two times three times three, which is thirty six."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3: Three numbers",
+      "lines": [
+        "8 = 2 \\times 2 \\times 2",
+        "12 = 2 \\times 2 \\times 3",
+        "20 = 2 \\times 2 \\times 5",
+        "\\text{LCM} = 2 \\times 2 \\times 2 \\times 3 \\times 5 = 120"
+      ],
+      "narration": "Find the L C M of eight, twelve and twenty. Eight is two times two times two. Twelve is two times two times three. Twenty is two times two times five. The most twos in any number is three, in eight. We also need a three and a five. So the L C M is two times two times two, times three, times five, which is one hundred and twenty."
+    },
+    {
+      "type": "steps",
+      "heading": "Check: HCF times LCM",
+      "lines": [
+        "12 \\text{ and } 18: \\ \\text{HCF} = 6, \\ \\text{LCM} = 36",
+        "6 \\times 36 = 216",
+        "12 \\times 18 = 216"
+      ],
+      "narration": "Here is a useful check for two numbers. For twelve and eighteen, the H C F is six and the L C M is thirty six. Six times thirty six is two hundred and sixteen. And twelve times eighteen is also two hundred and sixteen. For two numbers, the H C F times the L C M always equals the two numbers multiplied."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "The LCM is at least as big as the biggest number",
+        "HCF: take the shared prime factors",
+        "LCM: take every prime factor, the most times it appears",
+        "For two numbers: HCF $\\times$ LCM = the two numbers multiplied"
+      ],
+      "narration": "Four tips. The L C M is never smaller than the biggest number. Do not mix up the methods: for the H C F, take only the prime factors that are shared. For the L C M, take every prime factor, the most times it appears. And for two numbers, the H C F times the L C M equals the two numbers multiplied."
+    }
+  ],
+  "activity": {
+    "title": "Multiples and the LCM",
+    "instructions": "Find the LCM. Show your working.",
+    "questions": [
+      {"text": "Find the LCM of $3$ and $5$.", "marks": 1, "answer": ["$3$: $3, 6, 9, 12, 15$ and $5$: $5, 10, 15$", "LCM $= 15$"]},
+      {"text": "Find the LCM of $6$ and $8$.", "marks": 2, "answer": ["$6 = 2 \\times 3$ and $8 = 2 \\times 2 \\times 2$", "LCM $= 2 \\times 2 \\times 2 \\times 3 = 24$"]},
+      {"text": "Find the LCM of $9$ and $12$.", "marks": 2, "answer": ["$9 = 3 \\times 3$ and $12 = 2 \\times 2 \\times 3$", "LCM $= 2 \\times 2 \\times 3 \\times 3 = 36$"]},
+      {"text": "Find the LCM of $4$, $6$ and $10$.", "marks": 3, "answer": ["$4 = 2 \\times 2$, $6 = 2 \\times 3$, $10 = 2 \\times 5$", "LCM $= 2 \\times 2 \\times 3 \\times 5 = 60$"]},
+      {"text": "The HCF of $8$ and $20$ is $4$. Use this to find their LCM.", "marks": 2, "answer": ["HCF $\\times$ LCM $= 8 \\times 20 = 160$", "LCM $= 160 \\div 4 = 40$"]},
+      {"text": "Explain why two numbers have no highest common multiple.", "marks": 2, "answer": ["The common multiples never end: you can always add the LCM to get a bigger one.", "So there is no highest one."]}
+    ]
+  }
+}

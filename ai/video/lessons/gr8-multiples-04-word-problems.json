@@ -1,0 +1,93 @@
+{
+  "title": "HCF or LCM? Word Problems",
+  "subject": "Mathematics",
+  "grade": 8,
+  "topic": "Factors and Multiples",
+  "subtopic": "Choosing the HCF or the LCM in word problems",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "HCF or LCM? Word Problems",
+      "subheading": "Grade 8 Mathematics · HCF, LCM and LCD, part 4",
+      "narration": "Welcome to part four of our series on the H C F, the L C M and the L C D. In this lesson we solve word problems, and learn how to tell whether a problem needs the H C F or the L C M."
+    },
+    {
+      "type": "bullets",
+      "heading": "Which one do I need?",
+      "bullets": [
+        "HCF: splitting things into equal groups or pieces",
+        "HCF words: largest, greatest, as many as possible",
+        "LCM: things that repeat, and meet again",
+        "LCM words: next time together, smallest, least"
+      ],
+      "narration": "How do you know which one to use? Use the H C F when you split things into equal groups or equal pieces, with nothing left over. Look for words like largest, greatest, or as many as possible. Use the L C M when things repeat, and you want to know when they meet again. Look for words like next time together, smallest, or least."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1: Packing bags",
+      "lines": [
+        "24 \\text{ apples and } 36 \\text{ oranges, equal bags}",
+        "\\text{HCF of 24 and 36} = 12",
+        "12 \\text{ bags}",
+        "\\text{Each: } 2 \\text{ apples, } 3 \\text{ oranges}"
+      ],
+      "narration": "A shop has twenty four apples and thirty six oranges. It packs them into identical bags, with nothing left over. What is the greatest number of bags? We are splitting into equal groups, so we need the H C F. The H C F of twenty four and thirty six is twelve. So there are twelve bags. Each bag has twenty four divided by twelve, which is two apples, and thirty six divided by twelve, which is three oranges."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: Buses",
+      "lines": [
+        "\\text{Every 12 min and every 15 min, both at 07:00}",
+        "\\text{LCM of 12 and 15} = 60",
+        "60 \\text{ minutes later}",
+        "\\text{Together again at 08:00}"
+      ],
+      "narration": "One bus leaves every twelve minutes. Another leaves every fifteen minutes. Both leave at seven o'clock. When do they next leave together? The buses repeat, and we want them to meet again, so we need the L C M. The L C M of twelve and fifteen is sixty. Sixty minutes after seven o'clock is eight o'clock."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3: Cutting rope",
+      "lines": [
+        "48 \\text{ m and } 72 \\text{ m, equal pieces, as long as possible}",
+        "\\text{HCF of 48 and 72} = 24",
+        "\\text{Each piece: } 24 \\text{ m}",
+        "\\text{Pieces: } 2 + 3 = 5"
+      ],
+      "narration": "Two ropes are forty eight metres and seventy two metres long. They are cut into equal pieces, as long as possible, with no rope left over. How long is each piece? We are cutting into equal pieces, so we need the H C F. The H C F of forty eight and seventy two is twenty four. Each piece is twenty four metres. The first rope gives two pieces, and the second gives three, so there are five pieces."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 4: Groups of learners",
+      "lines": [
+        "\\text{Groups of 4, 5 or 6, nobody left out}",
+        "\\text{LCM of 4, 5 and 6} = 60",
+        "\\text{Smallest class: } 60 \\text{ learners}"
+      ],
+      "narration": "A class can be put into groups of four, groups of five, or groups of six, with nobody left out. What is the smallest possible number of learners? The number must be a multiple of four, five and six, and we want the smallest, so we need the L C M. The L C M of four, five and six is sixty. The smallest class has sixty learners."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "The HCF answer is smaller than the numbers in the question",
+        "The LCM answer is bigger than the numbers in the question",
+        "Check that your answer makes sense",
+        "Answer the question that was asked, with units"
+      ],
+      "narration": "Four tips. An H C F answer is smaller than the numbers in the question, because you are splitting them up. An L C M answer is bigger, because you are waiting for things to line up. Check that your answer makes sense. And answer the question that was asked, with units, like minutes or metres."
+    }
+  ],
+  "activity": {
+    "title": "HCF and LCM word problems",
+    "instructions": "Decide whether you need the HCF or the LCM, then solve.",
+    "questions": [
+      {"text": "$18$ boys and $24$ girls are put into equal teams, each with the same number of boys and the same number of girls. What is the greatest number of teams?", "marks": 2, "answer": ["HCF of $18$ and $24 = 6$", "$6$ teams"]},
+      {"text": "One light flashes every $6$ seconds and another every $8$ seconds. They flash together now. After how many seconds will they next flash together?", "marks": 2, "answer": ["LCM of $6$ and $8 = 24$", "After $24$ seconds"]},
+      {"text": "A floor is $120$ cm by $90$ cm. What is the largest square tile that covers it exactly, with no cutting?", "marks": 2, "answer": ["HCF of $120$ and $90 = 30$", "A $30$ cm by $30$ cm tile"]},
+      {"text": "What is the smallest number that $3$, $4$ and $10$ all divide into exactly?", "marks": 2, "answer": ["LCM of $3$, $4$ and $10 = 60$"]},
+      {"text": "Sausages come in packs of $8$ and rolls in packs of $6$. What is the smallest number of each pack you must buy to have the same number of sausages and rolls?", "marks": 3, "answer": ["LCM of $8$ and $6 = 24$", "$24 \\div 8 = 3$ packs of sausages", "$24 \\div 6 = 4$ packs of rolls"]},
+      {"text": "$30$ pens and $45$ pencils are packed into identical packs with none left over. What is the greatest number of packs, and what is in each?", "marks": 3, "answer": ["HCF of $30$ and $45 = 15$", "$15$ packs", "Each: $2$ pens and $3$ pencils"]}
+    ]
+  }
+}
