@@ -1,0 +1,114 @@
+{
+  "title": "LCM of Large Numbers and Algebraic Terms",
+  "subject": "Mathematics",
+  "grade": 9,
+  "topic": "Factors and Multiples",
+  "subtopic": "The LCM with prime factors and variables, and why there is no HCM",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "LCM of Large Numbers and Algebraic Terms",
+      "subheading": "Grade 9 Mathematics · HCF, LCM and LCD, part 2",
+      "narration": "Welcome to part two of our Grade 9 series on the H C F, the L C M and the L C D. In this lesson we find the lowest common multiple of large numbers and of algebraic terms."
+    },
+    {
+      "type": "bullets",
+      "heading": "The method",
+      "bullets": [
+        "LCM: the lowest common multiple",
+        "Take every prime that appears, with its highest power",
+        "Variables work the same way: $a^3$ and $a^2$ give $a^3$",
+        "There is no HCM: common multiples never end"
+      ],
+      "narration": "The L C M is the lowest common multiple. Write each number in prime factors. Then take every prime that appears in any of the numbers, with its highest power. Compare this with the H C F, where we take only shared primes, with the lowest power. Variables work the same way: a cubed and a squared give a cubed. And there is no H C M, no highest common multiple, because the common multiples never end."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1",
+      "lines": [
+        "180 = 2^2 \\times 3^2 \\times 5",
+        "336 = 2^4 \\times 3 \\times 7",
+        "\\text{LCM} = 2^4 \\times 3^2 \\times 5 \\times 7",
+        "= 5040"
+      ],
+      "narration": "Find the L C M of one hundred and eighty and three hundred and thirty six. One hundred and eighty is two squared, times three squared, times five. Three hundred and thirty six is two to the power four, times three, times seven. Take every prime with its highest power: two to the power four, three squared, five, and seven. Multiply: the L C M is five thousand and forty."
+    },
+    {
+      "type": "steps",
+      "heading": "Check with the HCF",
+      "lines": [
+        "\\text{HCF} \\times \\text{LCM} = 12 \\times 5040 = 60480",
+        "180 \\times 336 = 60480",
+        "\\text{Same, so it is correct}"
+      ],
+      "narration": "In the last lesson we found the H C F of these two numbers is twelve. Twelve times five thousand and forty is sixty thousand four hundred and eighty. And one hundred and eighty times three hundred and thirty six is also sixty thousand four hundred and eighty. For two numbers, the H C F times the L C M equals the numbers multiplied, so our answer is correct."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: Three numbers",
+      "lines": [
+        "24 = 2^3 \\times 3",
+        "90 = 2 \\times 3^2 \\times 5",
+        "150 = 2 \\times 3 \\times 5^2",
+        "\\text{LCM} = 2^3 \\times 3^2 \\times 5^2 = 1800"
+      ],
+      "narration": "Find the L C M of twenty four, ninety, and one hundred and fifty. Twenty four is two cubed times three. Ninety is two, times three squared, times five. One hundred and fifty is two, times three, times five squared. The highest powers are two cubed, three squared, and five squared. Eight times nine times twenty five is one thousand eight hundred."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3: Algebraic terms",
+      "lines": [
+        "12a^3b^2 \\text{ and } 18a^2b^4",
+        "\\text{Numbers: LCM of 12 and 18} = 36",
+        "\\text{Variables: } a^3, \\ b^4",
+        "\\text{LCM} = 36a^3b^4"
+      ],
+      "narration": "Find the L C M of twelve a cubed b squared, and eighteen a squared b to the power four. Numbers first: the L C M of twelve and eighteen is thirty six. Then each variable with its highest power: a cubed and b to the power four. So the L C M is thirty six a cubed b to the power four."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 4: Three terms",
+      "lines": [
+        "4x^2y, \\ 6xy^3, \\ 10x^3",
+        "\\text{LCM of 4, 6 and 10} = 60",
+        "\\text{Highest powers: } x^3, \\ y^3",
+        "\\text{LCM} = 60x^3y^3"
+      ],
+      "narration": "Find the L C M of four x squared y, six x y cubed, and ten x cubed. The L C M of four, six and ten is sixty. The highest power of x is x cubed. The highest power of y is y cubed. The last term has no y, but that does not matter for the L C M: we still take y cubed. The L C M is sixty x cubed y cubed."
+    },
+    {
+      "type": "steps",
+      "heading": "Why there is no HCM",
+      "lines": [
+        "\\text{Common multiples of } 12a^3b^2 \\text{ and } 18a^2b^4:",
+        "36a^3b^4, \\ 72a^3b^4, \\ 36a^4b^4, \\ \\ldots",
+        "\\text{Multiply by anything to get a bigger one}"
+      ],
+      "narration": "Why is there no highest common multiple? Thirty six a cubed b to the power four is a common multiple. So is seventy two a cubed b to the power four, and thirty six a to the power four b to the power four. Multiply any common multiple by anything, and you get another one. There is no end, so there is no highest. That is why we only ever find the lowest."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "HCF: shared primes, lowest powers",
+        "LCM: every prime, highest powers",
+        "The LCM is divisible by every number in the question",
+        "For two numbers: HCF $\\times$ LCM = the numbers multiplied"
+      ],
+      "narration": "Four tips. For the H C F, take the shared primes with the lowest powers. For the L C M, take every prime with the highest powers. Check that the L C M is divisible by every number or term in the question. And for two numbers, use H C F times L C M to check your work."
+    }
+  ],
+  "activity": {
+    "title": "LCM of large numbers and algebraic terms",
+    "instructions": "Find the LCM. Show your prime factors.",
+    "questions": [
+      {"text": "Find the LCM of $168$ and $252$.", "marks": 3, "answer": ["$168 = 2^3 \\times 3 \\times 7$ and $252 = 2^2 \\times 3^2 \\times 7$", "LCM $= 2^3 \\times 3^2 \\times 7 = 504$"]},
+      {"text": "Find the LCM of $144$ and $240$.", "marks": 3, "answer": ["$144 = 2^4 \\times 3^2$ and $240 = 2^4 \\times 3 \\times 5$", "LCM $= 2^4 \\times 3^2 \\times 5 = 720$"]},
+      {"text": "Find the LCM of $45$, $60$ and $75$.", "marks": 3, "answer": ["$45 = 3^2 \\times 5$, $60 = 2^2 \\times 3 \\times 5$, $75 = 3 \\times 5^2$", "LCM $= 2^2 \\times 3^2 \\times 5^2 = 900$"]},
+      {"text": "Find the LCM of $15x^2y$ and $25xy^3$.", "marks": 2, "answer": ["LCM $= 75x^2y^3$"]},
+      {"text": "Find the LCM of $6a^4b$, $9a^2b^3$ and $12a^3b^2$.", "marks": 2, "answer": ["LCM $= 36a^4b^3$"]},
+      {"text": "Two numbers have an HCF of $12$. Their product is $2160$. Find their LCM.", "marks": 2, "answer": ["HCF $\\times$ LCM $= 2160$", "LCM $= 2160 \\div 12 = 180$"]}
+    ]
+  }
+}

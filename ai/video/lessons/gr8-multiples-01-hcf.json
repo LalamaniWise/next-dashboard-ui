@@ -1,0 +1,94 @@
+{
+  "title": "Factors and the HCF",
+  "subject": "Mathematics",
+  "grade": 8,
+  "topic": "Factors and Multiples",
+  "subtopic": "Prime factors and the highest common factor (HCD)",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "Factors and the HCF",
+      "subheading": "Grade 8 Mathematics · HCF, LCM and LCD, part 1",
+      "narration": "Welcome to part one of our series on the H C F, the L C M and the L C D. In this lesson we learn about factors, prime factors, and the highest common factor."
+    },
+    {
+      "type": "bullets",
+      "heading": "Key words",
+      "bullets": [
+        "A factor divides a number exactly: $3$ is a factor of $12$",
+        "A prime number has exactly two factors: $2, 3, 5, 7, 11, \\ldots$",
+        "HCF: the highest common factor",
+        "The HCF is also called the HCD, the highest common divisor"
+      ],
+      "narration": "First, some key words. A factor divides a number exactly, with no remainder. Three is a factor of twelve. A prime number has exactly two factors, one and itself, like two, three, five, seven and eleven. The H C F is the highest common factor: the biggest number that is a factor of all the numbers. Some books call it the H C D, the highest common divisor. It is the same thing."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1: Listing factors",
+      "lines": [
+        "12: \\ 1, 2, 3, 4, 6, 12",
+        "18: \\ 1, 2, 3, 6, 9, 18",
+        "\\text{Common factors: } 1, 2, 3, 6",
+        "\\text{HCF} = 6"
+      ],
+      "narration": "Find the H C F of twelve and eighteen. List the factors of twelve: one, two, three, four, six and twelve. List the factors of eighteen: one, two, three, six, nine and eighteen. The common factors are one, two, three and six. The highest one is six, so the H C F is six."
+    },
+    {
+      "type": "steps",
+      "heading": "Prime factors",
+      "lines": [
+        "60 = 2 \\times 30",
+        "= 2 \\times 2 \\times 15",
+        "= 2 \\times 2 \\times 3 \\times 5",
+        "= 2^2 \\times 3 \\times 5"
+      ],
+      "narration": "For bigger numbers, listing factors takes too long. Instead we write each number as a product of prime factors. Sixty is two times thirty. Thirty is two times fifteen. Fifteen is three times five. So sixty is two times two times three times five, which we can write as two squared, times three, times five."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: HCF with prime factors",
+      "lines": [
+        "36 = 2 \\times 2 \\times 3 \\times 3",
+        "60 = 2 \\times 2 \\times 3 \\times 5",
+        "\\text{Common: } 2 \\times 2 \\times 3",
+        "\\text{HCF} = 12"
+      ],
+      "narration": "Find the H C F of thirty six and sixty. Thirty six is two times two times three times three. Sixty is two times two times three times five. Now find the prime factors they share. Both have two times two times three. Multiply them: the H C F is twelve."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3: Three numbers",
+      "lines": [
+        "24 = 2 \\times 2 \\times 2 \\times 3",
+        "36 = 2 \\times 2 \\times 3 \\times 3",
+        "60 = 2 \\times 2 \\times 3 \\times 5",
+        "\\text{HCF} = 2 \\times 2 \\times 3 = 12"
+      ],
+      "narration": "Find the H C F of twenty four, thirty six and sixty. Twenty four is two times two times two times three. Thirty six is two times two times three times three. Sixty is two times two times three times five. All three numbers share two times two times three. So the H C F is twelve."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "For small numbers, list the factors",
+        "For big numbers, use prime factors",
+        "Take only the prime factors that every number shares",
+        "If no prime factor is shared, the HCF is $1$"
+      ],
+      "narration": "Four tips. For small numbers, listing the factors is quick. For big numbers, use prime factors. Take only the prime factors that every number shares. And if the numbers share no prime factor at all, like eight and fifteen, the H C F is one."
+    }
+  ],
+  "activity": {
+    "title": "Factors and the HCF",
+    "instructions": "Find the HCF. Show your working.",
+    "questions": [
+      {"text": "Find the HCF of $8$ and $12$.", "marks": 1, "answer": ["$8$: $1, 2, 4, 8$ and $12$: $1, 2, 3, 4, 6, 12$", "HCF $= 4$"]},
+      {"text": "Find the HCF of $18$ and $24$.", "marks": 2, "answer": ["$18 = 2 \\times 3 \\times 3$ and $24 = 2 \\times 2 \\times 2 \\times 3$", "HCF $= 2 \\times 3 = 6$"]},
+      {"text": "Write $72$ as a product of prime factors.", "marks": 2, "answer": ["$72 = 2 \\times 2 \\times 2 \\times 3 \\times 3 = 2^3 \\times 3^2$"]},
+      {"text": "Find the HCF of $42$ and $70$.", "marks": 2, "answer": ["$42 = 2 \\times 3 \\times 7$ and $70 = 2 \\times 5 \\times 7$", "HCF $= 2 \\times 7 = 14$"]},
+      {"text": "Find the HCF of $30$, $45$ and $75$.", "marks": 3, "answer": ["$30 = 2 \\times 3 \\times 5$, $45 = 3 \\times 3 \\times 5$, $75 = 3 \\times 5 \\times 5$", "HCF $= 3 \\times 5 = 15$"]},
+      {"text": "Find the HCF of $17$ and $20$.", "marks": 1, "answer": ["$17$ is prime and is not a factor of $20$", "HCF $= 1$"]}
+    ]
+  }
+}

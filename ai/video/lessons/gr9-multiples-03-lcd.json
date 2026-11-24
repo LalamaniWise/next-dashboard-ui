@@ -1,0 +1,105 @@
+{
+  "title": "The LCD of Algebraic Fractions",
+  "subject": "Mathematics",
+  "grade": 9,
+  "topic": "Algebraic Fractions",
+  "subtopic": "Finding and using the lowest common denominator",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "The LCD of Algebraic Fractions",
+      "subheading": "Grade 9 Mathematics · HCF, LCM and LCD, part 3",
+      "narration": "Welcome to part three of our Grade 9 series on the H C F, the L C M and the L C D. In this lesson we find the lowest common denominator of algebraic fractions, and use it to add and subtract them."
+    },
+    {
+      "type": "bullets",
+      "heading": "The method",
+      "bullets": [
+        "The LCD is the LCM of the denominators",
+        "Factorise the denominators first",
+        "Multiply each top by what its bottom is missing",
+        "Put brackets around each top before subtracting"
+      ],
+      "narration": "The L C D is the L C M of the denominators. First factorise every denominator. Then find the L C M, using the highest power of each factor. Multiply the top of each fraction by whatever its bottom is missing from the L C D. And put brackets around each top before you subtract, so the signs come out right."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1",
+      "lines": [
+        "\\frac{3}{4x} + \\frac{5}{6x^2}",
+        "\\text{LCD} = 12x^2",
+        "= \\frac{9x}{12x^2} + \\frac{10}{12x^2}",
+        "= \\frac{9x + 10}{12x^2}"
+      ],
+      "narration": "Simplify three over four x, plus five over six x squared. The L C M of four and six is twelve, and the highest power of x is x squared. So the L C D is twelve x squared. The first fraction is missing three x, so multiply its top by three x, to get nine x. The second is missing two, so its top becomes ten. The answer is nine x plus ten, over twelve x squared."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: Two variables",
+      "lines": [
+        "\\frac{a}{2b} - \\frac{b}{3a}",
+        "\\text{LCD} = 6ab",
+        "= \\frac{3a^2}{6ab} - \\frac{2b^2}{6ab}",
+        "= \\frac{3a^2 - 2b^2}{6ab}"
+      ],
+      "narration": "Simplify a over two b, minus b over three a. The L C D is six a b. The first fraction is missing three a, so its top becomes three a squared. The second fraction is missing two b, so its top becomes two b squared. The answer is three a squared minus two b squared, over six a b."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3: Brackets on top",
+      "lines": [
+        "\\frac{x + 1}{4} - \\frac{x - 2}{6}",
+        "= \\frac{3(x + 1) - 2(x - 2)}{12}",
+        "= \\frac{3x + 3 - 2x + 4}{12}",
+        "= \\frac{x + 7}{12}"
+      ],
+      "narration": "Simplify x plus one over four, minus x minus two over six. The L C D is twelve. Multiply the first top by three and the second top by two, keeping the brackets. Now expand. Three times x plus one is three x plus three. Negative two times x minus two is negative two x plus four. Be careful: negative times negative is positive. Collect like terms to get x plus seven, over twelve."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 4: Factorise the bottom",
+      "lines": [
+        "\\frac{2}{x + 3} + \\frac{5}{2x + 6}",
+        "2x + 6 = 2(x + 3)",
+        "= \\frac{4}{2(x + 3)} + \\frac{5}{2(x + 3)}",
+        "= \\frac{9}{2(x + 3)}"
+      ],
+      "narration": "Simplify two over x plus three, plus five over two x plus six. First factorise the denominators. Two x plus six is two times, x plus three. So the L C D is two times, x plus three. The first fraction is missing a two, so its top becomes four. Four plus five is nine, so the answer is nine over two times, x plus three."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 5: Difference of squares",
+      "lines": [
+        "\\frac{3}{x^2 - 9} - \\frac{1}{x - 3}",
+        "= \\frac{3}{(x - 3)(x + 3)} - \\frac{x + 3}{(x - 3)(x + 3)}",
+        "= \\frac{3 - x - 3}{(x - 3)(x + 3)}",
+        "= \\frac{-x}{(x - 3)(x + 3)}"
+      ],
+      "narration": "Simplify three over x squared minus nine, minus one over x minus three. Factorise x squared minus nine as x minus three, times x plus three. That is the L C D. The second fraction is missing x plus three, so its top becomes x plus three. Now subtract the tops: three minus, x plus three, is three minus x minus three, which is negative x. The answer is negative x, over x minus three times x plus three."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "Always factorise the denominators first",
+        "Use each factor once, with its highest power",
+        "Keep brackets on the tops, then expand carefully",
+        "Simplify at the end if a factor cancels"
+      ],
+      "narration": "Four tips. Always factorise the denominators first. Use each factor in the L C D once, with its highest power. Keep brackets on the tops, then expand carefully, especially after a minus sign. And check at the end whether a factor cancels, so your answer is in its simplest form."
+    }
+  ],
+  "activity": {
+    "title": "The LCD of algebraic fractions",
+    "instructions": "Simplify. Show the LCD.",
+    "questions": [
+      {"text": "$\\frac{2}{3x} + \\frac{1}{6x}$", "marks": 2, "answer": ["LCD $= 6x$", "$= \\frac{4}{6x} + \\frac{1}{6x} = \\frac{5}{6x}$"]},
+      {"text": "$\\frac{5}{2a} - \\frac{3}{4a^2}$", "marks": 2, "answer": ["LCD $= 4a^2$", "$= \\frac{10a}{4a^2} - \\frac{3}{4a^2} = \\frac{10a - 3}{4a^2}$"]},
+      {"text": "$\\frac{x + 2}{3} + \\frac{x - 1}{2}$", "marks": 3, "answer": ["$= \\frac{2(x + 2) + 3(x - 1)}{6}$", "$= \\frac{2x + 4 + 3x - 3}{6}$", "$= \\frac{5x + 1}{6}$"]},
+      {"text": "$\\frac{2x - 1}{4} - \\frac{x - 3}{6}$", "marks": 3, "answer": ["$= \\frac{3(2x - 1) - 2(x - 3)}{12}$", "$= \\frac{6x - 3 - 2x + 6}{12}$", "$= \\frac{4x + 3}{12}$"]},
+      {"text": "$\\frac{4}{x - 2} + \\frac{3}{3x - 6}$", "marks": 3, "answer": ["$3x - 6 = 3(x - 2)$, so LCD $= 3(x - 2)$", "$= \\frac{12 + 3}{3(x - 2)} = \\frac{15}{3(x - 2)}$", "$= \\frac{5}{x - 2}$"]},
+      {"text": "$\\frac{2}{x^2 - 4} + \\frac{1}{x + 2}$", "marks": 3, "answer": ["$x^2 - 4 = (x - 2)(x + 2)$", "$= \\frac{2 + (x - 2)}{(x - 2)(x + 2)}$", "$= \\frac{x}{(x - 2)(x + 2)}$"]}
+    ]
+  }
+}

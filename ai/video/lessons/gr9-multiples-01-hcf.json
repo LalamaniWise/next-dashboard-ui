@@ -1,0 +1,104 @@
+{
+  "title": "HCF of Large Numbers and Algebraic Terms",
+  "subject": "Mathematics",
+  "grade": 9,
+  "topic": "Factors and Multiples",
+  "subtopic": "The HCF (HCD) with prime factors, exponents and variables",
+  "language": "en",
+  "scenes": [
+    {
+      "type": "title",
+      "heading": "HCF of Large Numbers and Algebraic Terms",
+      "subheading": "Grade 9 Mathematics · HCF, LCM and LCD, part 1",
+      "narration": "Welcome to part one of our Grade 9 series on the H C F, the L C M and the L C D. In this lesson we find the highest common factor of large numbers and of algebraic terms."
+    },
+    {
+      "type": "bullets",
+      "heading": "The method",
+      "bullets": [
+        "HCF: highest common factor, also called the HCD or GCD",
+        "Write each number in prime factors, with exponents",
+        "Take each shared prime with its lowest power",
+        "Variables work the same way: $a^3$ and $a^2$ share $a^2$"
+      ],
+      "narration": "The H C F is the highest common factor. You may also see it called the H C D, the highest common divisor, or the G C D, the greatest common divisor. They all mean the same thing. Write each number as prime factors, using exponents. Then take each prime that all the numbers share, with its lowest power. Variables work the same way: a cubed and a squared share a squared."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 1",
+      "lines": [
+        "180 = 2^2 \\times 3^2 \\times 5",
+        "336 = 2^4 \\times 3 \\times 7",
+        "\\text{HCF} = 2^2 \\times 3",
+        "= 12"
+      ],
+      "narration": "Find the H C F of one hundred and eighty and three hundred and thirty six. One hundred and eighty is two squared, times three squared, times five. Three hundred and thirty six is two to the power four, times three, times seven. The shared primes are two and three. The lowest power of two is two squared. The lowest power of three is three to the power one. So the H C F is two squared times three, which is twelve."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 2: Three numbers",
+      "lines": [
+        "252 = 2^2 \\times 3^2 \\times 7",
+        "420 = 2^2 \\times 3 \\times 5 \\times 7",
+        "588 = 2^2 \\times 3 \\times 7^2",
+        "\\text{HCF} = 2^2 \\times 3 \\times 7 = 84"
+      ],
+      "narration": "Find the H C F of two hundred and fifty two, four hundred and twenty, and five hundred and eighty eight. Two hundred and fifty two is two squared, times three squared, times seven. Four hundred and twenty is two squared, times three, times five, times seven. Five hundred and eighty eight is two squared, times three, times seven squared. Five is not in every number, so leave it out. The lowest powers are two squared, three, and seven. The H C F is eighty four."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 3: Algebraic terms",
+      "lines": [
+        "12a^3b^2 \\text{ and } 18a^2b^4",
+        "\\text{Numbers: HCF of 12 and 18} = 6",
+        "\\text{Variables: } a^2, \\ b^2",
+        "\\text{HCF} = 6a^2b^2"
+      ],
+      "narration": "Find the H C F of twelve a cubed b squared, and eighteen a squared b to the power four. Do the numbers first: the H C F of twelve and eighteen is six. Then each variable with its lowest power. The lowest power of a is a squared. The lowest power of b is b squared. So the H C F is six a squared b squared."
+    },
+    {
+      "type": "steps",
+      "heading": "Example 4: Three terms",
+      "lines": [
+        "8x^2y, \\ 20xy^3, \\ 28x^3y^2",
+        "\\text{HCF of 8, 20 and 28} = 4",
+        "\\text{Lowest powers: } x, \\ y",
+        "\\text{HCF} = 4xy"
+      ],
+      "narration": "Find the H C F of eight x squared y, twenty x y cubed, and twenty eight x cubed y squared. The H C F of eight, twenty and twenty eight is four. The lowest power of x is x to the power one, in the middle term. The lowest power of y is y to the power one, in the first term. So the H C F is four x y."
+    },
+    {
+      "type": "steps",
+      "heading": "Using the HCF to factorise",
+      "lines": [
+        "12a^3b^2 + 18a^2b^4",
+        "\\text{HCF} = 6a^2b^2",
+        "= 6a^2b^2(2a + 3b^2)"
+      ],
+      "narration": "This is exactly what we need to factorise. Factorise twelve a cubed b squared, plus eighteen a squared b to the power four. We found the H C F is six a squared b squared. Divide each term by it. The first term gives two a. The second term gives three b squared. So the answer is six a squared b squared, times two a plus three b squared."
+    },
+    {
+      "type": "bullets",
+      "heading": "Tips",
+      "bullets": [
+        "Use exponents to keep prime factors short",
+        "A prime that is missing from one number is not in the HCF",
+        "Take the lowest power of each shared prime or variable",
+        "Check: the HCF must divide every number exactly"
+      ],
+      "narration": "Four tips. Use exponents to keep your prime factors short. If a prime is missing from even one number, it is not in the H C F. Take the lowest power of each shared prime or variable. And check: the H C F must divide every number or term exactly."
+    }
+  ],
+  "activity": {
+    "title": "HCF of large numbers and algebraic terms",
+    "instructions": "Find the HCF. Show your prime factors.",
+    "questions": [
+      {"text": "Find the HCF of $168$ and $252$.", "marks": 3, "answer": ["$168 = 2^3 \\times 3 \\times 7$ and $252 = 2^2 \\times 3^2 \\times 7$", "HCF $= 2^2 \\times 3 \\times 7 = 84$"]},
+      {"text": "Find the HCF of $144$ and $240$.", "marks": 3, "answer": ["$144 = 2^4 \\times 3^2$ and $240 = 2^4 \\times 3 \\times 5$", "HCF $= 2^4 \\times 3 = 48$"]},
+      {"text": "Find the HCF of $105$, $165$ and $195$.", "marks": 3, "answer": ["$105 = 3 \\times 5 \\times 7$, $165 = 3 \\times 5 \\times 11$, $195 = 3 \\times 5 \\times 13$", "HCF $= 3 \\times 5 = 15$"]},
+      {"text": "Find the HCF of $15x^2y$ and $25xy^3$.", "marks": 2, "answer": ["HCF $= 5xy$"]},
+      {"text": "Find the HCF of $6a^4b$, $9a^2b^3$ and $12a^3b^2$.", "marks": 2, "answer": ["HCF $= 3a^2b$"]},
+      {"text": "Factorise $14p^3q^2 - 21p^2q^3$.", "marks": 2, "answer": ["HCF $= 7p^2q^2$", "$= 7p^2q^2(2p - 3q)$"]}
+    ]
+  }
+}
