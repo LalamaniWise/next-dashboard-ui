@@ -278,6 +278,10 @@ export type StudentSubjectsSchema = z.input<typeof studentSubjectsSchema>;
 
 const optionalText = z.string().trim().optional().or(z.literal(""));
 
+const phaseField = z.enum(["PRIMARY", "SECONDARY"], {
+  message: "Choose primary or secondary school!",
+});
+
 const accountFields = {
   username: z
     .string()
@@ -328,6 +332,7 @@ export const studentRegistrationSchema = z
     phone: optionalText,
     address: z.string().trim().min(1, { message: "Address is required!" }),
 
+    phase: phaseField,
     gradeId: z.coerce.number().min(1, { message: "Grade is required!" }),
     previousSchool: optionalText,
     lastGradeCompleted: optionalText,
@@ -389,6 +394,7 @@ export const parentRegistrationSchema = z
       .or(z.literal("")),
     phone: z.string().trim().min(1, { message: "Phone is required!" }),
     address: z.string().trim().min(1, { message: "Address is required!" }),
+    phase: phaseField,
     studentNumber: studentNumberField,
     childBirthday: childBirthdayField,
   })

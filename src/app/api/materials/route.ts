@@ -1,12 +1,18 @@
 import { randomUUID } from "crypto";
 import path from "path";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { auth } from "@/lib/auth";
 import { materialSchema } from "@/lib/formValidationSchemas";
 import { deleteFile, saveFile } from "@/lib/fileStore";
 import { canUploadFor } from "@/lib/materials";
 import { ALLOWED_FILES, IMAGE_FILES, MAX_UPLOAD_MB } from "@/lib/materialTypes";
 import prisma from "@/lib/prisma";
+import { ensureQuiz } from "@/lib/quizGenerator";
+import { TESTED_MATERIAL_TYPES } from "@/lib/quizzes";
+
+// Room for Claude to write the material's test after the upload answers
+export const maxDuration = 300;
 
 // Uploads go through a route handler rather than a server action, which
 // caps request bodies at 1 MB
@@ -58,8 +64,9 @@ export async function POST(request: Request) {
   const storedName = `${randomUUID()}${ext}`;
   await saveFile("materials", storedName, new Uint8Array(await file.arrayBuffer()), ALLOWED_FILES[ext]);
 
+  let materialId: number;
   try {
-    await prisma.material.create({
+    ({ id: materialId } = await prisma.material.create({
       data: {
         title: d.title,
         description: d.description || null,
@@ -73,13 +80,18 @@ export async function POST(request: Request) {
         size: file.size,
         uploadedById: userId,
       },
-    });
+      select: { id: true },
+    }));
   } catch (err) {
     console.log(err);
     await deleteFile("materials", storedName);
     return fail("The material couldn't be saved. Check the subject and grade.", 500);
   }
 
+  // Claude writes its test for a teacher to check (see /list/tests)
+  if ((TESTED_MATERIAL_TYPES as readonly string[]).includes(d.type)) {
+    after(() => ensureQuiz({ materialId }).then(() => revalidatePath("/list/tests")));
+  }
   revalidatePath("/list/materials");
   return Response.json({ ok: true }, { status: 201 });
 }

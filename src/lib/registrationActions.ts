@@ -17,6 +17,7 @@ import {
   studentRegistrationSchema,
   StudentRegistrationSchema,
 } from "./formValidationSchemas";
+import { gradeLabel, phaseOf } from "./phases";
 import prisma from "./prisma";
 import { nextStudentNumber } from "./studentNumber";
 import { blockedFor, clientIp, recordAttempt, waitMessage } from "./rateLimit";
@@ -89,17 +90,17 @@ const findChild = async (
 ) => {
   const student = await tx.student.findUnique({
     where: { studentNumber },
-    select: { id: true, birthday: true, parentId: true },
+    select: { id: true, birthday: true, parentId: true, grade: { select: { level: true } } },
   });
   if (student) {
     if (!sameDay(student.birthday, birthday)) return { error: NO_MATCH };
     if (student.parentId) return { error: ALREADY_LINKED };
-    return { studentId: student.id };
+    return { studentId: student.id, gradeLevel: student.grade.level };
   }
 
   const registration = await tx.studentRegistration.findUnique({
     where: { studentNumber },
-    select: { id: true, birthday: true, parentId: true, status: true },
+    select: { id: true, birthday: true, parentId: true, status: true, grade: { select: { level: true } } },
   });
   if (
     !registration ||
@@ -109,7 +110,7 @@ const findChild = async (
     return { error: NO_MATCH };
   }
   if (registration.parentId) return { error: ALREADY_LINKED };
-  return { registrationId: registration.id };
+  return { registrationId: registration.id, gradeLevel: registration.grade.level };
 };
 
 const linkChildToParent = (
@@ -126,6 +127,9 @@ const linkChildToParent = (
 
 // Thrown inside a transaction to roll it back with a message for the user
 class RegistrationError extends Error {}
+
+// The parent chose the other school phase from their child's
+class PhaseMismatch extends Error {}
 
 export const registerStudent = async (
   _state: RegistrationState,
@@ -148,6 +152,11 @@ export const registerStudent = async (
 
     const grade = await prisma.grade.findUnique({ where: { id: d.gradeId } });
     if (!grade) return fail("Choose the grade you are enrolling into.");
+    if (phaseOf(grade.level) !== d.phase) {
+      return fail(
+        `${gradeLabel(grade.level)} isn't in ${d.phase === "PRIMARY" ? "primary" : "secondary"} school. Check the school and the grade.`
+      );
+    }
 
     const subjectProblem = await subjectChoicesProblem(d.subjects);
     if (subjectProblem) return fail(subjectProblem);
@@ -173,6 +182,7 @@ export const registerStudent = async (
               sex: d.sex,
               birthday: d.birthday,
               gradeId: d.gradeId,
+              phase: d.phase,
               previousSchool: d.previousSchool || null,
               lastGradeCompleted: d.lastGradeCompleted || null,
               medicalNotes: d.medicalNotes || null,
@@ -238,6 +248,14 @@ export const registerParent = async (
     await prisma.$transaction(async (tx) => {
       const child = await findChild(tx, d.studentNumber, d.childBirthday);
       if ("error" in child) throw new RegistrationError(child.error);
+      // The number and birthday matched, so this is an honest mix-up, not a guess
+      if (phaseOf(child.gradeLevel) !== d.phase) {
+        throw new PhaseMismatch(
+          `Your child is in ${gradeLabel(child.gradeLevel)}, which is ${
+            phaseOf(child.gradeLevel) === "PRIMARY" ? "primary" : "secondary"
+          } school. Choose that school phase.`
+        );
+      }
 
       await tx.user.create({
         data: { id, username: d.username, password, role: "parent" },
@@ -251,11 +269,13 @@ export const registerParent = async (
           email: d.email || null,
           phone: d.phone,
           address: d.address,
+          phase: d.phase,
         },
       });
       await linkChildToParent(tx, child, id);
     });
   } catch (err) {
+    if (err instanceof PhaseMismatch) return fail(err.message);
     if (err instanceof RegistrationError) {
       recordChildGuess(guessKeys, err.message);
       return fail(err.message);

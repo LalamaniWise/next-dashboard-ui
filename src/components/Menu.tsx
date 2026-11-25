@@ -60,7 +60,19 @@ const menuItems = [
         icon: "/lesson.png",
         label: "Lessons",
         href: "/list/lessons",
-        visible: ["admin", "teacher"],
+        visible: ["admin", "teacher", "student", "parent"],
+      },
+      {
+        icon: "/subject.png",
+        label: "Learning",
+        href: "/list/learning",
+        visible: ["admin", "teacher", "student", "parent"],
+      },
+      {
+        icon: "/exam.png",
+        label: "Tests",
+        href: "/list/tests",
+        visible: ["admin", "teacher", "student", "parent"],
       },
       {
         icon: "/singleLesson.png",

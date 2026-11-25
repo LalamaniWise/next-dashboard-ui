@@ -11,6 +11,7 @@
     "db:turso": "node scripts/turso-migrate.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^1.13.0",
     "@hookform/resolvers": "^5.2.2",
     "@libsql/client": "^0.15.15",
     "@prisma/adapter-libsql": "^6.19.2",
