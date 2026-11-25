@@ -6,9 +6,12 @@ import OnlineClassesCard from "@/components/OnlineClassesCard";
 import OverdueNotice from "@/components/fees/OverdueNotice";
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import ReadinessCard from "@/components/tests/ReadinessCard";
+import { quizLearnersFor } from "@/lib/quizzes";
 
 const StudentPage = async () => {
-  const { userId } = await auth();
+  const { userId, role } = await auth();
+  const learners = (await quizLearnersFor(role, userId)) ?? [];
 
   const classItem = await prisma.class.findMany({
     where: {
@@ -41,6 +44,7 @@ const StudentPage = async () => {
         </div>
         {/* RIGHT */}
         <div className="w-full xl:w-1/3 flex flex-col gap-8">
+          <ReadinessCard students={learners} />
           <OnlineClassesCard role="student" userId={userId!} />
           <EventCalendar />
           <Announcements />

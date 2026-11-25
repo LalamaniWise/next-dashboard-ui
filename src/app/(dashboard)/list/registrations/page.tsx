@@ -76,7 +76,12 @@ const RegistrationListPage = async ({
         <p className="text-xs text-gray-500">@{item.username}</p>
       </td>
       <td className="hidden md:table-cell font-mono text-xs">{item.studentNumber}</td>
-      <td className="hidden md:table-cell">Grade {item.grade.level}</td>
+      <td className="hidden md:table-cell">
+        Grade {item.grade.level}
+        {item.phase && (
+          <span className="block text-xs text-gray-500">{item.phase === "PRIMARY" ? "Primary" : "Secondary"}</span>
+        )}
+      </td>
       <td className="hidden lg:table-cell">
         {item.parent ? `${item.parent.name} ${item.parent.surname}` : (
           <span className="text-gray-400">Not linked yet</span>

@@ -1,10 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
 import { auth } from "./auth";
 import { publishVideoSchema, videoSchema } from "./formValidationSchemas";
 import type { VideoProgress } from "./lessonVideoOptions";
 import prisma from "./prisma";
+import { ensureQuiz } from "./quizGenerator";
 import { getJob, JOB_ID, saveFinishedVideo, VideoServiceError } from "./videoService";
 import { parseYouTubeId, watchUrl } from "./youtube";
 
@@ -114,8 +116,14 @@ export const publishVideo = async (_state: State, formData: FormData): Promise<S
     where: { id },
     data: { status: "PUBLISHED", grades: { set: grades.map((g) => ({ id: g })) } },
   });
+  // Claude writes its test for a teacher to check (see /list/tests)
+  after(() => ensureQuiz({ videoId: id }).then(() => revalidatePath("/list/tests")));
   refresh();
-  return { success: true, error: false, message: "Published. Learners in those grades can watch it now." };
+  return {
+    success: true,
+    error: false,
+    message: "Published. Learners in those grades can watch it now, and its test is being written for you to check.",
+  };
 };
 
 // Removes the video from the app only; it stays on the YouTube channel.

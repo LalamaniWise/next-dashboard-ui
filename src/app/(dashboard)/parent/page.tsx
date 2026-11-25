@@ -5,13 +5,16 @@ import OnlineClassesCard from "@/components/OnlineClassesCard";
 import OverdueNotice from "@/components/fees/OverdueNotice";
 import prisma from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import ReadinessCard from "@/components/tests/ReadinessCard";
+import { quizLearnersFor } from "@/lib/quizzes";
 
 export const dynamic = "force-dynamic";
 
 
 const ParentPage = async () => {
-  const { userId } = await auth();
+  const { userId, role } = await auth();
   const currentUserId = userId;
+  const learners = (await quizLearnersFor(role, userId)) ?? [];
 
   const [students, pending] = await Promise.all([
     prisma.student.findMany({
@@ -61,6 +64,7 @@ const ParentPage = async () => {
       </div>
       {/* RIGHT */}
       <div className="w-full xl:w-1/3 flex flex-col gap-8">
+        <ReadinessCard students={learners} />
         {students.length > 0 && (
           <OnlineClassesCard role="parent" userId={currentUserId!} />
         )}

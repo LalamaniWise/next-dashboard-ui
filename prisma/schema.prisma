@@ -112,6 +112,7 @@ model Student {
   parent                  Parent?                  @relation(fields: [parentId], references: [id])
   invoices                Invoice[]
   payments                Payment[]
+  quizAttempts            QuizAttempt[]
 }
 
 model Teacher {
@@ -141,6 +142,8 @@ model Parent {
   email         String?               @unique
   phone         String                @unique
   address       String
+  // Primary or secondary school, chosen when the parent registers
+  phase         SchoolPhase?
   createdAt     DateTime              @default(now())
   students      Student[]
   registrations StudentRegistration[]
@@ -375,6 +378,8 @@ model StudentRegistration {
   sex                  UserSex
   birthday             DateTime
   gradeId              Int
+  // Chosen before the grade, which must be in this phase
+  phase                SchoolPhase?
   previousSchool       String?
   lastGradeCompleted   String?
   medicalNotes         String?
@@ -486,6 +491,7 @@ model Material {
   createdAt    DateTime     @default(now())
   subject      Subject      @relation(fields: [subjectId], references: [id])
   grade        Grade?       @relation(fields: [gradeId], references: [id])
+  quiz         Quiz?
 
   @@index([subjectId])
 }
@@ -635,6 +641,7 @@ model Video {
   // Who sees it once published: learners in these grades
   grades      Grade[]
   createdAt   DateTime    @default(now())
+  quiz        Quiz?
 
   @@index([status])
 }
@@ -658,4 +665,90 @@ model GalleryPhoto {
   createdAt    DateTime @default(now())
 
   @@index([category])
+}
+
+// Grades 1 to 7 are primary school, 8 to 12 secondary (see src/lib/phases.ts)
+enum SchoolPhase {
+  PRIMARY
+  SECONDARY
+}
+
+// TESTS. Every lesson video and study material gets a multiple-choice test,
+// written by Claude and checked by a teacher before learners can take it.
+
+// A school term, set by an admin. A learner's readiness for a term is worked
+// out from the tests published during it.
+model Term {
+  id        Int      @id @default(autoincrement())
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+
+  @@index([startDate])
+}
+
+enum QuizStatus {
+  // Claude is writing it
+  GENERATING
+  // Claude couldn't write it; error says why
+  FAILED
+  // Written, waiting for a teacher to check and publish it
+  PENDING
+  PUBLISHED
+}
+
+// The test for one video or one material (exactly one of the two is set).
+// Learners see it with the same grade and subject rules as what it's about.
+model Quiz {
+  id          Int            @id @default(autoincrement())
+  title       String
+  videoId     Int?           @unique
+  materialId  Int?           @unique
+  status      QuizStatus     @default(GENERATING)
+  error       String?
+  // The term a test counts towards is the one it was published in
+  publishedAt DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  video       Video?         @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  material    Material?      @relation(fields: [materialId], references: [id], onDelete: Cascade)
+  questions   QuizQuestion[]
+  attempts    QuizAttempt[]
+
+  @@index([status])
+}
+
+model QuizQuestion {
+  id          Int     @id @default(autoincrement())
+  quizId      Int
+  position    Int
+  question    String
+  // JSON array of the four answer options
+  options     String
+  // Index of the correct option, 0 to 3
+  answer      Int
+  marks       Int
+  // Shown to the learner after they hand in
+  explanation String?
+  quiz        Quiz    @relation(fields: [quizId], references: [id], onDelete: Cascade)
+
+  @@index([quizId, position])
+}
+
+// A learner's one go at a test
+model QuizAttempt {
+  id        Int      @id @default(autoincrement())
+  quizId    Int
+  studentId String
+  score     Int
+  total     Int
+  // JSON object of question id -> chosen option index
+  answers   String
+  createdAt DateTime @default(now())
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([quizId, studentId])
+  @@index([studentId])
 }

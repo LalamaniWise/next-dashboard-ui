@@ -7,6 +7,7 @@ import ResetPasswordForm from "@/components/ResetPasswordForm";
 import { integrationStatus } from "@/lib/meetings";
 import SetupChecklist from "@/components/SetupChecklist";
 import GradesManager from "@/components/GradesManager";
+import { TermsManager } from "@/components/tests/TestForms";
 import { LogoUpload, WebsiteSettingsForm } from "@/components/forms/WebsiteSettingsForm";
 import { siteContent, DEFAULT_SETTINGS } from "@/lib/schoolSettings";
 import prisma from "@/lib/prisma";
@@ -52,6 +53,9 @@ const SettingsPage = async () => {
           include: { _count: { select: { classes: true, students: true } } },
         })
       : [];
+  const terms = role === "admin" ? await prisma.term.findMany({ orderBy: { startDate: "asc" } }) : [];
+  const dateText = (d: Date) => d.toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" });
+  const now = new Date();
 
   return (
     <div className="flex-1 m-4 mt-0 flex flex-col gap-4">
@@ -95,6 +99,23 @@ const SettingsPage = async () => {
           </p>
           <GradesManager
             grades={grades.map((g) => ({ id: g.id, level: g.level, inUse: g._count.classes + g._count.students > 0 }))}
+          />
+        </div>
+      )}
+      {role === "admin" && (
+        <div id="terms" className="card p-6 scroll-mt-4">
+          <h1 className="text-lg font-semibold">Terms</h1>
+          <p className="text-sm text-gray-500 mb-4">
+            Each learner&apos;s term readiness is worked out from the tests published during the term, so learners and
+            parents can see how ready they are before term tests and exams.
+          </p>
+          <TermsManager
+            terms={terms.map((t) => ({
+              id: t.id,
+              name: t.name,
+              dates: `${dateText(t.startDate)} to ${dateText(t.endDate)}`,
+              current: t.startDate <= now && t.endDate >= now,
+            }))}
           />
         </div>
       )}

@@ -2,12 +2,13 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
-import { startTransition, useActionState, useState } from "react";
+import { startTransition, useActionState, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
   studentRegistrationSchema,
   StudentRegistrationSchema,
 } from "@/lib/formValidationSchemas";
+import { gradeLabel, phaseLabels, phaseOf, PHASES } from "@/lib/phases";
 import { registerStudent } from "@/lib/registrationActions";
 import { Section, SelectField, TextAreaField, TextField } from "./RegistrationFields";
 import SubjectPicker, { SubjectChoice, SubjectOption } from "./SubjectPicker";
@@ -27,6 +28,8 @@ const StudentRegistrationForm = ({ grades, subjects, schoolName, terms }: Props)
     handleSubmit,
     watch,
     control,
+    setValue,
+    getValues,
     formState: { errors, isSubmitted },
   } = useForm<StudentRegistrationSchema>({
     resolver: zodResolver(studentRegistrationSchema),
@@ -39,6 +42,14 @@ const StudentRegistrationForm = ({ grades, subjects, schoolName, terms }: Props)
   });
 
   const fullName = [watch("name"), watch("surname")].filter(Boolean).join(" ");
+
+  // Only the grades in the chosen school phase can be picked
+  const phase = watch("phase");
+  const phaseGrades = phase ? grades.filter((g) => phaseOf(g.level) === phase) : [];
+  useEffect(() => {
+    const chosen = grades.find((g) => String(g.id) === String(getValues("gradeId")));
+    if (chosen && phaseOf(chosen.level) !== phase) setValue("gradeId", "");
+  }, [phase, grades, getValues, setValue]);
   const today = new Intl.DateTimeFormat("en-GB", { dateStyle: "long" }).format(new Date());
 
   if (state.success && state.studentNumber) {
@@ -129,9 +140,16 @@ const StudentRegistrationForm = ({ grades, subjects, schoolName, terms }: Props)
 
       <Section title="School information">
         <SelectField
+          label="Primary or secondary school"
+          placeholder="Select"
+          options={PHASES.map((p) => ({ value: p, label: phaseLabels[p] }))}
+          registration={register("phase")}
+          error={errors.phase}
+        />
+        <SelectField
           label="Grade you are enrolling into"
-          placeholder="Select a grade"
-          options={grades.map((g) => ({ value: g.id, label: `Grade ${g.level}` }))}
+          placeholder={phase ? "Select a grade" : "Choose primary or secondary first"}
+          options={phaseGrades.map((g) => ({ value: g.id, label: gradeLabel(g.level) }))}
           registration={register("gradeId")}
           error={errors.gradeId}
           hint="The school will place you in a class within this grade."

@@ -12,6 +12,9 @@ import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Prisma } from "@prisma/client";
 
+// Room for Claude to write a video's test after an admin publishes it
+export const maxDuration = 300;
+
 const SORTS: SortMap<Prisma.PlaylistOrderByWithRelationInput> = {
   newest: { label: "Newest first", orderBy: { createdAt: "desc" } },
   title: { label: "Title (A–Z)", orderBy: { title: "asc" } },

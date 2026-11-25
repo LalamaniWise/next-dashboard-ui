@@ -14,7 +14,7 @@ export type LearnerScope = {
 // A learner sees materials and playlists for the subjects they registered for, in their
 // grade (or for all grades). Learners added before subject registration
 // existed have no subjects yet, so they see their grade's materials.
-const learnerWhere = (student: {
+export const learnerWhere = (student: {
   gradeId: number;
   subjects: { subjectId: number }[];
 }): LearnerScope => ({

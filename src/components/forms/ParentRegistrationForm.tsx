@@ -8,8 +8,9 @@ import {
   parentRegistrationSchema,
   ParentRegistrationSchema,
 } from "@/lib/formValidationSchemas";
+import { phaseLabels, PHASES } from "@/lib/phases";
 import { registerParent } from "@/lib/registrationActions";
-import { Section, TextField } from "./RegistrationFields";
+import { Section, SelectField, TextField } from "./RegistrationFields";
 
 const ParentRegistrationForm = () => {
   const {
@@ -50,6 +51,13 @@ const ParentRegistrationForm = () => {
           type="date"
           registration={register("childBirthday")}
           error={errors.childBirthday}
+        />
+        <SelectField
+          label="Your child is in"
+          placeholder="Select"
+          options={PHASES.map((p) => ({ value: p, label: phaseLabels[p] }))}
+          registration={register("phase")}
+          error={errors.phase}
         />
       </Section>
 
